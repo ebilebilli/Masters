@@ -12,6 +12,7 @@ celery = "*"
 redis = "*"
 psycopg2-binary = "*"
 dotenv = "*"
+pillow = "*"
 
 [dev-packages]
 

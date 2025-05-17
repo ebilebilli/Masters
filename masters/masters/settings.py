@@ -29,6 +29,13 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_yasg',
+
+    #Apps
+    'users',
+    'services',
+    'orders',
+    'reviews',
+    'core'
 ]
 
 MIDDLEWARE = [
@@ -115,3 +122,7 @@ CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
 CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
 CELERY_IGNORE_RESULT = True
 CELERY_TIMEZONE = 'UTC'
+
+#Media settings
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
