@@ -13,7 +13,7 @@ class ServiceSerializer(serializers.ModelSerializer):
     slug_field='name'
     )
     city = serializers.SlugRelatedField(
-    queryset=City.objects.filter(base_city__country__code2='AZ'),
+    queryset=City.objects.all(),
     slug_field='name'
     )
     image = ServiceImageSerializer(
