@@ -9,7 +9,7 @@ class User(AbstractUser):
     is_master = models.BooleanField()
 
     USERNAME_FIELD = 'phone_number'
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'is_master']
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'is_master', 'username']
 
 
     def __str__(self):
