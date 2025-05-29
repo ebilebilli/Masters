@@ -5,30 +5,37 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
-    env_file:
-      - .env
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=masters
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=boceyim123
+      - DEBUG=True
+      - SECRET_KEY=django-insecure-*6k#8a8t&k1t97j^=r9$@b71g(3&k@5c0y#8wl^c5y1_gxvzv%+
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
     volumes:
       - .:/app
     depends_on:
       - db
       - redis
     command: >
-<<<<<<< HEAD
-        sh -c "python wait_for_db.py &&
-        python manage.py migrate &&
-        python manage.py runserver 0.0.0.0:8000"
-
-=======
       sh -c "python manage.py migrate &&
-      python manage.py runserver 0.0.0.0:8000"
->>>>>>> cd530ea (Add user model)
+            python manage.py runserver 0.0.0.0:8000"
 
   celery:
     build:
       context: .
       dockerfile: Dockerfile
-    env_file:
-      - .env
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=masters
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=boceyim123
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
     volumes:
       - .:/app
     depends_on:
@@ -53,4 +60,4 @@ services:
       - "6379:6379"
 
 volumes:
-  postgres_data: 
+  postgres_data:

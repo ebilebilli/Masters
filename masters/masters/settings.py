@@ -38,8 +38,6 @@ INSTALLED_APPS = [
     'core'
 ]
 
-AUTH_USER_MODEL = 'users.User'
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -121,6 +119,7 @@ REST_FRAMEWORK = {
     ),
 }
 
+
 # Celery settings
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
 CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
@@ -130,3 +129,6 @@ CELERY_TIMEZONE = 'UTC'
 #Media settings
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+# For authentication
+AUTH_USER_MODEL = 'users.CustomUser'
