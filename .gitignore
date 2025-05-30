@@ -6,3 +6,6 @@ __pycache__/
 # Django migration files
 */migrations/*
 !*/migrations/__init__.py
+
+#media
+media/

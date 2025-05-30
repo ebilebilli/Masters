@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from services.models.service_model_photo import ServiceImage
+from masters.services.models.service_model_image import ServiceImage
 from services.models.service_model import Service
 
 

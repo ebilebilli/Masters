@@ -2,7 +2,6 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# .env faylını yüklə
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -29,6 +28,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_yasg',
+    'cities_light',
 
     #Apps
     'users',
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'reviews',
     'core'
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -118,6 +119,7 @@ REST_FRAMEWORK = {
     ),
 }
 
+
 # Celery settings
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
 CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
@@ -127,3 +129,6 @@ CELERY_TIMEZONE = 'UTC'
 #Media settings
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+# For authentication
+AUTH_USER_MODEL = 'users.CustomUser'
