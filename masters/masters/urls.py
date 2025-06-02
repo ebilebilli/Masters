@@ -1,11 +1,13 @@
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
 from masters.settings import MEDIA_URL, MEDIA_ROOT
 
 
 urlpatterns = [
+    path('api/', include('masters.api_routers')),
+
     path('admin/', admin.site.urls),
 ]
 

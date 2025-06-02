@@ -1,7 +1,15 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.utils import timezone
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.core.validators import RegexValidator
 from django.utils.translation import gettext_lazy as _
+
+from ..validators import az_letter_validator, phone_validator
+from ..user_managers import CustomUserManager
+
+from core.models import City
+from .language_model import Language
+from .work_image_model import WorkImage
 
 
 # Yalnız Azərbaycan əlifbasındakı hərflərə icazə verilir (böyük və kiçik hərflər)
@@ -17,51 +25,17 @@ mobile_number_validator = RegexValidator(
 )
 
 
-# class CustomUser(AbstractBaseUser):
-#     name = models.CharField(
-#         max_length=20,
-#         validators=[azerbaijani_letters_validator],
-#         verbose_name="Ad"
-#     )
-#     surname = models.CharField(
-#         max_length=20,
-#         validators=[azerbaijani_letters_validator],
-#         verbose_name="Soyad"
-#     )
-#     birth_date = models.DateField(
-#         verbose_name="Doğum tarixi",
-#         help_text="Format: gün.ay.il (məsələn: 29.05.2025)",
-#     )
-#     models.CharField(
-#         max_length=9,
-#         validators=[phone_validator],
-#         verbose_name="Mobil nömrə",
-#     )
 
+##########//  Custom User Manager  \\##########
 
-# Custom User Manager
-class CustomUserManager(BaseUserManager):
-    def create_user(self, mobile_number, password=None, **extra_fields):
-        if not mobile_number:
-            raise ValueError('Mobil nömrə daxil edilməlidir.')
-        user = self.model(mobile_number=mobile_number, **extra_fields)
-        user.set_password(password) 
-        user.save(using=self._db)
-        return user
-
-    def create_superuser(self, mobile_number, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-        return self.create_user(mobile_number, password, **extra_fields)
-
-# User Model
 class CustomUser(AbstractBaseUser, PermissionsMixin):
+    ##########//  Şəxsi məlumatlar  \\##########
     first_name = models.CharField(
         max_length=20,
         validators=[azerbaijani_letters_validator],
         verbose_name="Ad"
     )
-    
+
     last_name = models.CharField(
         max_length=20,
         validators=[azerbaijani_letters_validator],
@@ -81,23 +55,98 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     )
 
     GENDER_CHOICES = [
-        ('K', 'Kişi'),
-        ('Q', 'Qadın')
+        ('MALE', 'Kişi'),
+        ('FEMALE', 'Qadın')
     ]
-
     gender = models.CharField(
-        max_length=1,
+        max_length=6,
         choices=GENDER_CHOICES,
         verbose_name="Cins"
+    )
+
+
+    ##########//  Peşə məlumatları  \\##########
+    profession_area = models.CharField(
+        max_length=100,
+        verbose_name="İxtisas sahəsi"
+    )
+
+    profession_speciality = models.CharField(
+        max_length=100,
+        verbose_name="İxtisas üzrə peşə"
+    )
+
+    experience_years = models.PositiveIntegerField(
+        verbose_name="İş təcrübəsi (il ilə)"
+    )
+
+    cities = models.ManyToManyField(
+        "core.City",
+        verbose_name="Fəaliyyət göstərdiyi regionlar"
+    )
+
+
+    ##########//  Təhsil məlumatları  \\##########
+    EDUCATION_CHOICES = [
+        ('0', 'Yoxdur'),
+        ('1', 'Tam ali'),
+        ('2', 'Natamam ali'),
+        ('3', 'Orta'),
+        ('4', 'Peşə təhsili'),
+        ('5', 'Orta ixtisas təhsili'),
+    ]
+    education = models.CharField(
+        max_length=20,
+        choices=EDUCATION_CHOICES,
+        verbose_name="Təhsil səviyyəsi"
+    )
+
+    education_speciality = models.CharField(
+        max_length=50,
+        blank=True,
+        validators=[azerbaijani_letters_validator],
+        verbose_name="Təhsil üzrə ixtisas"
+    )
+
+    languages = models.ManyToManyField(
+        "Language",
+        verbose_name="Bildiyi dillər"
+    )
+
+    profile_image = models.ImageField(
+        upload_to='profile_images/',
+        blank=True,
+        null=True,
+        verbose_name="Profil şəkli"
+    )
+
+    facebook = models.URLField(blank=True, verbose_name="Facebook linki")
+    instagram = models.URLField(blank=True, verbose_name="Instagram linki")
+    tiktok = models.URLField(blank=True, verbose_name="TikTok linki")
+    linkedin = models.URLField(blank=True, verbose_name="LinkedIn linki")
+
+    work_images = models.ManyToManyField(
+        "WorkImage",
+        blank=True,
+        verbose_name="İşlərinə aid şəkillər"
+    )
+
+    note = models.TextField(
+        blank=True,
+        max_length=1500,
+        verbose_name="Əlavə qeyd"
     )
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
-    objects = CustomUserManager()
+    created_at = models.DateTimeField(default=timezone.now, verbose_name="Yaradılma tarixi")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Son yenilənmə tarixi")
 
     USERNAME_FIELD = 'mobile_number'
     REQUIRED_FIELDS = ['first_name', 'last_name', 'birth_date', 'gender']
 
+    objects = CustomUserManager()
+
     def __str__(self):
-        return f"{self.first_name} {self.last_name} - {self.mobile_number}"
+        return f"{self.first_name} {self.last_name} ({self.mobile_number})"
