@@ -1,12 +1,15 @@
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
+from rest_framework_simplejwt.tokens import RefreshToken
+
+from users.serializers.user_serializers import LoginSerializer
 from users.serializers.user_serializers import RegisterSerializer
 
 
-class RegisterView(APIView):
+class RegisterAPIView(APIView):
     permission_classes = [AllowAny] 
 
     def post(self, request):
@@ -25,7 +28,6 @@ class RegisterView(APIView):
     
 
 """
-
 
 {
   "first_name": "Elvin",
@@ -51,6 +53,34 @@ class RegisterView(APIView):
   "password2": "Izzet-1409"
 }
 
+"""
 
+
+class LoginAPIView(APIView):
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        if serializer.is_valid():
+            return Response(serializer.validated_data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 """
+
+{
+    "mobile_number": "503171409",
+    "password": "Izzet-1409"
+}
+
+"""
+
+
+class TestAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+
+        if user:
+            return Response({'mobile_number': user.mobile_number,
+                             'first_name': user.first_name})
+        else:
+            return Response({'detal': 'ok'})
