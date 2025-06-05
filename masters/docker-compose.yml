@@ -12,7 +12,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=boceyim123
       - DEBUG=True
-      - SECRET_KEY=django-insecure-$wdv-fm+g68_^r+fi&z42g$%$@gkdqek)^c8&hqh&ox$^8o1+n
+      - SECRET_KEY=django-insecure-*6k#8a8t&k1t97j^=r9$@b71g(3&k@5c0y#8wl^c5y1_gxvzv%+
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
     volumes:
@@ -52,7 +52,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5433:5432"
 
   redis:
     image: redis:7
