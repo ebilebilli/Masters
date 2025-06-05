@@ -9,7 +9,6 @@ from ..validators import az_letter_validator, phone_validator
 from ..user_managers import CustomUserManager
 
 from reviews.models.review_models import Review
-from core.models import City
 from .language_model import Language
 from .work_image_model import WorkImage
 
