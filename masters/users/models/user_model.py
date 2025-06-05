@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.db.models import Avg
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.core.validators import RegexValidator
 from django.utils.translation import gettext_lazy as _
@@ -7,6 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from ..validators import az_letter_validator, phone_validator
 from ..user_managers import CustomUserManager
 
+from reviews.models.review_models import Review
 from core.models import City
 from .language_model import Language
 from .work_image_model import WorkImage
@@ -147,6 +149,86 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['first_name', 'last_name', 'birth_date', 'gender']
 
     objects = CustomUserManager()
+
+    def average_rating(self):
+        average = Review.objects.filter(master=self).aggregate(avg=Avg('rating'))['avg']
+        if average is None:
+            return ''
+        return round(average, 2)
+
+    @property
+    def average_responsible(self):
+        average = Review.objects.filter(master=self).aggregate(avg=Avg('responsible'))['avg']
+        if average is None:
+            return ''
+        return round(average, 2)
+
+    @property
+    def average_neat(self):
+        average = Review.objects.filter(master=self).aggregate(avg=Avg('neat'))['avg']
+        if average is None:
+            return ''
+        return round(average, 2)
+
+    @property
+    def average_time_management(self):
+        average = Review.objects.filter(master=self).aggregate(avg=Avg('time_management'))['avg']
+        if average is None:
+            return ''
+        return round(average, 2)
+
+    @property
+    def average_communicative(self):
+        average = Review.objects.filter(master=self).aggregate(avg=Avg('communicative'))['avg']
+        if average is None:
+            return ''
+        return round(average, 2)
+
+    @property
+    def average_punctual(self):
+        average = Review.objects.filter(master=self).aggregate(avg=Avg('punctual'))['avg']
+        if average is None:
+            return ''
+        return round(average, 2)
+
+    @property
+    def average_professional(self):
+        average = Review.objects.filter(master=self).aggregate(avg=Avg('professional'))['avg']
+        if average is None:
+            return ''
+        return round(average, 2)
+
+    @property
+    def average_experienced(self):
+        average = Review.objects.filter(master=self).aggregate(avg=Avg('experienced'))['avg']
+        if average is None:
+            return ''
+        return round(average, 2)
+
+    @property
+    def average_efficient(self):
+        average = Review.objects.filter(master=self).aggregate(avg=Avg('efficient'))['avg']
+        if average is None:
+            return ''
+        return round(average, 2)
+
+    @property
+    def average_agile(self):
+        average = Review.objects.filter(master=self).aggregate(avg=Avg('agile'))['avg']
+        if average is None:
+            return ''
+        return round(average, 2)
+
+    @property
+    def average_patient(self):
+        average = Review.objects.filter(master=self).aggregate(avg=Avg('patient'))['avg']
+        if average is None:
+            return ''
+        return round(average, 2)
+
+    @property
+    def review_count(self):
+        return Review.objects.filter(master=self).count()
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.mobile_number})"

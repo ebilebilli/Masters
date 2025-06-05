@@ -1,31 +1,21 @@
 from django.contrib import admin
-from .models.service_model import Service
-from .models.category_model import Category
-from .models.service_model_image import ServiceImage
+from services.models.category_model import Category
+from services.models.service_model import Service
 
 
-class ServiceImageInline(admin.TabularInline):
-    model = ServiceImage
-    extra = 1
-
-
-@admin.register(Service)
-class ServiceAdmin(admin.ModelAdmin):
-    list_display = ('title', 'user', 'price', 'city', 'created_at')
-    list_filter = ('city', 'category', 'created_at')
-    search_fields = ('title', 'description', 'user__username')
-    inlines = [ServiceImageInline]
-    filter_horizontal = ('category',)
-
-
-@admin.register(ServiceImage)
-class ServiceImageAdmin(admin.ModelAdmin):
-    list_display = ('service', 'image', 'uploaded_at')
-    search_fields = ('service__title',)
-
-
-@admin.register(Category)
+# Category modeli üçün admin konfiqurasiyası
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug')
-    prepopulated_fields = {"slug": ("name",)}
-    search_fields = ('name',)
+    list_display = ('display_name', 'name')
+    search_fields = ('name', 'display_name')
+    ordering = ('display_name',)
+
+# ServiceTemplate modeli üçün admin konfiqurasiyası
+class ServiceAdmin(admin.ModelAdmin):
+    list_display = ('display_name', 'name', 'category')
+    search_fields = ('name', 'display_name', 'category__name')
+    list_filter = ('category',)
+    ordering = ('display_name',)
+
+# Modelləri admin paneldə qeydiyyatdan keçirmək
+admin.site.register(Category, CategoryAdmin)
+admin.site.register(Service, ServiceAdmin)
