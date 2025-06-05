@@ -7,7 +7,7 @@ User = get_user_model()
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
-    service = models.ForeignKey(Service, related_name="comments")
+    service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name="comments")
     
     text = models.TextField(max_length=1000)
     created_at = models.DateTimeField(auto_now_add=True)
