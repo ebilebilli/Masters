@@ -13,11 +13,11 @@ urlpatterns = [
         CategoryListAPIView.as_view(),
         name='categories'
     ),
-    path(
-        'masters/category/<int:category_id>/', 
-        MasterListForCategoryAPIView.as_view(), 
-        name='masters-by-category'
-    ),
+    # path(
+    #     'masters/category/<int:category_id>/', 
+    #     MasterListForCategoryAPIView.as_view(), 
+    #     name='masters-by-category'
+    # ),
 
     #Service endpoints
     path(
@@ -25,9 +25,9 @@ urlpatterns = [
         ServicesForCategoryAPIView.as_view(),
         name='services-for-category'
     ),
-    path(
-        'masters/service/<int:service_id>/', 
-        MasterListForServicesAPIView.as_view(), 
-        name='masters-by-service'
-    ),
+    # path(
+    #     'masters/service/<int:service_id>/', 
+    #     MasterListForServicesAPIView.as_view(), 
+    #     name='masters-by-service'
+    # ),
 ]
