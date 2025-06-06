@@ -11,7 +11,7 @@ schema_view = get_swagger_view(title='TEST API')
 urlpatterns = [
     path('api/', include('masters.api_routers')),
     path('api/v1/', include('apis.review_apis.urls', namespace='review_apis')),
-
+    path('api/v1/', include('apis.service_apis.urls', namespace='service_apis')),
     path('admin/', admin.site.urls),
     path('test/', schema_view)
 ]
