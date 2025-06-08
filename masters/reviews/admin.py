@@ -39,7 +39,7 @@ class ReviewAdmin(admin.ModelAdmin):
 class ReviewWorkImageAdmin(admin.ModelAdmin):
     list_display = ('id', 'review', 'image_tag', 'order', 'is_active', 'uploaded_at')
     list_filter = ('is_active', 'uploaded_at')
-    search_fields = ('review__username')
+    search_fields = ('review__username',)
     readonly_fields = ('uploaded_at', 'image_preview')
 
     def image_tag(self, obj):

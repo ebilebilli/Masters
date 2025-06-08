@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from core.models import City, District
+from core.models.city_model import City, District
 
 
 class CitySerializer(serializers.ModelSerializer):  

@@ -10,6 +10,7 @@ from utils.validators import az_letters_validator, not_only_whitespace
 
 
 class Review(models.Model):
+    user = models.CharField(max_length=20)  #Test merhelesdi olduguna gore customer yoxdur
     master = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE, related_name='reviews') 
     username = models.CharField(
         max_length=20,

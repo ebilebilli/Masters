@@ -166,7 +166,6 @@ SIMPLE_JWT = {
     'TOKEN_TYPE_CLAIM': 'token_type',
     'JTI_CLAIM': 'jti',
 
-    # ⬇⬇⬇ ƏLAVƏLƏR ⬇⬇⬇
     'AUTH_TOKEN_CLASSES': (
         'rest_framework_simplejwt.tokens.AccessToken',
         'rest_framework_simplejwt.tokens.RefreshToken',

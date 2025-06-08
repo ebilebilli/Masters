@@ -6,17 +6,10 @@ from .models import CustomUser
 from .models.work_image_model import WorkImage
 
 
-@admin.register(CustomUser)
-class UserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'mobile_number', 'first_name', 'last_name', 'is_staff')
-    search_fields = ('mobile_number',)
-    list_per_page = 20
-
-
 @admin.register(WorkImage)
 class WorkImageAdmin(admin.ModelAdmin):
     list_display = ('id', 'image')
-    search_fields = ('image',)
+    search_fields = ['field_name']
     list_per_page = 20
 
 
@@ -36,7 +29,7 @@ class CustomUserAdmin(BaseUserAdmin):
         'created_at',
     )
     list_filter = ('gender', 'education', 'is_active', 'is_staff')
-    search_fields = ('first_name', 'last_name', 'mobile_number')
+    search_fields = ['first_name', 'last_name', 'mobile_number']
     ordering = ('-created_at',)
 
     fieldsets = (

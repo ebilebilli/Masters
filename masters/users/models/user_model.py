@@ -127,7 +127,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     )
 
     languages = models.ManyToManyField(
-        "Language",
+        Language,
         verbose_name="Bildiyi dillər"
     )
 

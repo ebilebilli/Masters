@@ -35,4 +35,6 @@ urlpatterns = [
         MasterListForServicesAPIView.as_view(), 
         name='masters-by-service'
     ),
+    #Statistics endpoint
+    path('statistics/', statistics_view)
 ]

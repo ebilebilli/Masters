@@ -5,7 +5,8 @@ from django.shortcuts import get_object_or_404
 from django.core.cache import cache
 from django.conf import settings
 from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
+from rest_framework.decorators import api_view
+from django.db.models import Avg
 
 from services.models.category_model import Category
 from services.models.service_model import Service
@@ -17,9 +18,9 @@ from utils.paginations import CustomPagination
 __all__ = [
     'ServicesForCategoryAPIView',
     'MasterListForServicesAPIView',
-    'ServiceListAPIView'
+    'ServiceListAPIView',
+    'statistics_view'
 ]
-
 
 
 class ServiceListAPIView(APIView):
@@ -124,3 +125,30 @@ class MasterListForServicesAPIView(APIView):
         serializer = CustomUserSerializer(result_page, many=True)
         paginated_response = pagination.get_paginated_response(serializer.data).data
         return Response(paginated_response, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def statistics_view(request):
+    # Yalnız aktiv və təsdiqlənmiş ustalar
+    master_count = CustomUser.objects.filter(is_active=True).count()
+    category_count = Category.objects.count()
+    avg_rating = CustomUser.objects.aggregate(avg=Avg('rating'))['avg'] or 0.0
+
+    # Dinamik usta sayı formatı
+    if master_count <= 50:
+        master_count_label = master_count
+    elif master_count <= 100:
+        master_count_label = "100+"
+    elif master_count <= 200:
+        master_count_label = "200+"
+    elif master_count <= 500:
+        master_count_label = "500+"
+    else:
+        master_count_label = "1000+"
+
+    data = {
+        "usta_sayi": master_count_label,
+        "xidmet_novu": category_count,
+        "ortalama_reytinq": round(avg_rating, 2),
+    }
+    return Response(data)
