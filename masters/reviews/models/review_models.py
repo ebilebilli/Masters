@@ -4,13 +4,13 @@ from django.core.validators import(
     MaxValueValidator, 
     MaxLengthValidator, 
     MinLengthValidator
-)
+    )
+
 from utils.validators import az_letters_validator, not_only_whitespace
 
 
 class Review(models.Model):
     master = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE, related_name='reviews') 
-    user = models.CharField(max_length=255)
     username = models.CharField(
         max_length=20,
         validators=[az_letters_validator],

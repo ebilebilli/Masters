@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-from datetime import timedelta
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -16,6 +15,7 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ["*"]
 
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -30,14 +30,17 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'drf_yasg',
+    'django_elasticsearch_dsl',
 
     #Apps
-    'users',
+    'core',
     'services',
-    'orders',
+    'users',
     'reviews',
-    'core'
+    'search'
 ]
+
+AUTH_USER_MODEL = 'users.CustomUser'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -50,23 +53,20 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'masters.urls'
+
 TEMPLATES = [
-{
-'BACKEND': 'django.template.backends.django.DjangoTemplates',
-'DIRS': [BASE_DIR / 'templates'],
-'APP_DIRS': True,
-'OPTIONS': {
-'context_processors': [
-'django.template.context_processors.debug',
-'django.template.context_processors.request',
-'django.contrib.auth.context_processors.auth',
-'django.contrib.messages.context_processors.messages',
-],
-'libraries': {
-'staticfiles': 'django.templatetags.static',
-}
-},
-},
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
 ]
 
 WSGI_APPLICATION = 'masters.wsgi.application'
@@ -97,6 +97,9 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+    {
+        'NAME': 'utils.validators.CustomPasswordValidator',
+    },
 ]
 
 # Internationalization
@@ -117,16 +120,17 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    # 'DEFAULT_PERMISSION_CLASSES': (
-    #     'rest_framework.permissions.IsAuthenticated',
-    # ),
-     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
-}
-
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
-    'AUTH_HEADER_TYPES': ('Bearer',),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    
+#     'DEFAULT_THROTTLE_CLASSES': [
+#         'rest_framework.throttling.UserRateThrottle',
+# #     ],
+#     'DEFAULT_THROTTLE_RATES': {
+#         'user': '100/day',
+#         'anon': '10/hour'
+#     },
 }
 
 # Celery settings
@@ -135,9 +139,87 @@ CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
 CELERY_IGNORE_RESULT = True
 CELERY_TIMEZONE = 'UTC'
 
+#Redis settings
+REDIS_HOST = os.getenv('REDIS_HOST', 'redis')         
+REDIS_PORT = os.getenv('REDIS_PORT', 6379)
+REDIS_DB = os.getenv('REDIS_DB', 0)
+
 #Media settings
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
-# For authentication
-AUTH_USER_MODEL = 'users.CustomUser'
+
+#JWT settings
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=int(os.getenv('ACCESS_TOKEN_LIFETIME_MINUTES'))),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=int(os.getenv('REFRESH_TOKEN_LIFETIME_DAYS'))),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'ALGORITHM': os.getenv('JWT_ALGORITHM'),
+    'SIGNING_KEY': SECRET_KEY,
+    'VERIFYING_KEY': None,
+    'AUTH_HEADER_TYPES': (os.getenv('JWT_AUTH_HEADER_TYPE', 'Bearer'),),
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'TOKEN_TYPE_CLAIM': 'token_type',
+    'JTI_CLAIM': 'jti',
+
+    # ⬇⬇⬇ ƏLAVƏLƏR ⬇⬇⬇
+    'AUTH_TOKEN_CLASSES': (
+        'rest_framework_simplejwt.tokens.AccessToken',
+        'rest_framework_simplejwt.tokens.RefreshToken',
+    ),
+    'TOKEN_BLACKLIST_ENABLED': True,
+}
+
+
+#Elasticsearch settings
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': os.getenv("ELASTICSEARCH_HOST"),
+    }
+}
+
+ELASTICSEARCH_HOST = os.getenv("ELASTICSEARCH_HOST")
+
+#Caches settings
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': f"redis://{os.getenv('REDIS_HOST')}:{os.getenv('REDIS_PORT')}/{os.getenv('REDIS_DB')}",
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+
+TIMEOUT = int(os.getenv('TIMEOUT', 3600))
+
+# Swagger configuration
+SWAGGER_SETTINGS = {
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+        }
+    },
+    "USE_SESSION_AUTH": False,  
+}
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}

@@ -2,7 +2,6 @@ from django.contrib import admin
 from services.models.category_model import Category
 from services.models.service_model import Service
 
-
 # Category modeli üçün admin konfiqurasiyası
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('display_name', 'name')

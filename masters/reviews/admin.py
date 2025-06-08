@@ -14,12 +14,12 @@ class ReviewAdmin(admin.ModelAdmin):
         'updated_at',
     )
     list_filter = ('rating', 'created_at')
-    search_fields = ('username', 'user', 'comment')
+    search_fields = ('username', 'comment')
     readonly_fields = ('created_at', 'updated_at')
 
     fieldsets = (
         ('Əsas məlumatlar', {
-            'fields': ('master', 'user', 'username', 'rating', 'comment')
+            'fields': ('master', 'username', 'rating', 'comment')
         }),
         ('Dəyərləndirmə kriteriyaları', {
             'fields': (
@@ -39,7 +39,7 @@ class ReviewAdmin(admin.ModelAdmin):
 class ReviewWorkImageAdmin(admin.ModelAdmin):
     list_display = ('id', 'review', 'image_tag', 'order', 'is_active', 'uploaded_at')
     list_filter = ('is_active', 'uploaded_at')
-    search_fields = ('review__username', 'review__user')
+    search_fields = ('review__username')
     readonly_fields = ('uploaded_at', 'image_preview')
 
     def image_tag(self, obj):

@@ -1,10 +1,12 @@
 from django.apps import AppConfig
 
 
-class ServicesConfig(AppConfig):
+class SearchConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'services'
+    name = 'search'
 
     def ready(self):
-        import services.signals
+        import search.signals
 
+
+  
