@@ -9,7 +9,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 from reviews.models.review_models import Review
-from users.models.master_model import Master
+from users.models.user_model import CustomUser
 from reviews.serializers.review_serializers import ReviewSerializer
 from utils.paginations import PaginationForMainPage
 from utils.permissions import HeHasPermission
@@ -32,13 +32,13 @@ class ReviewsForMasterAPIView(APIView):
         responses={200: ReviewSerializer(many=True)},
     )
     def get(self, request, master_id):
-        master = get_object_or_404(Master, is_active_on_main_page=True, id=master_id)
-
+        master = get_object_or_404(CustomUser, is_active=True, id=master_id)
         pagination = self.pagination_class()
         reviews = Review.objects.filter(master=master)
         result_page = pagination.paginate_queryset(reviews, request)
         serializer = ReviewSerializer(result_page, many=True)
         paginated_response = pagination.get_paginated_response(serializer.data).data
+
         return Response(paginated_response, status=status.HTTP_200_OK)
 
 
@@ -60,8 +60,8 @@ class CreateReviewAPIView(APIView):
         if user.id == master_id:
             return Response({'error': 'Özünüzə şərh əlavə edə bilmərsiniz'}, status=status.HTTP_403_FORBIDDEN) 
         try:
-            master = Master.objects.get(is_active_on_main_page=True, id=master_id)
-        except Master.DoesNotExist:
+            master = CustomUser.objects.get(is_active=True, id=master_id)
+        except CustomUser.DoesNotExist:
             return Response({'detail': 'Usta tapılmadı.'}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = ReviewSerializer(data=request.data)
@@ -124,7 +124,7 @@ class FilterReviewAPIView(APIView):
     )
     def get(self, request, master_id):
         pagination = self.pagination_class()
-        master = get_object_or_404(Master, is_active_on_main_page=True, id=master_id)
+        master = get_object_or_404(CustomUser, is_active=True, id=master_id)
         order = request.query_params.get('order', 'newest')
 
         if order == 'oldest':

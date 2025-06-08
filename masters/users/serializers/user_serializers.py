@@ -1,12 +1,22 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
+from core.models.city_model import City
+from core.models.language_model import Language
 
 from users.models import CustomUser
-from core.models import City
-from users.models import Language, WorkImage
+from users.models import  WorkImage
 
 
+class CustomUserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CustomUser
+        exclude = [
+            'password', 'is_superuser', 'is_staff', 'user_permissions', 'groups',
+            'last_login', 'date_joined', 'is_active', 
+        ]
+   
 
 class WorkImageSerializer(serializers.Serializer):
     image = serializers.ImageField()
@@ -25,7 +35,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = [
             'first_name', 'last_name', 'birth_date', 'mobile_number', 'gender',
-            'profession_area', 'profession_speciality', 'experience_years',
+            'profession_area', 'profession_speciality', 'custom_profession', 'experience_years',
             'cities', 'education', 'education_speciality', 'languages',
             'profile_image', 'facebook', 'instagram', 'tiktok', 'linkedin',
             'work_images', 'note',
@@ -59,7 +69,6 @@ class RegisterSerializer(serializers.ModelSerializer):
             user.work_images.add(work_image)
 
         return user
-
 
 
 class LoginSerializer(serializers.Serializer):

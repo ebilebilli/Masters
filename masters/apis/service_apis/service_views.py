@@ -10,8 +10,8 @@ from drf_yasg import openapi
 from services.models.category_model import Category
 from services.models.service_model import Service
 from services.serializers.service_serializer import ServiceSerializer
-from users.models.master_model import Master
-from users.serializers.master_serializer import MasterSerializer
+from users.models.user_model import CustomUser
+from users.serializers.user_serializers import CustomUserSerializer
 from utils.paginations import CustomPagination
 
 __all__ = [
@@ -109,18 +109,18 @@ class MasterListForServicesAPIView(APIView):
     
     @swagger_auto_schema(
         operation_summary="Kateqoriya üzrə aktiv ustaları qaytarır",
-        responses={200: MasterSerializer(many=True)}
+        responses={200: CustomUserSerializer(many=True)}
     )
 
     def get(self, request, service_id):
         pagination = self.pagination_class()
         service = get_object_or_404(Service, id=service_id)
-        masters = Master.objects.filter(profession_service=service, is_active_on_main_page=True)
+        masters = CustomUser.objects.filter(profession_speciality=service, is_active=True)
         if not masters.exists():
             return Response({
                 'error': 'Hal-hazırda bu servisə uyğun aktiv bir usta yoxdur'
             }, status=status.HTTP_404_NOT_FOUND)
         result_page = pagination.paginate_queryset(masters, request)
-        serializer = MasterSerializer(result_page, many=True)
+        serializer = CustomUserSerializer(result_page, many=True)
         paginated_response = pagination.get_paginated_response(serializer.data).data
         return Response(paginated_response, status=status.HTTP_200_OK)

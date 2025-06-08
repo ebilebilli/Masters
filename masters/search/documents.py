@@ -1,12 +1,15 @@
-from django_elasticsearch_dsl import Document, fields, Index
+from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
 from elasticsearch import Elasticsearch
 from django.conf import settings
 
+from users.models.user_model import CustomUser
+from users.models.work_image_model import WorkImage
 from services.models.category_model import Category
 from services.models.service_model import Service
+from core.models.language_model import Language
 from core.models.city_model import City, District
-from users.models.master_model import Master
+
 
 es_client = Elasticsearch(hosts=[settings.ELASTICSEARCH_HOST])
 if not es_client.ping():
@@ -14,13 +17,13 @@ if not es_client.ping():
 
 @registry.register_document
 class MasterDocument(Document):
-    profession_category = fields.ObjectField(properties={
+    profession_area = fields.ObjectField(properties={
         'id': fields.IntegerField(),
         'name': fields.TextField(),
         'display_name': fields.TextField(),
     })
 
-    profession_service = fields.ObjectField(properties={
+    profession_speciality = fields.ObjectField(properties={
         'id': fields.IntegerField(),
         'name': fields.TextField(),
         'display_name': fields.TextField(),
@@ -38,7 +41,28 @@ class MasterDocument(Document):
         'display_name': fields.TextField(),
     })
 
+    languages = fields.NestedField(properties={
+        'id': fields.IntegerField(),
+        'name': fields.TextField(),
+        'display_name': fields.TextField(),
+    })
+
+    work_images = fields.NestedField(properties={
+        'id': fields.IntegerField(),
+        'image': fields.TextField(),
+    })
+
     average_rating = fields.FloatField()
+    average_responsible = fields.FloatField()
+    average_neat = fields.FloatField()
+    average_time_management = fields.FloatField()
+    average_communicative = fields.FloatField()
+    average_punctual = fields.FloatField()
+    average_professional = fields.FloatField()
+    average_experienced = fields.FloatField()
+    average_efficient = fields.FloatField()
+    average_agile = fields.FloatField()
+    average_patient = fields.FloatField()
     review_count = fields.IntegerField()
 
     class Index:
@@ -49,37 +73,43 @@ class MasterDocument(Document):
         }
 
     class Django:
-        model = Master
+        model = CustomUser
         fields = [
-            'full_name',
-            'custom_profession',
-            'education_detail',
-            'birthday',
-            'phone_number',
+            'first_name',
+            'last_name',
+            'birth_date',
+            'mobile_number',
             'gender',
-            'is_active_on_main_page',
+            'custom_profession',
+            'experience_years',
+            'education',
+            'education_speciality',
+            'profile_image',
+            'facebook',
+            'instagram',
+            'tiktok',
+            'linkedin',
             'note',
-            'experience',
-            'facebook_url',
-            'instagram_url',
-            'tiktok_url',
-            'linkedin_url',
-            'youtube_url',
+            'is_active',
             'created_at',
-            'slug',
+            'updated_at',
         ]
-        related_models = [Category, Service, City, District]
+        related_models = [Category, Service, City, District, Language, WorkImage]
 
     def get_instances_from_related(self, related_instance):
         try:
             if isinstance(related_instance, Category):
-                return Master.objects.filter(profession_category=related_instance)
+                return CustomUser.objects.filter(profession_area=related_instance)
             elif isinstance(related_instance, Service):
-                return Master.objects.filter(profession_service=related_instance)
+                return CustomUser.objects.filter(profession_speciality=related_instance)
             elif isinstance(related_instance, City):
-                return Master.objects.filter(cities=related_instance)
+                return CustomUser.objects.filter(cities=related_instance)
             elif isinstance(related_instance, District):
-                return Master.objects.filter(districts=related_instance)
+                return CustomUser.objects.filter(districts=related_instance)
+            elif isinstance(related_instance, Language):
+                return CustomUser.objects.filter(languages=related_instance)
+            elif isinstance(related_instance, WorkImage):
+                return CustomUser.objects.filter(work_images=related_instance)
             return []
         except Exception:
             return []
@@ -87,24 +117,54 @@ class MasterDocument(Document):
     def prepare_average_rating(self, instance):
         return instance.average_rating() or None
 
+    def prepare_average_responsible(self, instance):
+        return instance.average_responsible or None
+
+    def prepare_average_neat(self, instance):
+        return instance.average_neat or None
+
+    def prepare_average_time_management(self, instance):
+        return instance.average_time_management or None
+
+    def prepare_average_communicative(self, instance):
+        return instance.average_communicative or None
+
+    def prepare_average_punctual(self, instance):
+        return instance.average_punctual or None
+
+    def prepare_average_professional(self, instance):
+        return instance.average_professional or None
+
+    def prepare_average_experienced(self, instance):
+        return instance.average_experienced or None
+
+    def prepare_average_efficient(self, instance):
+        return instance.average_efficient or None
+
+    def prepare_average_agile(self, instance):
+        return instance.average_agile or None
+
+    def prepare_average_patient(self, instance):
+        return instance.average_patient or None
+
     def prepare_review_count(self, instance):
         return instance.review_count or None
 
-    def prepare_profession_category(self, instance):
-        if instance.profession_category:
+    def prepare_profession_area(self, instance):
+        if instance.profession_area:
             return {
-                'id': instance.profession_category.id,
-                'name': instance.profession_category.name,
-                'display_name': instance.profession_category.display_name
+                'id': instance.profession_area.id,
+                'name': instance.profession_area.name,
+                'display_name': instance.profession_area.display_name
             }
         return None
 
-    def prepare_profession_service(self, instance):
-        if instance.profession_service:
+    def prepare_profession_speciality(self, instance):
+        if instance.profession_speciality:
             return {
-                'id': instance.profession_service.id,
-                'name': instance.profession_service.name,
-                'display_name': instance.profession_service.display_name
+                'id': instance.profession_speciality.id,
+                'name': instance.profession_speciality.name,
+                'display_name': instance.profession_speciality.display_name
             }
         return None
 
@@ -129,4 +189,23 @@ class MasterDocument(Document):
                 'display_name': getattr(district, 'display_name', None)
             }
             for district in instance.districts.all()
+        ]
+
+    def prepare_languages(self, instance):
+        return [
+            {
+                'id': language.id,
+                'name': language.name,
+                'display_name': getattr(language, 'display_name', None)
+            }
+            for language in instance.languages.all()
+        ]
+
+    def prepare_work_images(self, instance):
+        return [
+            {
+                'id': image.id,
+                'image': image.image.url if image.image else None
+            }
+            for image in instance.work_images.all()
         ]

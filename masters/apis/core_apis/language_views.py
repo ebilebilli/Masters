@@ -5,8 +5,6 @@ from django.core.cache import cache
 from django.conf import settings
 
 from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
-
 from core.models.language_model import Language
 from core.serializers.language_serializer import LanguageSerializer
 

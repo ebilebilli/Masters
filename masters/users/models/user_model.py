@@ -8,8 +8,11 @@ from django.utils.translation import gettext_lazy as _
 from ..validators import az_letter_validator, phone_validator
 from ..user_managers import CustomUserManager
 
+from services.models.category_model import Category
+from services.models.service_model import Service
 from reviews.models.review_models import Review
-from .language_model import Language
+from core.models.city_model import City, District
+from core.models.language_model import Language
 from .work_image_model import WorkImage
 
 
@@ -67,23 +70,37 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 
     ##########//  Peşə məlumatları  \\##########
-    profession_area = models.CharField(
-        max_length=100,
-        verbose_name="İxtisas sahəsi"
+    profession_area = models.ForeignKey(
+        Category,
+        on_delete=models.PROTECT,
+        related_name='category_masters'
     )
 
-    profession_speciality = models.CharField(
-        max_length=100,
-        verbose_name="İxtisas üzrə peşə"
+    profession_speciality = models.ForeignKey(
+        Service,
+        on_delete=models.PROTECT,
+        related_name='profession_masters'
     )
 
     experience_years = models.PositiveIntegerField(
         verbose_name="İş təcrübəsi (il ilə)"
     )
 
+    custom_profession = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True,
+    )
+
     cities = models.ManyToManyField(
-        "core.City",
-        verbose_name="Fəaliyyət göstərdiyi regionlar"
+        City,
+        related_name='city_masters',
+        verbose_name='Şəhərlər',
+    )
+    districts = models.ManyToManyField(
+        District,
+        related_name='district_masters',
+        blank=True,
     )
 
 
