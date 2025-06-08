@@ -4,6 +4,7 @@ from rest_framework_simplejwt import views as jwt_views
 from apis.user_apis.register_views import *
 from apis.user_apis.master_views import *
 from apis.user_apis.master_img_views import *
+from apis.user_apis.register_views  import *
 
 
 app_name = 'user_apis'
@@ -53,6 +54,28 @@ urlpatterns = [
         name='delete-image'
     ),
     
+    #Auth views
+    path(
+        'register/',
+        RegisterAPIView.as_view(),
+        name='register'
+    ),
+    path(
+        'login/', 
+        LoginAPIView.as_view(), 
+        name='login'
+    ),
+    path(
+        'update/', 
+        ProfileUpdateAPIView.as_view(), 
+        name='update'
+    ),
+    path(
+        'test/',
+        TestAPIView.as_view(),
+        name='test'
+    ),
+
     #Jwt endpoints
     path(
         'api/token/', 
