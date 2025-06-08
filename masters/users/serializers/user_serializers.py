@@ -2,48 +2,85 @@ from rest_framework import serializers
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from users.models import CustomUser
-from core.models import City
-from users.models import Language, WorkImage
+from users.models.user_model import CustomUser
+from users.models.work_image_model import WorkImage
+from users.models.language_model import Language
+from core.models.city_model import City
 
 
-
-class WorkImageSerializer(serializers.Serializer):
-    image = serializers.ImageField()
-    order = serializers.IntegerField(required=False)
+class WorkImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WorkImage
+        fields = '__all__'
+        extra_kwargs = {
+            'image': {'required': False}
+        }
 
 
 class RegisterSerializer(serializers.ModelSerializer):
-    cities = serializers.PrimaryKeyRelatedField(queryset=City.objects.all(), many=True)
-    languages = serializers.PrimaryKeyRelatedField(queryset=Language.objects.all(), many=True)
-    work_images = WorkImageSerializer(many=True, required=False)
+    password = serializers.CharField(write_only=True)
+    password2 = serializers.CharField(write_only=True)
 
-    password = serializers.CharField(write_only=True, min_length=8)
-    password2 = serializers.CharField(write_only=True, min_length=8)
+    cities = serializers.PrimaryKeyRelatedField(many=True, queryset=City.objects.all())
+    languages = serializers.PrimaryKeyRelatedField(many=True, queryset=Language.objects.all())
 
     class Meta:
         model = CustomUser
         fields = [
-            'first_name', 'last_name', 'birth_date', 'mobile_number', 'gender',
-            'profession_area', 'profession_speciality', 'experience_years',
-            'cities', 'education', 'education_speciality', 'languages',
-            'profile_image', 'facebook', 'instagram', 'tiktok', 'linkedin',
-            'work_images', 'note',
-            'password', 'password2'
+            # Şəxsi məlumatlar
+            'first_name',
+            'last_name',
+            'birth_date',
+            'gender',
+            'mobile_number',
+
+            # Şifrə
+            'password',
+            'password2',
+
+            # Peşə məlumatları
+            'profession_area',
+            'profession_speciality',
+            'experience_years',
+            'cities',
+
+            # Təhsil məlumatları
+            'education',
+            'education_speciality',
+
+            # Dillər
+            'languages',
+
+            # Profil və sosial media
+            'profile_image',
+            'facebook',
+            'instagram',
+            'tiktok',
+            'linkedin',
+
+            # İş şəkilləri (yalnız read_only)
+            'work_images',
+
+            # Əlavə qeyd
+            'note',
         ]
+        extra_kwargs = {
+            'work_images': {'read_only': True}
+        }
 
     def validate(self, attrs):
-        if attrs.get('password') != attrs.get('password2'):
+        if attrs['password'] != attrs['password2']:
             raise serializers.ValidationError({"password": "Şifrələr uyğun deyil."})
         return attrs
 
     def create(self, validated_data):
+        work_images_data = validated_data.pop('work_images', []) 
+
         password = validated_data.pop('password')
         validated_data.pop('password2')
 
         cities = validated_data.pop('cities', [])
         languages = validated_data.pop('languages', [])
-        work_images_data = validated_data.pop('work_images', [])
 
         user = CustomUser.objects.create(**validated_data)
         user.set_password(password)
@@ -52,14 +89,23 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.cities.set(cities)
         user.languages.set(languages)
 
-        for img_data in work_images_data:
-            image = img_data['image']
-            order = img_data.get('order', 0)
-            work_image = WorkImage.objects.create(image=image, order=order)
+        print(work_images_data)
+
+        for image in work_images_data:
+            work_image = WorkImage.objects.create(image=image)
             user.work_images.add(work_image)
 
-        return user
+        # İş şəkillərini əlavə et (FILES-dən)
 
+        # request = self.context.get('request')
+        # if request:
+        #     work_images_files = request.FILES.getlist('work_images')
+        #     for idx, file in enumerate(work_images_files):
+        #         work_image = WorkImage.objects.create(image=file, order=idx)
+        #         user.work_images.add(work_image)
+
+
+        return user
 
 
 class LoginSerializer(serializers.Serializer):
@@ -93,3 +139,33 @@ class LoginSerializer(serializers.Serializer):
                 "mobile_number": user.mobile_number,
             }
         }
+
+
+
+
+class ProfileUpdateSerializer(serializers.ModelSerializer):
+    cities = serializers.PrimaryKeyRelatedField(queryset=City.objects.all(), many=True, required=False)
+    languages = serializers.PrimaryKeyRelatedField(queryset=Language.objects.all(), many=True, required=False)
+    work_images = serializers.PrimaryKeyRelatedField(queryset=WorkImage.objects.all(), many=True, required=False)
+
+    class Meta:
+        model = CustomUser
+        exclude = ['password', 'last_login', 'is_staff', 'is_superuser', 'groups', 'user_permissions', 'created_at', 'updated_at']
+
+    def update(self, instance, validated_data):
+        cities = validated_data.pop('cities', None)
+        languages = validated_data.pop('languages', None)
+        work_images = validated_data.get('work_images', None)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        if cities is not None:
+            instance.cities.set(cities)
+        if languages is not None:
+            instance.languages.set(languages)
+        if work_images is not None:
+            instance.work_images.set(work_images)
+
+        instance.save()
+        return instance

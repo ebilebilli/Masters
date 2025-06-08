@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from ..validators import az_letter_validator, phone_validator
 from ..user_managers import CustomUserManager
 
-from core.models import City
+from core.models.city_model import City
 from .language_model import Language
 from .work_image_model import WorkImage
 

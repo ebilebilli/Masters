@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'rest_framework_swagger',
     'drf_yasg',
     'cities_light',
+    'corsheaders',
 
     #Apps
     'users',
@@ -41,6 +42,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -50,7 +53,29 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CORS_ALLOW_HEADERS = [
+    'content-type',
+    'authorization',
+    'x-csrftoken',
+    'accept',
+    'origin',
+    'user-agent',
+    'x-requested-with',
+]
+
+
+CORS_ALLOW_ALL_ORIGINS = False
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "https://9459-213-172-90-209.ngrok-free.app",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+
 ROOT_URLCONF = 'masters.urls'
+
 TEMPLATES = [
 {
 'BACKEND': 'django.template.backends.django.DjangoTemplates',
