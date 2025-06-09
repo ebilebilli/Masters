@@ -178,10 +178,15 @@ SIMPLE_JWT = {
 ELASTICSEARCH_DSL = {
     'default': {
         'hosts': os.getenv("ELASTICSEARCH_HOST"),
+        'http_auth': (
+            os.getenv("ELASTICSEARCH_USER"),
+            os.getenv("ELASTICSEARCH_PASSWORD")
+        ),
     }
 }
 
 ELASTICSEARCH_HOST = os.getenv("ELASTICSEARCH_HOST")
+
 
 #Caches settings
 CACHES = {

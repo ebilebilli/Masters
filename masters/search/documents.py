@@ -11,18 +11,22 @@ from services.models.service_model import Service
 from core.models.language_model import Language
 from core.models.city_model import City, District
 
+
 logger = logging.getLogger(__name__)
 
 try:
-    es_client = Elasticsearch(hosts=[settings.ELASTICSEARCH_HOST])
+    es_client = Elasticsearch(
+        hosts=[settings.ELASTICSEARCH_HOST],
+        http_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD),
+        timeout=30
+    )
     if not es_client.ping():
         logger.warning("Elasticsearch serverinə qoşulma uğursuz oldu!")
         es_client = None
 except Exception as e:
     logger.error(f"Elasticsearch bağlantısı zamanı xəta baş verdi: {e}")
     es_client = None
-
-
+    
 @registry.register_document
 class MasterDocument(Document):
     profession_area = fields.ObjectField(properties={
