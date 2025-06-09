@@ -14,7 +14,12 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ["*"]
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = True
 
+CORS_ALLOWED_ORIGINS = [
+    "https://masters-dobm.onrender.com",
+]
 
 # Application definition
 INSTALLED_APPS = [
@@ -31,6 +36,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'drf_yasg',
     'django_elasticsearch_dsl',
+    'sslserver'
 
     #Apps
     'core',
