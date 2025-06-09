@@ -14,7 +14,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         model = CustomUser
         exclude = [
             'password', 'is_superuser', 'is_staff', 'user_permissions', 'groups',
-            'last_login', 'date_joined', 'is_active', 
+            'last_login', 'is_active', 
         ]
    
 
