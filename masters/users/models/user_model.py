@@ -162,7 +162,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Son yenilənmə tarixi")
 
     USERNAME_FIELD = 'mobile_number'
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'birth_date', 'gender']
+    REQUIRED_FIELDS = [] 
 
     objects = CustomUserManager()
 

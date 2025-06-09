@@ -39,7 +39,7 @@ class CustomUserAdmin(BaseUserAdmin):
         ('Təhsil məlumatları', {'fields': ('education', 'education_speciality', 'languages')}),
         ('Profil', {'fields': ('profile_image', 'facebook', 'instagram', 'tiktok', 'linkedin', 'work_images', 'note')}),
         ('İcazələr', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
-        ('Tarixçə', {'fields': ('last_login', 'created_at', 'updated_at')}),
+        ('Tarixçə', {'fields': ('last_login', 'created_at')}),
     )
 
     filter_horizontal = ('cities', 'districts', 'languages', 'work_images', 'groups', 'user_permissions')
