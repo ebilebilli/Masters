@@ -77,6 +77,6 @@ def populate_cities():
     "zangilan": "Zəngilan",
     "zardab": "Zərdab"
 }
-    for x, y in dict(data):
+    for x, y in data.items():
         from core.models.city_model import City
         cities = City.objects.create(name=x, display_name=y)
