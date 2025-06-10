@@ -5,8 +5,9 @@ from django.shortcuts import get_object_or_404
 from django.core.cache import cache
 from django.conf import settings
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.decorators import api_view
 from django.db.models import Avg
+from rest_framework.decorators import api_view, permission_classes
+from drf_yasg import openapi
 
 from services.models.category_model import Category
 from services.models.service_model import Service
@@ -14,6 +15,7 @@ from services.serializers.service_serializer import ServiceSerializer
 from users.models.user_model import CustomUser
 from users.serializers.user_serializers import CustomUserSerializer
 from utils.paginations import CustomPagination
+from reviews.models.review_models import Review
 
 __all__ = [
     'ServicesForCategoryAPIView',
@@ -127,29 +129,52 @@ class MasterListForServicesAPIView(APIView):
         return Response(paginated_response, status=status.HTTP_200_OK)
 
 
-class ServiceStatisticsAPIView(APIView):
-    permission_classes = [AllowAny]
-    http_method_names = ['get']
+@api_view(['GET'])
+@permission_classes([AllowAny])
+@swagger_auto_schema(
+    operation_summary="Get platform statistics",
+    operation_description="Returns statistics including number of active masters, categories, and average rating.",
+    responses={
+        200: openapi.Response(
+            description="Successful response",
+            schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'usta_sayi': openapi.Schema(type=openapi.TYPE_STRING, description="Number of active masters (e.g., '100+', '500+')"),
+                    'xidmet_novu': openapi.Schema(type=openapi.TYPE_INTEGER, description="Number of categories"),
+                    'ortalama_reytinq': openapi.Schema(type=openapi.TYPE_NUMBER, description="Average rating of reviews")
+                }
+            )
+        )
+    }
+)
+def statistics_view(request):
+    # Aktiv ustaların sayını hesablayın (is_active=True)
+    master_count = CustomUser.objects.filter(is_active=True).count()
+    
+    # Kateqoriyaların sayını hesablayın
+    category_count = Category.objects.count()
+    
+    # Bütün rəylərin orta reytinqini hesablayın
+    avg_rating = Review.objects.aggregate(avg=Avg('rating'))['avg'] or 0.0
 
-    def get(self, request):
-        master_count = CustomUser.objects.filter(is_active=True).count()
-        category_count = Category.objects.count()
-        avg_rating = CustomUser.objects.aggregate(avg=Avg('rating'))['avg'] or 0.0
+    # Usta sayını etiketə çevir
+    if master_count <= 50:
+        master_count_label = str(master_count)
+    elif master_count <= 100:
+        master_count_label = "100+"
+    elif master_count <= 200:
+        master_count_label = "200+"
+    elif master_count <= 500:
+        master_count_label = "500+"
+    else:
+        master_count_label = "1000+"
 
-        if master_count <= 50:
-            master_count_label = master_count
-        elif master_count <= 100:
-            master_count_label = "100+"
-        elif master_count <= 200:
-            master_count_label = "200+"
-        elif master_count <= 500:
-            master_count_label = "500+"
-        else:
-            master_count_label = "1000+"
-
-        data = {
-            'usta_sayi': master_count_label,
-            'xidmet_novu': category_count,
-            'ortalama_reytinq': round(avg_rating, 2),
-        }
-        return Response(data)
+    # Cavab məlumatları
+    data = {
+        "usta_sayi": master_count_label,
+        "xidmet_novu": category_count,
+        "ortalama_reytinq": round(avg_rating, 2),
+    }
+    
+    return Response(data)
