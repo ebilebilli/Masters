@@ -1,4 +1,6 @@
-data = {
+
+def populate_cities():
+    data = {
     "baku": "Bakı",
     "ganca": "Gəncə",
     "nakhchivan": "Naxçıvan",
@@ -75,7 +77,6 @@ data = {
     "zangilan": "Zəngilan",
     "zardab": "Zərdab"
 }
-
-for x, y in dict(data):
-    from core.models.city_model import City
-    cities = City.objects.create(name=x, display_name=y)
+    for x, y in dict(data):
+        from core.models.city_model import City
+        cities = City.objects.create(name=x, display_name=y)
