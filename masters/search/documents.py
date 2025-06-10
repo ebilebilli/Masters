@@ -1,8 +1,8 @@
+import logging
+import os
 from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
 from elasticsearch import Elasticsearch
-from django.conf import settings
-import logging
 
 from users.models.user_model import CustomUser
 from users.models.work_image_model import WorkImage
@@ -16,9 +16,10 @@ logger = logging.getLogger(__name__)
 
 try:
     es_client = Elasticsearch(
-        hosts=[settings.ELASTICSEARCH_HOST],
-        http_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD),
-        timeout=30
+        hosts=[os.getenv("ELASTICSEARCH_HOST")],
+        http_auth=(os.getenv("ELASTICSEARCH_USER"), os.getenv("ELASTICSEARCH_PASSWORD")),
+        timeout=30,
+        verify_certs=True
     )
     if not es_client.ping():
         logger.warning("Elasticsearch serverinə qoşulma uğursuz oldu!")
@@ -26,7 +27,8 @@ try:
 except Exception as e:
     logger.error(f"Elasticsearch bağlantısı zamanı xəta baş verdi: {e}")
     es_client = None
-    
+
+
 @registry.register_document
 class MasterDocument(Document):
     profession_area = fields.ObjectField(properties={
