@@ -13,9 +13,9 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ["https://masters-1.onrender.com", 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ["masters-1.onrender.com", 'localhost', '127.0.0.1']
 
-CSRF_TRUSTED_ORIGINS = ['https://masters-1.onrender.com',]
+CSRF_TRUSTED_ORIGINS = ['masters-1.onrender.com',]
 # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # SECURE_SSL_REDIRECT = True
 
