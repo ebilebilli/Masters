@@ -2,6 +2,7 @@ from django.urls import path
 
 from apis.service_apis.category_views import *
 from apis.service_apis.service_views import *
+from apis.service_apis.service_views import statistics_view
 
 
 app_name = 'service_apis'
@@ -37,7 +38,7 @@ urlpatterns = [
     ),
     path(
         'services/statistics/', 
-        ServiceStatisticsAPIView.as_view(),
+        statistics_view,
         name='service-statistics'
         )
 ]

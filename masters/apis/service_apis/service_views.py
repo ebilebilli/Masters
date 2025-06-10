@@ -21,7 +21,6 @@ __all__ = [
     'ServicesForCategoryAPIView',
     'MasterListForServicesAPIView',
     'ServiceListAPIView',
-    'ServiceStatisticsAPIView'
 ]
 
 
@@ -149,16 +148,12 @@ class MasterListForServicesAPIView(APIView):
     }
 )
 def statistics_view(request):
-    # Aktiv ustaların sayını hesablayın (is_active=True)
     master_count = CustomUser.objects.filter(is_active=True).count()
     
-    # Kateqoriyaların sayını hesablayın
     category_count = Category.objects.count()
     
-    # Bütün rəylərin orta reytinqini hesablayın
     avg_rating = Review.objects.aggregate(avg=Avg('rating'))['avg'] or 0.0
 
-    # Usta sayını etiketə çevir
     if master_count <= 50:
         master_count_label = str(master_count)
     elif master_count <= 100:
@@ -170,7 +165,6 @@ def statistics_view(request):
     else:
         master_count_label = "1000+"
 
-    # Cavab məlumatları
     data = {
         "usta_sayi": master_count_label,
         "xidmet_novu": category_count,
