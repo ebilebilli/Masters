@@ -1,15 +1,12 @@
 
 def populate_cities():
     data = {
-    "baku": "Bakı",
-    "ganca": "Gəncə",
     "nakhchivan": "Naxçıvan",
     "sumqayit": "Sumqayıt",
     "lenkeran": "Lənkəran",
     "mingechevir": "Mingəçevir",
     "naftalan": "Naftalan",
     "khankendi": "Xankəndi",
-    "sheki": "Şəki",
     "shirvan": "Şirvan",
     "yevlakh": "Yevlax",
     "absheron": "Abşeron",
