@@ -31,14 +31,11 @@ class CityListAPIView(APIView):
 
         try:
             cities = City.objects.all()
-            if not cities.exists():
-                return Response({'error': 'No cities found.'}, status=status.HTTP_404_NOT_FOUND)
             serializer = CitySerializer(cities, many=True)
             cache.set(cache_key, serializer.data, timeout=settings.TIMEOUT)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({'error': f'Internal server error: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+        except City.DoesNotExist:
+            return Response({'error': 'Heç bir şəhər tapılmadı'}, status=status.HTTP_404_NOT_FOUND)
 
 class DistrictListAPIView(APIView):
     permission_classes = [AllowAny]
