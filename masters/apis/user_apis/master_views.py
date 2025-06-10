@@ -112,42 +112,6 @@ class MasterDetailAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class MasterProfileUpdateAPIView(APIView):
-    """
-    get:
-    Retrieve a master's details by ID.
-
-    patch:
-    Update the master. Only the master themselves or a superuser can perform this.
-
-    """
-     
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    http_method_names = ['patch']
-
-    @swagger_auto_schema(
-        operation_summary="Ustanı yenilə",
-        request_body=CustomUserSerializer(partial=True),
-        responses={
-            200: CustomUserSerializer(),
-            400: 'Daxil edilən məlumatlar səhvdir',
-            403: 'İcazəniz yoxdur'
-        }
-    )
-
-    def patch(self, request, master_id):
-        user = request.user
-        master = get_object_or_404(CustomUser, id=master_id)
-        serializer = CustomUserSerializer(master, data=request.data, partial=True)
-        if master.id != user.id and not user.is_superuser:
-            return Response({'error': 'Bunu etməyə icazəniz yoxdur'}, status=status.HTTP_403_FORBIDDEN)
-
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response({'error': 'Daxil edilən məlumatlar səhvdir'}, status=status.HTTP_400_BAD_REQUEST)
-
 
 class MasterProfileDeleteAPIView(APIView):
     """

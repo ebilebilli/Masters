@@ -42,7 +42,6 @@ class ReviewsForMasterAPIView(APIView):
         return Response(paginated_response, status=status.HTTP_200_OK)
 
 
-
 class CreateReviewAPIView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]

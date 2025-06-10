@@ -12,44 +12,39 @@ app_name = 'user_apis'
 urlpatterns = [            
     # Master endpoints
     path(
-        'masters/', 
+        'professionals/', 
         MastersListAPIView.as_view(), 
-        name='masters-list'
+        name='professionals-list'
     ),
     path(
-        'masters/top/', 
+        'professionals/top/', 
         TopRatedMastersListAPIView.as_view(), 
-        name='masters-top-rated-list '
+        name='professionals-top-rated-list '
     ),
     path(
-        'masters/<int:master_id>/', 
+        'professionals/<int:master_id>/', 
         MasterDetailAPIView.as_view(),
-        name='master-detail'
+        name='professionals-detail'
     ),
     path(
-        'masters/<int:master_id>/update', 
-        MasterProfileUpdateAPIView.as_view(),
-        name='master-update'
-    ),  
-    path(
-        'masters/<int:master_id>/delete', 
+        'professionals/<int:master_id>/delete', 
         MasterProfileDeleteAPIView.as_view(),
-        name='master-delete'
+        name='professionals-delete'
     ),  
     
     #Master handwork images endpoints
     path(
-        'masters/<int:master_id>/images/',
+        'professionals/<int:master_id>/images/',
         WorkImagesForMasterAPIView.as_view(),
         name='work-images'
     ),
     path(
-        'masters/images/create/',
+        'professionals/images/create/',
         CreateWorkImagesForMasterAPIView.as_view(),
         name='create-image'
     ),
     path(
-        'masters/images/delete/',
+        'professionals/images/delete/',
         DeleteMasterWorkImageAPIView.as_view(),
         name='delete-image'
     ),

@@ -14,7 +14,7 @@ urlpatterns = [
         name='categories'
     ),
     path(
-        'masters/category/<int:category_id>/', 
+        'category/<int:category_id>/professionals/', 
         MasterListForCategoryAPIView.as_view(), 
         name='masters-by-category'
     ),
@@ -31,7 +31,7 @@ urlpatterns = [
         name='services-for-category'
     ),
     path(
-        'masters/service/<int:service_id>/', 
+        'service/<int:service_id>/professionals/', 
         MasterListForServicesAPIView.as_view(), 
         name='masters-by-service'
     ),

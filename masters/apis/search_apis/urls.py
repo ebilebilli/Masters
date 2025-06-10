@@ -5,8 +5,8 @@ app_name = 'search_apis'
 
 urlpatterns = [
     path(
-        'masters/search/', 
+        'professionals/search/', 
         SearchAPIView.as_view(),
-        name='master-search'
+        name='professionals-search'
     ),
 ]
