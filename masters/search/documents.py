@@ -19,7 +19,6 @@ try:
         hosts=[os.getenv("ELASTICSEARCH_HOST")],
         http_auth=(os.getenv("ELASTICSEARCH_USER"), os.getenv("ELASTICSEARCH_PASSWORD")),
         timeout=30,
-        verify_certs=True
     )
     if not es_client.ping():
         logger.warning("Elasticsearch serverinə qoşulma uğursuz oldu!")
