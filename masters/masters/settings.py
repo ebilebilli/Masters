@@ -42,8 +42,7 @@ INSTALLED_APPS = [
     'core',
     'services',
     'users',
-    'reviews',
-    'search'
+    'reviews'
 ]
 
 AUTH_USER_MODEL = 'users.CustomUser'
