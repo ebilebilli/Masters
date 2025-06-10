@@ -59,24 +59,5 @@ services:
     ports:
       - "6379:6379"
   
-
-  elasticsearch:
-    image: elasticsearch:8.13.4
-    container_name: elasticsearch
-    environment:
-    - discovery.type=${DISCOVERY_TYPE}
-    - xpack.security.enabled=${XPACK_SECURITY_ENABLED}
-    - bootstrap.memory_lock=${BOOTSTRAP_MEMORY_LOCK}
-    - ES_JAVA_OPTS=${ES_JAVA_OPTS}
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    ports:
-      - 9200:9200
-    volumes:
-      - esdata:/usr/share/elasticsearch/data
-
 volumes:
   postgres_data:
-  esdata:
