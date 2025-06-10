@@ -19,7 +19,7 @@ __all__ = [
     'ServicesForCategoryAPIView',
     'MasterListForServicesAPIView',
     'ServiceListAPIView',
-    'statistics_view'
+    'ServiceStatisticsAPIView'
 ]
 
 
@@ -127,28 +127,29 @@ class MasterListForServicesAPIView(APIView):
         return Response(paginated_response, status=status.HTTP_200_OK)
 
 
-@api_view(['GET'])
-def statistics_view(request):
-    # Yalnız aktiv və təsdiqlənmiş ustalar
-    master_count = CustomUser.objects.filter(is_active=True).count()
-    category_count = Category.objects.count()
-    avg_rating = CustomUser.objects.aggregate(avg=Avg('rating'))['avg'] or 0.0
+class ServiceStatisticsAPIView(APIView):
+    permission_classes = [AllowAny]
+    http_method_names = ['get']
 
-    # Dinamik usta sayı formatı
-    if master_count <= 50:
-        master_count_label = master_count
-    elif master_count <= 100:
-        master_count_label = "100+"
-    elif master_count <= 200:
-        master_count_label = "200+"
-    elif master_count <= 500:
-        master_count_label = "500+"
-    else:
-        master_count_label = "1000+"
+    def get(self, request):
+        master_count = CustomUser.objects.filter(is_active=True).count()
+        category_count = Category.objects.count()
+        avg_rating = CustomUser.objects.aggregate(avg=Avg('rating'))['avg'] or 0.0
 
-    data = {
-        "usta_sayi": master_count_label,
-        "xidmet_novu": category_count,
-        "ortalama_reytinq": round(avg_rating, 2),
-    }
-    return Response(data)
+        if master_count <= 50:
+            master_count_label = master_count
+        elif master_count <= 100:
+            master_count_label = "100+"
+        elif master_count <= 200:
+            master_count_label = "200+"
+        elif master_count <= 500:
+            master_count_label = "500+"
+        else:
+            master_count_label = "1000+"
+
+        data = {
+            'usta_sayi': master_count_label,
+            'xidmet_novu': category_count,
+            'ortalama_reytinq': round(avg_rating, 2),
+        }
+        return Response(data)
