@@ -17,7 +17,6 @@ __all__ = [
     'MastersListAPIView',
     'TopRatedMastersListAPIView',
     'MasterDetailAPIView',
-    'MasterProfileUpdateAPIView',
     'MasterProfileDeleteAPIView'
 ]
 
