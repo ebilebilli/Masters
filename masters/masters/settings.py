@@ -19,9 +19,8 @@ CSRF_TRUSTED_ORIGINS = ['https://masters-1.onrender.com', 'http://masters-1.onre
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # SECURE_SSL_REDIRECT = True
 
-# CORS_ALLOWED_ORIGINS = [
-#     "https://masters-1.onrender.com",
-# ]
+CORS_ALLOW_ALL_ORIGINS = True
+    
 
 # Application definition
 INSTALLED_APPS = [
