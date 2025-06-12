@@ -12,7 +12,7 @@ from users.serializers.user_serializers import(
 )
 from rest_framework.generics import CreateAPIView
 
-from users.serializers.user_serializers import WorkImageSerializer
+from users.serializers.work_image_serializers import WorkImageSerializer
 from users.models import WorkImage
 
 

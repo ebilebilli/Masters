@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from core.models.city_model import City, District
 from core.models.language_model import Language
+from services.models.category_model import Category
 import json
 
 from users.models import CustomUser
@@ -19,13 +20,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         ]
    
 
-class WorkImageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = WorkImage
-        fields = '__all__'
-        extra_kwargs = {
-            'image': {'required': False}
-        }
+
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -90,30 +85,39 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         request_data = self.initial_data if hasattr(self, 'initial_data') else {}
 
-        # Profession sahəsi üçün şərti yoxlama
-        profession_area_id = request_data.get("profession_area")
-        try:
-            profession_area_id = int(profession_area_id)
-        except (ValueError, TypeError):
-            profession_area_id = None
+        profession_area = request_data.get("profession_area")
+        profession_area_name = Category.objects.filter(id=profession_area).first()
+        
 
-        if profession_area_id == 1:
+        if str(profession_area_name) == "other":
             self.fields['profession_speciality'].required = False
             self.fields['custom_profession'].required = True
         else:
             self.fields['profession_speciality'].required = True
             self.fields['custom_profession'].required = False
 
-        # Bakı varsa (id = 1), districts-i tələb et
+        # Təhsil üçün
+        education = request_data.get("education")
+
+        if education == "0":  # "Yoxdur"
+            self.fields["education_speciality"].required = False
+        else:
+            self.fields["education_speciality"].required = True
+
+        # Şəhər üçün
         city_ids = request_data.get("cities", [])
-        if isinstance(city_ids, (str, int)) and type(city_ids) == int:
+
+        if isinstance(city_ids, (str, int)):
             city_ids = [int(city_ids)]
-        elif isinstance(city_ids, list) and type(city_ids) == int:
+        elif isinstance(city_ids, list):
             city_ids = [int(c) if isinstance(c, str) else c for c in city_ids]
         else:
             city_ids = []
 
-        if 1 in city_ids:
+        city_names = City.objects.filter(id__in=city_ids).values_list("name", flat=True)
+        city_names = [name.lower() for name in city_names]
+
+        if "baku" in city_names:
             self.fields['districts'].required = True
         else:
             self.fields['districts'].required = False
@@ -126,8 +130,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         profession_speciality = attrs.get('profession_speciality')
         custom_profession = attrs.get('custom_profession')
 
-        area_id = getattr(profession_area, 'id', profession_area)
-        if area_id == 1:
+        area_name = getattr(profession_area, 'name', profession_area)
+        if area_name == 'other':
             if profession_speciality is not None:
                 raise serializers.ValidationError({
                     'profession_speciality': 'Bu sahə seçiləndə profession_speciality boş olmalıdır.'
@@ -145,13 +149,27 @@ class RegisterSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({
                     'custom_profession': 'Bu sahə üçün custom_profession boş qalmalıdır.'
                 })
+        
+        # Təhsil üçün yoxlanış
+        education = attrs.get("education")
+        speciality = attrs.get("education_speciality")
+
+        if education == "0" and speciality:
+            raise serializers.ValidationError({
+                "education_speciality": "Təhsil yoxdursa, ixtisas qeyd edilməməlidir."
+            })
+
+        if education != "0" and not speciality:
+            raise serializers.ValidationError({
+                "education_speciality": "Bu sahə mütləq doldurulmalıdır."
+            })
 
         # Bakı şəhəri seçilibsə, rayonlar mütləqdir
         cities = attrs.get('cities', [])
         districts = attrs.get('districts', [])
-        city_ids = [getattr(c, 'id', c) for c in cities]
+        city_name = [getattr(c, 'name', c) for c in cities]
 
-        if 1 in city_ids:
+        if 'baku' in city_name:
             if not districts:
                 raise serializers.ValidationError({
                     'districts': 'Bakı seçildikdə rayonlar mütləq seçilməlidir.'
