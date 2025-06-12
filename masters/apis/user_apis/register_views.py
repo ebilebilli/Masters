@@ -43,6 +43,7 @@ class RegisterAPIView(APIView):
                 return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
                 return Response({"detail": "Gözlənilməz bir xəta baş verdi."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                # return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 """

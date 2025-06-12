@@ -79,6 +79,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     profession_speciality = models.ForeignKey(
         Service,
         on_delete=models.PROTECT,
+        null=True,
+        blank=True,
         related_name='profession_masters'
     )
 
