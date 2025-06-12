@@ -2,6 +2,8 @@ from django.contrib.auth.models import BaseUserManager
 from django.utils import timezone
 
 
+
+##########//  Custom User Manager  \\##########
 class CustomUserManager(BaseUserManager):
     def create_user(self, mobile_number, password=None, **extra_fields):
         if not mobile_number:

@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.core.validators import RegexValidator
 from django.utils.translation import gettext_lazy as _
 
-from ..validators import az_letter_validator, phone_validator
+from ..validators import azerbaijani_letters_validator, mobile_number_validator
 from ..user_managers import CustomUserManager
 
 from services.models.category_model import Category
@@ -16,21 +16,6 @@ from core.models.language_model import Language
 from .work_image_model import WorkImage
 
 
-# Yalnız Azərbaycan əlifbasındakı hərflərə icazə verilir (böyük və kiçik hərflər)
-azerbaijani_letters_validator = RegexValidator(
-    regex=r'^[A-Za-zƏəÖöĞğÜüÇçŞşİı]+$',
-    message='Yalnız Azərbaycan əlifbasındakı hərflərə icazə verilir.'
-)
-
-# Mobil nömrə validatoru (9 rəqəm, məsələn: 501234567)
-mobile_number_validator = RegexValidator(
-    regex=r'^\d{9}$',
-    message='Mobil nömrə düzgün daxil edilməyib. 50 123 45 67 formatında daxil edin.'
-)
-
-
-
-##########//  Custom User Manager  \\##########
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     ##########//  Şəxsi məlumatlar  \\##########
@@ -99,6 +84,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         related_name='city_masters',
         verbose_name='Şəhərlər',
     )
+
     districts = models.ManyToManyField(
         District,
         related_name='district_masters',
