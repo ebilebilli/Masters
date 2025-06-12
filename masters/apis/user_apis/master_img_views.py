@@ -38,7 +38,7 @@ class WorkImagesForMasterAPIView(APIView):
     )
     
     def get(self, request, master_id):
-        master = get_object_or_404(CustomUser, is_active=True, id=master_id)
+        master = get_object_or_404(CustomUser, id=master_id)
         images = master.work_images.all() 
         serializer = WorkImageSerializer(images, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

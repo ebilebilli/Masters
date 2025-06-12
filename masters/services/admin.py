@@ -4,13 +4,13 @@ from services.models.service_model import Service
 
 
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('display_name', 'name')
+    list_display = ("id", 'display_name', 'name')
     search_fields = ('name', 'display_name')
     ordering = ('display_name',)
 
 
 class ServiceAdmin(admin.ModelAdmin):
-    list_display = ('display_name', 'name', 'category')
+    list_display = ("id", 'display_name', 'name', 'category')
     search_fields = ('name', 'display_name', 'category__name')
     list_filter = ('category',)
     ordering = ('display_name',)
