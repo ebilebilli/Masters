@@ -51,7 +51,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             # Peşə məlumatları
             'profession_area',
             'profession_speciality',
-            'custom_profession'
+            'custom_profession',
             'experience_years',
             'cities',
 
