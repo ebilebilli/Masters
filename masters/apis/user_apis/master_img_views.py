@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView, status
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import JSONParser, MultiPartParser
@@ -28,6 +29,7 @@ class WorkImagesForMasterAPIView(APIView):
     Upload one or more new work images for the authenticated master.
     Limits the total image count to 10.
     """
+    permission_classes = [AllowAny]
     http_method_names = ['get']
     
     @swagger_auto_schema(
