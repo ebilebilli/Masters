@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
-from core.models.city_model import City
+from core.models.city_model import City, District
 from core.models.language_model import Language
+import json
 
 from users.models import CustomUser
 from users.models import  WorkImage
@@ -32,6 +33,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(write_only=True)
 
     cities = serializers.PrimaryKeyRelatedField(many=True, queryset=City.objects.all())
+    districts = serializers.PrimaryKeyRelatedField(many=True, queryset=District.objects.all(), required=False)
     languages = serializers.PrimaryKeyRelatedField(many=True, queryset=Language.objects.all())
 
     work_images = serializers.ListField(
@@ -60,6 +62,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             'custom_profession',
             'experience_years',
             'cities',
+            'districts',
 
             # Təhsil məlumatları
             'education',
@@ -75,7 +78,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             'tiktok',
             'linkedin',
 
-            # İş şəkilləri (yalnız read_only)
+            # İş şəkilləri
             'work_images',
 
             # Əlavə qeyd
@@ -85,24 +88,35 @@ class RegisterSerializer(serializers.ModelSerializer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Daxil olunan məlumatlardan profession_area ID-ni götür
-        profession_area_id = None
         request_data = self.initial_data if hasattr(self, 'initial_data') else {}
 
-        if request_data.get("profession_area"):
-            try:
-                profession_area_id = int(request_data.get("profession_area"))
-            except ValueError:
-                pass
+        # Profession sahəsi üçün şərti yoxlama
+        profession_area_id = request_data.get("profession_area")
+        try:
+            profession_area_id = int(profession_area_id)
+        except (ValueError, TypeError):
+            profession_area_id = None
 
-        DEFAULT_AREA_ID = 1  
-
-        if profession_area_id == DEFAULT_AREA_ID:
+        if profession_area_id == 1:
             self.fields['profession_speciality'].required = False
             self.fields['custom_profession'].required = True
         else:
             self.fields['profession_speciality'].required = True
             self.fields['custom_profession'].required = False
+
+        # Bakı varsa (id = 1), districts-i tələb et
+        city_ids = request_data.get("cities", [])
+        if isinstance(city_ids, (str, int)) and type(city_ids) == int:
+            city_ids = [int(city_ids)]
+        elif isinstance(city_ids, list) and type(city_ids) == int:
+            city_ids = [int(c) if isinstance(c, str) else c for c in city_ids]
+        else:
+            city_ids = []
+
+        if 1 in city_ids:
+            self.fields['districts'].required = True
+        else:
+            self.fields['districts'].required = False
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
@@ -112,12 +126,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         profession_speciality = attrs.get('profession_speciality')
         custom_profession = attrs.get('custom_profession')
 
-        DEFAULT_AREA_ID = 1  
-
-        # profession_area int və ya object ola bilər
-        profession_area_id = getattr(profession_area, 'id', profession_area)
-
-        if profession_area_id == DEFAULT_AREA_ID:
+        area_id = getattr(profession_area, 'id', profession_area)
+        if area_id == 1:
             if profession_speciality is not None:
                 raise serializers.ValidationError({
                     'profession_speciality': 'Bu sahə seçiləndə profession_speciality boş olmalıdır.'
@@ -136,30 +146,291 @@ class RegisterSerializer(serializers.ModelSerializer):
                     'custom_profession': 'Bu sahə üçün custom_profession boş qalmalıdır.'
                 })
 
+        # Bakı şəhəri seçilibsə, rayonlar mütləqdir
+        cities = attrs.get('cities', [])
+        districts = attrs.get('districts', [])
+        city_ids = [getattr(c, 'id', c) for c in cities]
+
+        if 1 in city_ids:
+            if not districts:
+                raise serializers.ValidationError({
+                    'districts': 'Bakı seçildikdə rayonlar mütləq seçilməlidir.'
+                })
+        else:
+            if districts:
+                raise serializers.ValidationError({
+                    'districts': 'Bakı şəhəri seçilmədiyi halda rayonlar daxil edilməməlidir.'
+                })
+
         return attrs
 
     def create(self, validated_data):
-        work_images_data = validated_data.pop('work_images', []) 
+        work_images_data = validated_data.pop('work_images', [])
         password = validated_data.pop('password')
         validated_data.pop('password2')
 
         cities = validated_data.pop('cities', [])
+        districts = validated_data.pop('districts', [])
         languages = validated_data.pop('languages', [])
 
         user = CustomUser.objects.create(**validated_data)
         user.set_password(password)
         user.save()
 
-        user.cities.set(cities)
-        user.languages.set(languages)
+        def extract_ids(qs):
+            return [obj if isinstance(obj, int) else obj.id for obj in qs]
+
+        user.cities.set(extract_ids(cities))
+        user.districts.set(extract_ids(districts))
+        user.languages.set(extract_ids(languages))
 
         for image in work_images_data:
-            work_image = WorkImage.objects.create(image=image)
-            user.work_images.add(work_image)
+            img = WorkImage.objects.create(image=image)
+            user.work_images.add(img)
 
         return user
+
+
+# class RegisterSerializer(serializers.ModelSerializer):
+#     password = serializers.CharField(write_only=True)
+#     password2 = serializers.CharField(write_only=True)
+
+#     cities = serializers.PrimaryKeyRelatedField(many=True, queryset=City.objects.all())
+#     districts = serializers.PrimaryKeyRelatedField(many=True, queryset=District.objects.all(), required=False)
+#     languages = serializers.PrimaryKeyRelatedField(many=True, queryset=Language.objects.all())
+
+#     work_images = serializers.ListField(
+#         child=serializers.ImageField(),
+#         write_only=True,
+#         required=False
+#     )
+
+#     class Meta:
+#         model = CustomUser
+#         fields = [
+#             # Şəxsi məlumatlar
+#             'first_name',
+#             'last_name',
+#             'birth_date',
+#             'gender',
+#             'mobile_number',
+
+#             # Şifrə
+#             'password',
+#             'password2',
+
+#             # Peşə məlumatları
+#             'profession_area',
+#             'profession_speciality',
+#             'custom_profession',
+#             'experience_years',
+#             'cities',
+#             'districts',
+
+#             # Təhsil məlumatları
+#             'education',
+#             'education_speciality',
+
+#             # Dillər
+#             'languages',
+
+#             # Profil və sosial media
+#             'profile_image',
+#             'facebook',
+#             'instagram',
+#             'tiktok',
+#             'linkedin',
+
+#             # İş şəkilləri
+#             'work_images',
+
+#             # Əlavə qeyd
+#             'note',
+#         ]
+
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+
+#         request_data = self.initial_data if hasattr(self, 'initial_data') else {}
+
+#         # Profession sahəsi üçün şərti yoxlama
+#         profession_area_id = request_data.get("profession_area")
+#         try:
+#             profession_area_id = int(profession_area_id)
+#         except (ValueError, TypeError):
+#             profession_area_id = None
+
+#         if profession_area_id == 1:
+#             self.fields['profession_speciality'].required = False
+#             self.fields['custom_profession'].required = True
+#         else:
+#             self.fields['profession_speciality'].required = True
+#             self.fields['custom_profession'].required = False
+
+#         # Bakı varsa (id = 1), districts-i tələb et
+#         city_ids = request_data.get("cities", [])
+#         if isinstance(city_ids, (str, int)):
+#             city_ids = [int(city_ids)]
+#         elif isinstance(city_ids, list):
+#             city_ids = [int(c) if isinstance(c, str) else c for c in city_ids]
+#         else:
+#             city_ids = []
+
+#         if 1 in city_ids:
+#             self.fields['districts'].required = True
+#         else:
+#             self.fields['districts'].required = False
+
+#     def validate_mobile_number(self, value):
+#         if CustomUser.objects.filter(mobile_number=value).exists():
+#             raise serializers.ValidationError("Bu mobil nömrə ilə artıq qeydiyyat aparılıb.")
+#         if not value.isdigit():
+#             raise serializers.ValidationError("Mobil nömrə yalnız rəqəmlərdən ibarət olmalıdır.")
+#         if len(value) != 9:
+#             raise serializers.ValidationError("Mobil nömrə 9 rəqəmdən ibarət olmalıdır.")
+#         return value
+
+#     def validate_first_name(self, value):
+#         if not value.strip():
+#             raise serializers.ValidationError("Ad sahəsi boş ola bilməz.")
+#         if len(value.strip()) < 2:
+#             raise serializers.ValidationError("Ad ən azı 2 simvol olmalıdır.")
+#         return value    
+
+
+#     def validate_last_name(self, value):
+#         if not value.strip():
+#             raise serializers.ValidationError("Soyad sahəsi boş ola bilməz.")
+#         if len(value.strip()) < 2:
+#             raise serializers.ValidationError("Soyad ən azı 2 simvol olmalıdır.")
+#         return value
+
+
+#     def validate_education_speciality(self, value):
+#         if value and any(char.isdigit() for char in value):
+#             raise serializers.ValidationError("Təhsil üzrə ixtisas yalnız hərflərdən ibarət olmalıdır.")
+#         return value
+
+#     def validate_birth_date(self, value):
+#         from datetime import date
+#         if value > date.today():
+#             raise serializers.ValidationError("Doğum tarixi indiki tarixdən sonrakı bir tarix ola bilməz.")
+#         return value
+
+#     def validate_experience_years(self, value):
+#         if value > 100:
+#             raise serializers.ValidationError("İş təcrübəsi 100 ildən çox ola bilməz.")
+#         return value
+
+#     def validate_custom_profession(self, value):
+#         if value and not all(char.isalpha() or char.isspace() for char in value):
+#             raise serializers.ValidationError("Xüsusi ixtisas sahəsi yalnız hərflərdən ibarət olmalıdır.")
+#         if value and len(value.strip()) < 3:
+#             raise serializers.ValidationError("Xüsusi ixtisas sahəsi ən azı 3 simvol olmalıdır.")
+#         return value
+
+#     def validate_profession_area(self, value):
+#         if not value:
+#             raise serializers.ValidationError("Peşə sahəsi mütləq seçilməlidir.")
+#         return value
+
+#     def validate_profession_speciality(self, value):
+#         area_id = self.initial_data.get('profession_area')
+#         try:
+#             area_id = int(area_id)
+#         except (TypeError, ValueError):
+#             area_id = None
+
+#         if area_id and area_id != 1 and not value:
+#             raise serializers.ValidationError("Bu peşə sahəsi üçün ixtisas mütləqdir.")
+#         if area_id == 1 and value:
+#             raise serializers.ValidationError("Bu peşə sahəsində ixtisas seçilməməlidir.")
+#         return value
     
+#     def validate_languages(self, value):
+#         if not value:
+#             raise serializers.ValidationError("Ən azı bir dil seçilməlidir.")
+#         return value
+
+#     def validate_cities(self, value):
+#         if not value:
+#             raise serializers.ValidationError("Ən azı bir şəhər seçilməlidir.")
+#         return value
+
+#     def validate(self, attrs):
+#         if attrs['password'] != attrs['password2']:
+#             raise serializers.ValidationError({"password": "Şifrələr uyğun deyil."})
+
+#         profession_area = attrs.get('profession_area')
+#         profession_speciality = attrs.get('profession_speciality')
+#         custom_profession = attrs.get('custom_profession')
+
+#         area_id = getattr(profession_area, 'id', profession_area)
+#         if area_id == 1:
+#             if profession_speciality is not None:
+#                 raise serializers.ValidationError({
+#                     'profession_speciality': 'Bu sahə seçiləndə profession_speciality boş olmalıdır.'
+#                 })
+#             if not custom_profession:
+#                 raise serializers.ValidationError({
+#                     'custom_profession': 'Bu sahə seçiləndə custom_profession mütləq doldurulmalıdır.'
+#                 })
+#         else:
+#             if not profession_speciality:
+#                 raise serializers.ValidationError({
+#                     'profession_speciality': 'Bu sahə üçün profession_speciality vacibdir.'
+#                 })
+#             if custom_profession:
+#                 raise serializers.ValidationError({
+#                     'custom_profession': 'Bu sahə üçün custom_profession boş qalmalıdır.'
+#                 })
+
+#         # Bakı şəhəri seçilibsə, rayonlar mütləqdir
+#         cities = attrs.get('cities', [])
+#         districts = attrs.get('districts', [])
+#         city_ids = [getattr(c, 'id', c) for c in cities]
+
+#         if 1 in city_ids:
+#             if not districts:
+#                 raise serializers.ValidationError({
+#                     'districts': 'Bakı seçildikdə rayonlar mütləq seçilməlidir.'
+#                 })
+#         else:
+#             if districts:
+#                 raise serializers.ValidationError({
+#                     'districts': 'Bakı şəhəri seçilmədiyi halda rayonlar daxil edilməməlidir.'
+#                 })
+
+#         return attrs
+
+#     def create(self, validated_data):
+#         work_images_data = validated_data.pop('work_images', [])
+#         password = validated_data.pop('password')
+#         validated_data.pop('password2')
+
+#         cities = validated_data.pop('cities', [])
+#         districts = validated_data.pop('districts', [])
+#         languages = validated_data.pop('languages', [])
+
+#         user = CustomUser.objects.create(**validated_data)
+#         user.set_password(password)
+#         user.save()
+
+#         def extract_ids(qs):
+#             return [obj if isinstance(obj, int) else obj.id for obj in qs]
+
+#         user.cities.set(extract_ids(cities))
+#         user.districts.set(extract_ids(districts))
+#         user.languages.set(extract_ids(languages))
+
+#         for image in work_images_data:
+#             img = WorkImage.objects.create(image=image)
+#             user.work_images.add(img)
+
+#         return user
+
     
+
 class LoginSerializer(serializers.Serializer):
     mobile_number = serializers.CharField()
     password = serializers.CharField(write_only=True)

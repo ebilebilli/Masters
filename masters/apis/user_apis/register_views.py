@@ -45,33 +45,6 @@ class RegisterAPIView(APIView):
                 return Response({"detail": "Gözlənilməz bir xəta baş verdi."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-"""
-
-{
-  "first_name": "Elvin",
-  "last_name": "Quliyev",
-  "birth_date": "2000-05-12",
-  "mobile_number": "501287667",
-  "gender": "MALE",
-  "profession_area": "Tikinti",
-  "profession_speciality": "Usta",
-  "experience_years": 5,
-  "cities": [1, 2],
-  "education": "1",
-  "education_speciality": "İnşaat mühəndisliyi",
-  "languages": [1, 3],
-  "profile_image": null,
-  "facebook": "",
-  "instagram": "",
-  "tiktok": "",
-  "linkedin": "",
-  "work_images": [],
-  "note": "",
-  "password": "Izzet-1409",
-  "password2": "Izzet-1409"
-}
-
-"""
 
 
 class LoginAPIView(APIView):
@@ -80,15 +53,6 @@ class LoginAPIView(APIView):
         if serializer.is_valid():
             return Response(serializer.validated_data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-"""
-
-{
-    "mobile_number": "503171409",
-    "password": "Izzet-1409"
-}
-
-"""
 
 
 class TestAPIView(APIView):
