@@ -5,7 +5,7 @@ from apis.user_apis.register_views import *
 from apis.user_apis.profile_views  import *
 from apis.user_apis.master_views import *
 from apis.user_apis.master_img_views import *
-
+from apis.user_apis.register_views import LogoutAPIView
 
 
 app_name = 'user_apis'
@@ -62,6 +62,11 @@ urlpatterns = [
         name='login'
     ),
     path(
+        'logout/', 
+        LogoutAPIView.as_view(), 
+        name='logout'
+    ),
+    path(
         'profile/', 
         ProfileAPIView.as_view(), 
         name='profile'
@@ -72,10 +77,16 @@ urlpatterns = [
         name='update'
     ),
     path(
+        'profile/delete/',
+        ProfileDeleteAPIView.as_view(),
+        name='profile-delete'
+    ),
+    path(
         'test/',
         TestAPIView.as_view(),
         name='test'
     ),
+
 
     #Jwt endpoints
     path(
