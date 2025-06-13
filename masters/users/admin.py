@@ -1,6 +1,6 @@
 from django.contrib import admin
-from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin 
+from django.utils.translation import gettext_lazy as _
 
 from .models import CustomUser
 from .models.work_image_model import WorkImage
@@ -12,43 +12,72 @@ class WorkImageAdmin(admin.ModelAdmin):
     search_fields = ['field_name']
     list_per_page = 20
 
-
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
-from users.models.user_model import CustomUser
+
 
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
     list_display = (
-        'first_name', 'last_name', 'mobile_number', 'gender', 'profession_area',
-        'profession_speciality', 'experience_years', 'education', 'is_active',
-        'is_staff', 'created_at'
+        'id', 'first_name', 'last_name', 'mobile_number',
+        'gender', 'profession_area', 'experience_years',
+        'is_active', 'is_staff'
     )
-    list_filter = ('gender', 'education', 'is_active', 'is_staff')
+    list_filter = ('is_active', 'is_staff', 'gender', 'profession_area')
     search_fields = ('first_name', 'last_name', 'mobile_number')
     ordering = ('-created_at',)
-    readonly_fields = ('last_login', 'created_at', 'updated_at')
+    filter_horizontal = ('cities', 'districts', 'languages', 'work_images', 'groups', 'user_permissions')
 
+    # Mövcud istifadəçini redaktə etmək üçün sahələr
     fieldsets = (
-        (None, {'fields': ('mobile_number', 'password')}),
-        ('Şəxsi məlumatlar', {'fields': ('first_name', 'last_name', 'birth_date', 'gender')}),
-        ('Peşə məlumatları', {'fields': ('profession_area', 'profession_speciality', 'experience_years', 'custom_profession', 'cities', 'districts')}),
-        ('Təhsil məlumatları', {'fields': ('education', 'education_speciality', 'languages')}),
-        ('Profil', {'fields': ('profile_image', 'facebook', 'instagram', 'tiktok', 'linkedin', 'work_images', 'note')}),
-        ('İcazələr', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
-        ('Tarixçə', {'fields': ('last_login', 'created_at', 'updated_at')}),
+        (_("Şəxsi məlumatlar"), {
+            "fields": (
+                'first_name', 'last_name', 'birth_date', 'mobile_number', 'gender',
+                'profile_image', 'note'
+            )
+        }),
+        (_("Peşə məlumatları"), {
+            "fields": (
+                'profession_area', 'profession_speciality', 'experience_years',
+                'custom_profession', 'cities', 'districts', 'work_images'
+            )
+        }),
+        (_("Təhsil məlumatları"), {
+            "fields": (
+                'education', 'education_speciality', 'languages',
+            )
+        }),
+        (_("Sosial şəbəkələr"), {
+            "fields": (
+                'facebook', 'instagram', 'tiktok', 'linkedin'
+            )
+        }),
+        (_("İcazələr"), {
+            "fields": (
+                'is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions',
+            )
+        }),
+        (_("Tarixlər"), {
+            "fields": ('last_login', 'created_at', 'updated_at'),
+        }),
     )
 
+    # Yeni istifadəçi yaradanda görünsün deyə bütün sahələri əlavə edirik
     add_fieldsets = (
-        (None, {
+        (_("Əsas məlumatlar"), {
             'classes': ('wide',),
             'fields': (
-                'mobile_number', 'first_name', 'last_name', 'birth_date', 'gender',
-                'password1', 'password2', 'is_active', 'is_staff', 'is_superuser'
+                'mobile_number', 'password1', 'password2',
+                'first_name', 'last_name', 'birth_date', 'gender',
+                'profile_image', 'note',
+                'profession_area', 'profession_speciality', 'experience_years',
+                'custom_profession', 'cities', 'districts', 'work_images',
+                'education', 'education_speciality', 'languages',
+                'facebook', 'instagram', 'tiktok', 'linkedin',
+                'is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions',
             ),
         }),
     )
 
-    filter_horizontal = ('cities', 'districts', 'languages', 'work_images', 'groups', 'user_permissions')
+    readonly_fields = ('created_at', 'updated_at', 'last_login')
