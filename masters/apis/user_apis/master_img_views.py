@@ -10,7 +10,7 @@ from drf_yasg import openapi
 
 from users.models.user_model import CustomUser
 from users.models.work_image_model import WorkImage
-from users.serializers.user_serializers import WorkImageSerializer
+from users.serializers.work_image_serializers import WorkImageSerializer
 from utils.permissions import HeHasPermission
 
 __all__ = [

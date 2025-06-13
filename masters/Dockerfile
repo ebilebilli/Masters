@@ -10,6 +10,9 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
+# gettext quraşdırın
+RUN apt-get update && apt-get install -y gettext
+
 # Python asılılıqlarını quraşdırmaq üçün requirements.txt kopyalayın
 COPY requirements.txt .
 
