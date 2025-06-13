@@ -111,7 +111,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Internationalization
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'az'
 TIME_ZONE = "Asia/Baku"
 USE_I18N = True
 USE_TZ = True
@@ -128,6 +128,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+
     
 #     'DEFAULT_THROTTLE_CLASSES': [
 #         'rest_framework.throttling.UserRateThrottle',

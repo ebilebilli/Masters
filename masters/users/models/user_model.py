@@ -13,7 +13,6 @@ from services.models.service_model import Service
 from reviews.models.review_models import Review
 from core.models.city_model import City, District
 from core.models.language_model import Language
-from .work_image_model import WorkImage
 
 
 
