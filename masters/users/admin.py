@@ -13,6 +13,11 @@ class WorkImageAdmin(admin.ModelAdmin):
     list_per_page = 20
 
 
+from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+from users.models.user_model import CustomUser
+
+
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
@@ -39,7 +44,10 @@ class CustomUserAdmin(UserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('mobile_number', 'first_name', 'last_name', 'birth_date', 'gender', 'password1', 'password2', 'is_active', 'is_staff'),
+            'fields': (
+                'mobile_number', 'first_name', 'last_name', 'birth_date', 'gender',
+                'password1', 'password2', 'is_active', 'is_staff', 'is_superuser'
+            ),
         }),
     )
 
