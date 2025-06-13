@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework_simplejwt import views as jwt_views
 
-from apis.user_apis.register_views import *
+from apis.user_apis.user_views import *
 from apis.user_apis.profile_views  import *
 from apis.user_apis.master_views import *
 from apis.user_apis.master_img_views import *
@@ -66,10 +66,20 @@ urlpatterns = [
         ProfileAPIView.as_view(), 
         name='profile'
     ),
+    # path(
+    #     'update/', 
+    #     ProfileUpdateAPIView.as_view(), 
+    #     name='update'
+    # ),
     path(
-        'update/', 
-        ProfileUpdateAPIView.as_view(), 
-        name='update'
+        'logout/', 
+        LogoutAPIView.as_view(), 
+        name='logout'
+    ),
+    path(
+        'delete/', 
+        UserDeleteAPIView.as_view(), 
+        name='delete'
     ),
     path(
         'test/',

@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -5,10 +6,14 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
 from users.serializers.user_serializers import(
     RegisterSerializer,
     LoginSerializer,
-    ProfileUpdateSerializer
 )
 from rest_framework.generics import CreateAPIView
 
@@ -23,7 +28,13 @@ class WorkImageCreateAPIView(CreateAPIView):
 
 class RegisterAPIView(APIView):
     permission_classes = [AllowAny]
-    parser_classes = [MultiPartParser, FormParser] 
+    parser_classes = [MultiPartParser, FormParser]
+
+    @swagger_auto_schema(
+        operation_summary="İstifadəçi qeydiyyat üçün məlumatlar daxil edilir",
+        request_body=RegisterSerializer(),
+        responses={201: RegisterSerializer(), 400: 'Validasiya xətası'}
+    )
 
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
@@ -69,13 +80,57 @@ class TestAPIView(APIView):
         
 
 
-class ProfileUpdateAPIView(APIView):
+class LogoutAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def patch(self, request):
+    @swagger_auto_schema(
+        operation_summary="İstifadəçinin çıxışı (logout)",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=["refresh"],
+            properties={
+                "refresh": openapi.Schema(type=openapi.TYPE_STRING, description="Refresh token")
+            }
+        ),
+        responses={
+            205: openapi.Response(description="Çıxış uğurla tamamlandı."),
+            400: openapi.Response(description="Token düzgün deyil və ya artıq blacklistdədir.")
+        }
+    )
+
+    def post(self, request):
+        try:
+            refresh_token = request.data.get("refresh")
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response({"detail": "Çıxış uğurla tamamlandı."}, status=status.HTTP_205_RESET_CONTENT)
+        except TokenError:
+            return Response({"detail": "Token düzgün deyil və ya artıq blacklistdədir."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+class UserDeleteAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_summary="İstifadəçi profilinin deaktiv edilməsi (silinməsi əvəzinə)",
+        responses={
+            204: openapi.Response(description="Profil deaktiv edildi (is_active=False)"),
+            401: openapi.Response(description="Avtorizasiya tələb olunur")
+        }
+    )
+    @transaction.atomic
+    def delete(self, request):
         user = request.user
-        serializer = ProfileUpdateSerializer(user, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # Tokenləri blackliste at
+        tokens = OutstandingToken.objects.filter(user=user)
+        for token in tokens:
+            BlacklistedToken.objects.get_or_create(token=token)
+
+        # İstifadəçini tam silmək əvəzinə deaktiv et
+        user.is_active = False
+        user.save()
+
+        return Response({"detail": "İstifadəçi uğurla silindi."}, status=status.HTTP_204_NO_CONTENT)
