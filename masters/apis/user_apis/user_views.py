@@ -86,20 +86,22 @@ register_request_body = openapi.Schema(
         "note": openapi.Schema(type=openapi.TYPE_STRING, description="Qeyd", nullable=True),
     }
 )
+
+# Form-data nümunəsi
 register_form_data_example = {
     "first_name": "Ali",
     "last_name": "Vəliyev",
     "birth_date": "1990-01-01",
     "gender": "male",
-    "mobile_number": "+501234567",
+    "mobile_number": "+994501234567",
     "password": "securepassword123",
     "password2": "securepassword123",
     "cities": [1, 2],
     "districts": [3],
     "languages": [1],
     "profession_area": 1,
-    "profession_speciality": "databaseden seçin",
-    "custom_profession": "databaseden seçin",
+    "profession_speciality": [],
+    "custom_profession": [1],
     "experience_years": 5,
     "education": "Bakalavr",
     "education_speciality": "Kompüter elmləri",
@@ -115,8 +117,9 @@ register_form_data_example = {
 class RegisterAPIView(APIView):
     @swagger_auto_schema(
         request_body=register_request_body,
+        operation_description="User registration endpoint",
         consumes=['multipart/form-data'],
-        responses={201: openapi.Response('Qeydiyyat tamamlandı')},
+        responses={201: openapi.Response(description='Qeydiyyat tamamlandı')},
         examples={
             'multipart/form-data': register_form_data_example
         }
@@ -126,28 +129,6 @@ class RegisterAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         return Response({"detail": "Qeydiyyat uğurla tamamlandı."}, status=status.HTTP_201_CREATED)
-
-class LoginAPIView(APIView):
-    @swagger_auto_schema(request_body=LoginSerializer)
-    def post(self, request):
-        serializer = LoginSerializer(data=request.data)
-        if serializer.is_valid():
-            return Response(serializer.validated_data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-# class TestAPIView(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def get(self, request):
-#         user = request.user
-
-#         if user:
-#             return Response({'mobile_number': user.mobile_number,
-#                             'first_name': user.first_name})
-#         else:
-#             return Response({'detal': 'ok'})
         
 
 
