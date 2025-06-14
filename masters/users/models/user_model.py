@@ -72,6 +72,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     custom_profession = models.CharField(
         max_length=100,
+        validators=[azerbaijani_letters_validator],
         null=True,
         blank=True,
     )
@@ -128,6 +129,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     )
 
     note = models.TextField(
+        validators=[azerbaijani_letters_validator],
         blank=True,
         max_length=1500,
         verbose_name="Əlavə qeyd"
