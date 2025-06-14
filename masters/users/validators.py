@@ -4,7 +4,7 @@ from django.core.validators import RegexValidator
 
 # Azərbaycan dilində hərf validatoru (Ad və soyad üçün)
 azerbaijani_letters_validator = RegexValidator(
-    regex=r'^[A-Za-zƏəÖöĞğÜüÇçŞşİı]+$',
+    regex=r'^(?=.*[A-Za-zƏəÖöĞğÜüÇçŞşİı])[A-Za-zƏəÖöĞğÜüÇçŞşİı\s]+$',
     message='Yalnız Azərbaycan əlifbasındakı hərflərə icazə verilir.'
 )
 

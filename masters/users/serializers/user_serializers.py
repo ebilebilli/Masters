@@ -248,13 +248,12 @@ class RegisterSerializer(serializers.ModelSerializer):
         password = validated_data.pop('password')
         validated_data.pop('password2')
 
-        first_name = validated_data.pop('first_name').capitalize()
-        last_name = validated_data.pop('last_name').capitalize()
-        education_speciality = validated_data.pop('education_speciality')
-        if education_speciality is not None:
+        first_name = validated_data.pop('first_name', '').capitalize()
+        last_name = validated_data.pop('last_name', '').capitalize()
+
+        education_speciality = validated_data.pop('education_speciality', '')
+        if education_speciality:
             education_speciality = education_speciality.capitalize()
-        else:
-            education_speciality = education_speciality
 
         cities = validated_data.pop('cities', [])
         languages = validated_data.pop('languages', [])
