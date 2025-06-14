@@ -81,11 +81,6 @@ urlpatterns = [
         UserDeleteAPIView.as_view(), 
         name='delete'
     ),
-    path(
-        'test/',
-        TestAPIView.as_view(),
-        name='test'
-    ),
 
     #Jwt endpoints
     path(

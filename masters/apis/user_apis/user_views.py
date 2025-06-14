@@ -26,39 +26,74 @@ class WorkImageCreateAPIView(CreateAPIView):
     serializer_class = WorkImageSerializer
 
 
-class RegisterAPIView(APIView):
-    permission_classes = [AllowAny]
-    parser_classes = [MultiPartParser, FormParser]
-
-    @swagger_auto_schema(
-        operation_summary="İstifadəçi qeydiyyat üçün məlumatlar daxil edilir",
-        request_body=RegisterSerializer(),
-        responses={201: RegisterSerializer(), 400: 'Validasiya xətası'}
+work_images_field = openapi.Schema(
+    type=openapi.TYPE_ARRAY,
+    items=openapi.Schema(type=openapi.TYPE_FILE, format='binary'),
+    description="İş şəkilləri (bir neçə fayl)",
+    nullable=True,
     )
 
+register_request_body = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    required=[
+        'first_name', 'last_name', 'birth_date', 'gender', 'mobile_number',
+        'password', 'password2', 'cities', 'languages', 'profession_area',
+        'experience_years', 'education'
+    ],
+    properties={
+        "first_name": openapi.Schema(type=openapi.TYPE_STRING, description="Ad"),
+        "last_name": openapi.Schema(type=openapi.TYPE_STRING, description="Soyad"),
+        "birth_date": openapi.Schema(type=openapi.TYPE_STRING, format='date', description="Doğum tarixi"),
+        "gender": openapi.Schema(type=openapi.TYPE_STRING, description="Cins"),
+        "mobile_number": openapi.Schema(type=openapi.TYPE_STRING, description="Mobil nömrə"),
+        "password": openapi.Schema(type=openapi.TYPE_STRING, format='password', description="Şifrə"),
+        "password2": openapi.Schema(type=openapi.TYPE_STRING, format='password', description="Şifrə təsdiqi"),
+        "cities": openapi.Schema(
+            type=openapi.TYPE_ARRAY,
+            items=openapi.Schema(type=openapi.TYPE_INTEGER),
+            description="Şəhərlərin ID-ləri"
+        ),
+        "districts": openapi.Schema(
+            type=openapi.TYPE_ARRAY,
+            items=openapi.Schema(type=openapi.TYPE_INTEGER),
+            description="Rayonların ID-ləri",
+            nullable=True
+        ),
+        "languages": openapi.Schema(
+            type=openapi.TYPE_ARRAY,
+            items=openapi.Schema(type=openapi.TYPE_INTEGER),
+            description="Dillərin ID-ləri"
+        ),
+        "profession_area": openapi.Schema(type=openapi.TYPE_INTEGER, description="Peşə sahəsi ID"),
+        "profession_speciality": openapi.Schema(type=openapi.TYPE_STRING, description="Peşə ixtisası", nullable=True),
+        "custom_profession": openapi.Schema(type=openapi.TYPE_STRING, description="Xüsusi peşə", nullable=True),
+        "experience_years": openapi.Schema(type=openapi.TYPE_INTEGER, description="İş təcrübəsi ili"),
+        "education": openapi.Schema(type=openapi.TYPE_STRING, description="Təhsil səviyyəsi"),
+        "education_speciality": openapi.Schema(type=openapi.TYPE_STRING, description="Təhsil ixtisası", nullable=True),
+        "profile_image": openapi.Schema(type=openapi.TYPE_FILE, format='binary', description="Profil şəkli", nullable=True),
+        "facebook": openapi.Schema(type=openapi.TYPE_STRING, description="Facebook URL", nullable=True),
+        "instagram": openapi.Schema(type=openapi.TYPE_STRING, description="Instagram URL", nullable=True),
+        "tiktok": openapi.Schema(type=openapi.TYPE_STRING, description="TikTok URL", nullable=True),
+        "linkedin": openapi.Schema(type=openapi.TYPE_STRING, description="LinkedIn URL", nullable=True),
+        "work_images": work_images_field,
+        "note": openapi.Schema(type=openapi.TYPE_STRING, description="Qeyd", nullable=True),
+    }
+)
+
+class RegisterAPIView(APIView):
+
+    @swagger_auto_schema(
+        request_body=register_request_body,
+        consumes=['multipart/form-data']
+    )
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
-        if serializer.is_valid():
-            print("REQUEST GƏLDİ")
-            try:
-                user = serializer.save()
-                return Response({
-                    "message": "İstifadəçi uğurla yaradıldı.",
-                    "user": {
-                        "id": user.id,
-                        "full_name": f"{user.first_name} {user.last_name}",
-                        "mobile_number": user.mobile_number
-                    }
-                }, status=status.HTTP_201_CREATED)
-            except ValidationError as e:
-                return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-            except Exception as e:
-                return Response({"detail": "Gözlənilməz bir xəta baş verdi."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        return Response({"detail": "Qeydiyyat uğurla tamamlandı."}, status=status.HTTP_201_CREATED)
 
 class LoginAPIView(APIView):
+    @swagger_auto_schema(request_body=LoginSerializer)
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
@@ -66,17 +101,18 @@ class LoginAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class TestAPIView(APIView):
-    permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        user = request.user
+# class TestAPIView(APIView):
+#     permission_classes = [IsAuthenticated]
 
-        if user:
-            return Response({'mobile_number': user.mobile_number,
-                            'first_name': user.first_name})
-        else:
-            return Response({'detal': 'ok'})
+#     def get(self, request):
+#         user = request.user
+
+#         if user:
+#             return Response({'mobile_number': user.mobile_number,
+#                             'first_name': user.first_name})
+#         else:
+#             return Response({'detal': 'ok'})
         
 
 
