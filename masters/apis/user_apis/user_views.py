@@ -34,7 +34,7 @@ work_images_field = openapi.Schema(
 )
 
 class RegisterAPIView(APIView):
-    authentication_classes = [AllowAny]
+    permission_classes = [AllowAny]
     parser_classes = [MultiPartParser, FormParser]
 
     @swagger_auto_schema(
@@ -104,6 +104,7 @@ class RegisterAPIView(APIView):
         return Response({"detail": "Qeydiyyat uğurla tamamlandı."}, status=status.HTTP_201_CREATED)
 
 class LoginAPIView(APIView):
+    permission_classes = [AllowAny]
     @swagger_auto_schema(request_body=LoginSerializer)
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
