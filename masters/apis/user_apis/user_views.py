@@ -26,13 +26,6 @@ class WorkImageCreateAPIView(CreateAPIView):
     serializer_class = WorkImageSerializer
 
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
-
-# Mövcud work_images_field və register_request_body (dəyişməz qalır)
 work_images_field = openapi.Schema(
     type=openapi.TYPE_ARRAY,
     items=openapi.Schema(type=openapi.TYPE_FILE, format='binary'),
@@ -100,8 +93,8 @@ register_form_data_example = {
     "districts": [3],
     "languages": [1],
     "profession_area": 1,
-    "profession_speciality": [],
-    "custom_profession": [1],
+    "profession_speciality": 1,
+    "custom_profession": "Veb tərtibatçı",
     "experience_years": 5,
     "education": "Bakalavr",
     "education_speciality": "Kompüter elmləri",
@@ -129,6 +122,28 @@ class RegisterAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         return Response({"detail": "Qeydiyyat uğurla tamamlandı."}, status=status.HTTP_201_CREATED)
+
+class LoginAPIView(APIView):
+    @swagger_auto_schema(request_body=LoginSerializer)
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        if serializer.is_valid():
+            return Response(serializer.validated_data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+# class TestAPIView(APIView):
+#     permission_classes = [IsAuthenticated]
+
+#     def get(self, request):
+#         user = request.user
+
+#         if user:
+#             return Response({'mobile_number': user.mobile_number,
+#                             'first_name': user.first_name})
+#         else:
+#             return Response({'detal': 'ok'})
         
 
 
