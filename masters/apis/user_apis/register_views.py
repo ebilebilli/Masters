@@ -3,13 +3,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.tokens import RefreshToken
-from users.serializers.user_serializers import(
-    RegisterSerializer,
-    LoginSerializer,
-    ProfileUpdateSerializer
-)
+from users.serializers.user_serializers import RegisterSerializer, LoginSerializer
+from users.serializers.profile_serializers import ProfileUpdateSerializer
 from rest_framework.generics import CreateAPIView
 
 from users.serializers.work_image_serializers import WorkImageSerializer
@@ -23,12 +21,12 @@ class WorkImageCreateAPIView(CreateAPIView):
 
 class RegisterAPIView(APIView):
     permission_classes = [AllowAny]
-    parser_classes = [MultiPartParser, FormParser] 
+    parser_classes = [MultiPartParser, FormParser]
 
+    @swagger_auto_schema(request_body=RegisterSerializer)
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
-            print("REQUEST GƏLDİ")
             try:
                 user = serializer.save()
                 return Response({
@@ -44,7 +42,6 @@ class RegisterAPIView(APIView):
             except Exception as e:
                 return Response({"detail": "Gözlənilməz bir xəta baş verdi."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 class LoginAPIView(APIView):
