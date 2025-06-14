@@ -34,6 +34,7 @@ work_images_field = openapi.Schema(
 )
 
 class RegisterAPIView(APIView):
+    authentication_classes = [AllowAny]
     parser_classes = [MultiPartParser, FormParser]
 
     @swagger_auto_schema(
