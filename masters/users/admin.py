@@ -27,7 +27,7 @@ class CustomUserAdmin(UserAdmin):
     list_filter = ('is_active', 'is_staff', 'gender', 'profession_area')
     search_fields = ('first_name', 'last_name', 'mobile_number')
     ordering = ('-created_at',)
-    filter_horizontal = ('cities', 'districts', 'languages', 'work_images', 'groups', 'user_permissions')
+    filter_horizontal = ('cities', 'languages', 'work_images', 'groups', 'user_permissions')
 
     # Mövcud istifadəçini redaktə etmək üçün sahələr
     fieldsets = (
@@ -40,7 +40,7 @@ class CustomUserAdmin(UserAdmin):
         (_("Peşə məlumatları"), {
             "fields": (
                 'profession_area', 'profession_speciality', 'experience_years',
-                'custom_profession', 'cities', 'districts', 'work_images'
+                'custom_profession', 'cities', 'work_images'
             )
         }),
         (_("Təhsil məlumatları"), {
@@ -72,7 +72,7 @@ class CustomUserAdmin(UserAdmin):
                 'first_name', 'last_name', 'birth_date', 'gender',
                 'profile_image', 'note',
                 'profession_area', 'profession_speciality', 'experience_years',
-                'custom_profession', 'cities', 'districts', 'work_images',
+                'custom_profession', 'cities', 'work_images',
                 'education', 'education_speciality', 'languages',
                 'facebook', 'instagram', 'tiktok', 'linkedin',
                 'is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions',
