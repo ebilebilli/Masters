@@ -68,33 +68,6 @@ class RegisterAPIView(APIView):
         responses={
             201: openapi.Response(description='Uğurlu qeydiyyat'),
             400: openapi.Response(description='Validasiya xətası')
-        },
-        examples={
-            'multipart/form-data': {
-                'first_name': 'Ali',
-                'last_name': 'Vəliyev',
-                'birth_date': '1990-01-01',
-                'gender': 'male',
-                'mobile_number': '+994501234567',
-                'password': 'securepassword123',
-                'password2': 'securepassword123',
-                'cities': [1, 2],
-                'districts': [3],
-                'languages': [1],
-                'profession_area': 1,
-                'profession_speciality': 'Proqramçı',
-                'custom_profession': 'Veb tərtibatçı',
-                'experience_years': 5,
-                'education': 'Bakalavr',
-                'education_speciality': 'Kompüter elmləri',
-                'facebook': 'https://facebook.com/ali.valiyev',
-                'instagram': 'https://instagram.com/ali_valiyev',
-                'tiktok': '',
-                'linkedin': '',
-                'profile_image': 'Profil şəkli faylı (məsələn, image.jpg)',
-                'work_images': ['İş şəkli 1 (məsələn, work1.jpg)', 'İş şəkli 2 (məsələn, work2.jpg)'],
-                'note': 'Əlavə qeyd'
-            }
         }
     )
     def post(self, request):

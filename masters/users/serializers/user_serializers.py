@@ -504,11 +504,16 @@ class RegisterSerializer(serializers.ModelSerializer):
         password = validated_data.pop('password')
         validated_data.pop('password2')
 
+        profession_speciality = validated_data.pop("profession_speciality", None)
+
         cities = validated_data.pop('cities', [])
         districts = validated_data.pop('districts', [])
         languages = validated_data.pop('languages', [])
 
-        user = CustomUser.objects.create(**validated_data)
+        user = CustomUser.objects.create(
+            **validated_data, 
+            profession_speciality=profession_speciality
+        )
         user.set_password(password)
         user.save()
 
