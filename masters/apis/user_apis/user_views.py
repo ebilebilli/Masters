@@ -26,12 +26,19 @@ class WorkImageCreateAPIView(CreateAPIView):
     serializer_class = WorkImageSerializer
 
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
+# Mövcud work_images_field və register_request_body (dəyişməz qalır)
 work_images_field = openapi.Schema(
     type=openapi.TYPE_ARRAY,
     items=openapi.Schema(type=openapi.TYPE_FILE, format='binary'),
     description="İş şəkilləri (bir neçə fayl)",
     nullable=True,
-    )
+)
 
 register_request_body = openapi.Schema(
     type=openapi.TYPE_OBJECT,
@@ -79,12 +86,40 @@ register_request_body = openapi.Schema(
         "note": openapi.Schema(type=openapi.TYPE_STRING, description="Qeyd", nullable=True),
     }
 )
+register_form_data_example = {
+    "first_name": "Ali",
+    "last_name": "Vəliyev",
+    "birth_date": "1990-01-01",
+    "gender": "male",
+    "mobile_number": "+501234567",
+    "password": "securepassword123",
+    "password2": "securepassword123",
+    "cities": [1, 2],
+    "districts": [3],
+    "languages": [1],
+    "profession_area": 1,
+    "profession_speciality": "databaseden seçin",
+    "custom_profession": "databaseden seçin",
+    "experience_years": 5,
+    "education": "Bakalavr",
+    "education_speciality": "Kompüter elmləri",
+    "facebook": "https://facebook.com/ali.valiyev",
+    "instagram": "https://instagram.com/ali_valiyev",
+    "tiktok": "",
+    "linkedin": "",
+    "profile_image": "Profil şəkli faylı (məsələn, image.jpg)",
+    "work_images": ["İş şəkli 1 (məsələn, work1.jpg)", "İş şəkli 2 (məsələn, work2.jpg)"],
+    "note": "Əlavə qeyd"
+}
 
 class RegisterAPIView(APIView):
-
     @swagger_auto_schema(
         request_body=register_request_body,
-        consumes=['multipart/form-data']
+        consumes=['multipart/form-data'],
+        responses={201: openapi.Response('Qeydiyyat tamamlandı')},
+        examples={
+            'multipart/form-data': register_form_data_example
+        }
     )
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
