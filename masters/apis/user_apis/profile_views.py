@@ -6,10 +6,8 @@ from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from users.serializers.profile_serializers import (
-    ProfileSerializer,
-    ProfileUpdateSerializer
-)
+from users.serializers.profile_serializers import ProfileSerializer
+
 
 class ProfileAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -47,14 +45,14 @@ class ProfileAPIView(APIView):
 #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ProfileUpdateAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-    parser_classes = [MultiPartParser, FormParser]
+# class ProfileUpdateAPIView(APIView):
+#     permission_classes = [IsAuthenticated]
+#     parser_classes = [MultiPartParser, FormParser]
 
-    def put(self, request):
-        user = request.user
-        serializer = ProfileUpdateSerializer(instance=user, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  
+#     def put(self, request):
+#         user = request.user
+#         serializer = ProfileUpdateSerializer(instance=user, data=request.data, partial=True)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_200_OK)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  

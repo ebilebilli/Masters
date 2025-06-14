@@ -33,94 +33,73 @@ work_images_field = openapi.Schema(
     nullable=True,
 )
 
-register_request_body = openapi.Schema(
-    type=openapi.TYPE_OBJECT,
-    required=[
-        'first_name', 'last_name', 'birth_date', 'gender', 'mobile_number',
-        'password', 'password2', 'cities', 'languages', 'profession_area',
-        'experience_years', 'education'
-    ],
-    properties={
-        "first_name": openapi.Schema(type=openapi.TYPE_STRING, description="Ad"),
-        "last_name": openapi.Schema(type=openapi.TYPE_STRING, description="Soyad"),
-        "birth_date": openapi.Schema(type=openapi.TYPE_STRING, format='date', description="Doğum tarixi"),
-        "gender": openapi.Schema(type=openapi.TYPE_STRING, description="Cins"),
-        "mobile_number": openapi.Schema(type=openapi.TYPE_STRING, description="Mobil nömrə"),
-        "password": openapi.Schema(type=openapi.TYPE_STRING, format='password', description="Şifrə"),
-        "password2": openapi.Schema(type=openapi.TYPE_STRING, format='password', description="Şifrə təsdiqi"),
-        "cities": openapi.Schema(
-            type=openapi.TYPE_ARRAY,
-            items=openapi.Schema(type=openapi.TYPE_INTEGER),
-            description="Şəhərlərin ID-ləri"
-        ),
-        "districts": openapi.Schema(
-            type=openapi.TYPE_ARRAY,
-            items=openapi.Schema(type=openapi.TYPE_INTEGER),
-            description="Rayonların ID-ləri",
-            nullable=True
-        ),
-        "languages": openapi.Schema(
-            type=openapi.TYPE_ARRAY,
-            items=openapi.Schema(type=openapi.TYPE_INTEGER),
-            description="Dillərin ID-ləri"
-        ),
-        "profession_area": openapi.Schema(type=openapi.TYPE_INTEGER, description="Peşə sahəsi ID"),
-        "profession_speciality": openapi.Schema(type=openapi.TYPE_STRING, description="Peşə ixtisası", nullable=True),
-        "custom_profession": openapi.Schema(type=openapi.TYPE_STRING, description="Xüsusi peşə", nullable=True),
-        "experience_years": openapi.Schema(type=openapi.TYPE_INTEGER, description="İş təcrübəsi ili"),
-        "education": openapi.Schema(type=openapi.TYPE_STRING, description="Təhsil səviyyəsi"),
-        "education_speciality": openapi.Schema(type=openapi.TYPE_STRING, description="Təhsil ixtisası", nullable=True),
-        "profile_image": openapi.Schema(type=openapi.TYPE_FILE, format='binary', description="Profil şəkli", nullable=True),
-        "facebook": openapi.Schema(type=openapi.TYPE_STRING, description="Facebook URL", nullable=True),
-        "instagram": openapi.Schema(type=openapi.TYPE_STRING, description="Instagram URL", nullable=True),
-        "tiktok": openapi.Schema(type=openapi.TYPE_STRING, description="TikTok URL", nullable=True),
-        "linkedin": openapi.Schema(type=openapi.TYPE_STRING, description="LinkedIn URL", nullable=True),
-        "work_images": work_images_field,
-        "note": openapi.Schema(type=openapi.TYPE_STRING, description="Qeyd", nullable=True),
-    }
-)
-
-# Form-data nümunəsi
-register_form_data_example = {
-    "first_name": "Ali",
-    "last_name": "Vəliyev",
-    "birth_date": "1990-01-01",
-    "gender": "male",
-    "mobile_number": "+994501234567",
-    "password": "securepassword123",
-    "password2": "securepassword123",
-    "cities": [1, 2],
-    "districts": [3],
-    "languages": [1],
-    "profession_area": 1,
-    "profession_speciality": 1,
-    "custom_profession": "Veb tərtibatçı",
-    "experience_years": 5,
-    "education": "Bakalavr",
-    "education_speciality": "Kompüter elmləri",
-    "facebook": "https://facebook.com/ali.valiyev",
-    "instagram": "https://instagram.com/ali_valiyev",
-    "tiktok": "",
-    "linkedin": "",
-    "profile_image": "Profil şəkli faylı (məsələn, image.jpg)",
-    "work_images": ["İş şəkli 1 (məsələn, work1.jpg)", "İş şəkli 2 (məsələn, work2.jpg)"],
-    "note": "Əlavə qeyd"
-}
-
 class RegisterAPIView(APIView):
+    parser_classes = [MultiPartParser, FormParser]
+
     @swagger_auto_schema(
-        request_body=register_request_body,
-        operation_description="User registration endpoint",
-        consumes=['multipart/form-data'],
-        responses={201: openapi.Response(description='Qeydiyyat tamamlandı')},
+        operation_summary="Form-data ilə istifadəçi qeydiyyatı",
+        operation_description="Fayl yükləmələri ilə istifadəçi qeydiyyatı",
+        manual_parameters=[
+            openapi.Parameter('first_name', openapi.IN_FORM, type=openapi.TYPE_STRING, description="Ad", required=True),
+            openapi.Parameter('last_name', openapi.IN_FORM, type=openapi.TYPE_STRING, description="Soyad", required=True),
+            openapi.Parameter('birth_date', openapi.IN_FORM, type=openapi.TYPE_STRING, format='date', description="Doğum tarixi", required=True),
+            openapi.Parameter('gender', openapi.IN_FORM, type=openapi.TYPE_STRING, description="Cins", required=True),
+            openapi.Parameter('mobile_number', openapi.IN_FORM, type=openapi.TYPE_STRING, description="Mobil nömrə", required=True),
+            openapi.Parameter('password', openapi.IN_FORM, type=openapi.TYPE_STRING, format='password', description="Şifrə", required=True),
+            openapi.Parameter('password2', openapi.IN_FORM, type=openapi.TYPE_STRING, format='password', description="Şifrə təsdiqi", required=True),
+            openapi.Parameter('cities', openapi.IN_FORM, type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_INTEGER), description="Şəhərlərin ID-ləri", collectionFormat='multi', required=True),
+            openapi.Parameter('districts', openapi.IN_FORM, type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_INTEGER), description="Rayonların ID-ləri", collectionFormat='multi', required=False),
+            openapi.Parameter('languages', openapi.IN_FORM, type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_INTEGER), description="Dillərin ID-ləri", collectionFormat='multi', required=True),
+            openapi.Parameter('profession_area', openapi.IN_FORM, type=openapi.TYPE_INTEGER, description="Peşə sahəsi ID", required=True),
+            openapi.Parameter('profession_speciality', openapi.IN_FORM, type=openapi.TYPE_STRING, description="Peşə ixtisası", required=False),
+            openapi.Parameter('custom_profession', openapi.IN_FORM, type=openapi.TYPE_STRING, description="Xüsusi peşə", required=False),
+            openapi.Parameter('experience_years', openapi.IN_FORM, type=openapi.TYPE_INTEGER, description="İş təcrübəsi ili", required=True),
+            openapi.Parameter('education', openapi.IN_FORM, type=openapi.TYPE_STRING, description="Təhsil səviyyəsi", required=True),
+            openapi.Parameter('education_speciality', openapi.IN_FORM, type=openapi.TYPE_STRING, description="Təhsil ixtisası", required=False),
+            openapi.Parameter('profile_image', openapi.IN_FORM, type=openapi.TYPE_FILE, description="Profil şəkli", required=False),
+            openapi.Parameter('work_images', openapi.IN_FORM, type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_FILE), description="İş şəkilləri", collectionFormat='multi', required=False),
+            openapi.Parameter('facebook', openapi.IN_FORM, type=openapi.TYPE_STRING, description="Facebook URL", required=False),
+            openapi.Parameter('instagram', openapi.IN_FORM, type=openapi.TYPE_STRING, description="Instagram URL", required=False),
+            openapi.Parameter('tiktok', openapi.IN_FORM, type=openapi.TYPE_STRING, description="TikTok URL", required=False),
+            openapi.Parameter('linkedin', openapi.IN_FORM, type=openapi.TYPE_STRING, description="LinkedIn URL", required=False),
+            openapi.Parameter('note', openapi.IN_FORM, type=openapi.TYPE_STRING, description="Qeyd", required=False),
+        ],
+        responses={
+            201: openapi.Response(description='Uğurlu qeydiyyat'),
+            400: openapi.Response(description='Validasiya xətası')
+        },
         examples={
-            'multipart/form-data': register_form_data_example
+            'multipart/form-data': {
+                'first_name': 'Ali',
+                'last_name': 'Vəliyev',
+                'birth_date': '1990-01-01',
+                'gender': 'male',
+                'mobile_number': '+994501234567',
+                'password': 'securepassword123',
+                'password2': 'securepassword123',
+                'cities': [1, 2],
+                'districts': [3],
+                'languages': [1],
+                'profession_area': 1,
+                'profession_speciality': 'Proqramçı',
+                'custom_profession': 'Veb tərtibatçı',
+                'experience_years': 5,
+                'education': 'Bakalavr',
+                'education_speciality': 'Kompüter elmləri',
+                'facebook': 'https://facebook.com/ali.valiyev',
+                'instagram': 'https://instagram.com/ali_valiyev',
+                'tiktok': '',
+                'linkedin': '',
+                'profile_image': 'Profil şəkli faylı (məsələn, image.jpg)',
+                'work_images': ['İş şəkli 1 (məsələn, work1.jpg)', 'İş şəkli 2 (məsələn, work2.jpg)'],
+                'note': 'Əlavə qeyd'
+            }
         }
     )
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.save()
+        serializer.save()
         return Response({"detail": "Qeydiyyat uğurla tamamlandı."}, status=status.HTTP_201_CREATED)
 
 class LoginAPIView(APIView):
