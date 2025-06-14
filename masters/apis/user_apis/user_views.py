@@ -27,34 +27,65 @@ class WorkImageCreateAPIView(CreateAPIView):
 
 
 class RegisterAPIView(APIView):
-    permission_classes = [AllowAny]
-    parser_classes = [MultiPartParser, FormParser]
+    parser_classes = [MultiPartParser, FormParser]  # <-- Əsas şərt!
 
     @swagger_auto_schema(
-        operation_summary="İstifadəçi qeydiyyat üçün məlumatlar daxil edilir",
-        request_body=RegisterSerializer(),
-        responses={201: RegisterSerializer(), 400: 'Validasiya xətası'}
+        operation_summary="Form-data ilə istifadəçi qeydiyyatı",
+        manual_parameters=[
+            openapi.Parameter('first_name', openapi.IN_FORM, type=openapi.TYPE_STRING),
+            openapi.Parameter('last_name', openapi.IN_FORM, type=openapi.TYPE_STRING),
+            openapi.Parameter('birth_date', openapi.IN_FORM, type=openapi.TYPE_STRING, format='date'),
+            openapi.Parameter('gender', openapi.IN_FORM, type=openapi.TYPE_STRING),
+            openapi.Parameter('mobile_number', openapi.IN_FORM, type=openapi.TYPE_STRING),
+            openapi.Parameter('password', openapi.IN_FORM, type=openapi.TYPE_STRING),
+            openapi.Parameter('password2', openapi.IN_FORM, type=openapi.TYPE_STRING),
+            openapi.Parameter('cities', openapi.IN_FORM, type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_INTEGER), collectionFormat='multi'),
+            openapi.Parameter('languages', openapi.IN_FORM, type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_INTEGER), collectionFormat='multi'),
+            openapi.Parameter('profession_area', openapi.IN_FORM, type=openapi.TYPE_INTEGER),
+            openapi.Parameter('experience_years', openapi.IN_FORM, type=openapi.TYPE_INTEGER),
+            openapi.Parameter('education', openapi.IN_FORM, type=openapi.TYPE_STRING),
+            openapi.Parameter('profile_image', openapi.IN_FORM, type=openapi.TYPE_FILE),
+            openapi.Parameter('work_images', openapi.IN_FORM, type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_FILE), collectionFormat='multi'),
+        ],
+        responses={201: 'Uğurlu qeydiyyat', 400: 'Validasiya xətası'}
     )
-
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
-        if serializer.is_valid():
-            print("REQUEST GƏLDİ")
-            try:
-                user = serializer.save()
-                return Response({
-                    "message": "İstifadəçi uğurla yaradıldı.",
-                    "user": {
-                        "id": user.id,
-                        "full_name": f"{user.first_name} {user.last_name}",
-                        "mobile_number": user.mobile_number
-                    }
-                }, status=status.HTTP_201_CREATED)
-            except ValidationError as e:
-                return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-            except Exception as e:
-                return Response({"detail": "Gözlənilməz bir xəta baş verdi."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"detail": "Qeydiyyat uğurla tamamlandı."}, status=status.HTTP_201_CREATED)
+
+
+
+# class RegisterAPIView(APIView):
+#     permission_classes = [AllowAny]
+#     parser_classes = [MultiPartParser, FormParser]
+
+#     @swagger_auto_schema(
+#         operation_summary="İstifadəçi qeydiyyat üçün məlumatlar daxil edilir",
+#         request_body=RegisterSerializer(),
+#         responses={201: RegisterSerializer(), 400: 'Validasiya xətası'}
+#     )
+
+#     def post(self, request):
+#         serializer = RegisterSerializer(data=request.data)
+#         if serializer.is_valid():
+#             print("REQUEST GƏLDİ")
+#             try:
+#                 user = serializer.save()
+#                 return Response({
+#                     "message": "İstifadəçi uğurla yaradıldı.",
+#                     "user": {
+#                         "id": user.id,
+#                         "full_name": f"{user.first_name} {user.last_name}",
+#                         "mobile_number": user.mobile_number
+#                     }
+#                 }, status=status.HTTP_201_CREATED)
+#             except ValidationError as e:
+#                 return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+#             except Exception as e:
+#                 return Response({"detail": "Gözlənilməz bir xəta baş verdi."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
