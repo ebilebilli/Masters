@@ -558,32 +558,3 @@ class LoginSerializer(serializers.Serializer):
                 "mobile_number": user.mobile_number,
             }
         }
-
-
-
-class ProfileUpdateSerializer(serializers.ModelSerializer):
-    cities = serializers.PrimaryKeyRelatedField(queryset=City.objects.all(), many=True, required=False)
-    languages = serializers.PrimaryKeyRelatedField(queryset=Language.objects.all(), many=True, required=False)
-    work_images = serializers.PrimaryKeyRelatedField(queryset=WorkImage.objects.all(), many=True, required=False)
-
-    class Meta:
-        model = CustomUser
-        exclude = ['password', 'last_login', 'is_staff', 'is_superuser', 'groups', 'user_permissions', 'created_at', 'updated_at']
-
-    def update(self, instance, validated_data):
-        cities = validated_data.pop('cities', None)
-        languages = validated_data.pop('languages', None)
-        work_images = validated_data.get('work_images', None)
-
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-
-        if cities is not None:
-            instance.cities.set(cities)
-        if languages is not None:
-            instance.languages.set(languages)
-        if work_images is not None:
-            instance.work_images.set(work_images)
-
-        instance.save()
-        return instance
