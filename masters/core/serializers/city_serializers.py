@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from core.models.city_model import City, District
+from core.models.city_model import City
 
 
 class CitySerializer(serializers.ModelSerializer):  
@@ -8,7 +8,7 @@ class CitySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class DistrictSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = District
-        fields = ['id', 'name', 'display_name', 'city']
+# class DistrictSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = District
+#         fields = ['id', 'name', 'display_name', 'city']

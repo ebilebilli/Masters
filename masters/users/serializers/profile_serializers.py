@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from core.models.city_model import City, District
+from core.models.city_model import City
 from core.models.language_model import Language
 from users.models import CustomUser
 from users.models import  WorkImage

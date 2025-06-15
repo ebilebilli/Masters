@@ -13,11 +13,11 @@ urlpatterns = [
         CityListAPIView.as_view(),
         name='cities'
     ),
-    path(
-        'districts/',
-        DistrictListAPIView.as_view(),
-        name='districts'
-    ),
+    # path(
+    #     'districts/',
+    #     DistrictListAPIView.as_view(),
+    #     name='districts'
+    # ),
 
     #Language endpointss
     path(

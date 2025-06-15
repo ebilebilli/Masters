@@ -1,5 +1,5 @@
 from django.contrib import admin
-from core.models.city_model import City, District
+from core.models.city_model import City
 from core.models.language_model import Language
 
 
@@ -8,11 +8,11 @@ class CityAdmin(admin.ModelAdmin):
     search_fields = ('name', 'display_name')
     ordering = ('display_name',)
 
-class DistrictAdmin(admin.ModelAdmin):
-    list_display = ('id', 'display_name', 'name', 'city')
-    search_fields = ('name', 'display_name')
-    list_filter = ('city',)
-    ordering = ('display_name',)
+# class DistrictAdmin(admin.ModelAdmin):
+#     list_display = ('id', 'display_name', 'name', 'city')
+#     search_fields = ('name', 'display_name')
+#     list_filter = ('city',)
+#     ordering = ('display_name',)
 
 
 class LanguageAdmin(admin.ModelAdmin):
@@ -22,5 +22,5 @@ class LanguageAdmin(admin.ModelAdmin):
 
 
 admin.site.register(City, CityAdmin)
-admin.site.register(District, DistrictAdmin)
+# admin.site.register(District, DistrictAdmin)
 admin.site.register(Language, LanguageAdmin)
