@@ -20,7 +20,7 @@ class SearchAPIView(APIView):
     profession_area_id_param = openapi.Parameter('profession_area_id', openapi.IN_QUERY, description="Profession area", type=openapi.TYPE_INTEGER)
     profession_speciality_id_param = openapi.Parameter('profession_speciality_id', openapi.IN_QUERY, description="Profession speciality", type=openapi.TYPE_INTEGER)
     city_id_param = openapi.Parameter('city_id', openapi.IN_QUERY, description="City ID", type=openapi.TYPE_INTEGER)
-    district_id_param = openapi.Parameter('district_id', openapi.IN_QUERY, description="District ID", type=openapi.TYPE_INTEGER)
+    # district_id_param = openapi.Parameter('district_id', openapi.IN_QUERY, description="District ID", type=openapi.TYPE_INTEGER)
     language_id_param = openapi.Parameter('language_id', openapi.IN_QUERY, description="Language ID", type=openapi.TYPE_INTEGER)
     education_param = openapi.Parameter('education', openapi.IN_QUERY, description="Education level", type=openapi.TYPE_STRING)
     experience_years_param = openapi.Parameter('experience_years', openapi.IN_QUERY, description="Experience years", type=openapi.TYPE_INTEGER)
@@ -34,7 +34,7 @@ class SearchAPIView(APIView):
             profession_area_id_param,
             profession_speciality_id_param,
             city_id_param,
-            district_id_param,
+            # district_id_param,
             language_id_param,
             education_param,
             experience_years_param,
@@ -56,7 +56,7 @@ class SearchAPIView(APIView):
         profession_area_id = request.query_params.get('profession_area_id')
         profession_speciality_id = request.query_params.get('profession_speciality_id')
         city_id = request.query_params.get('city_id')
-        district_id = request.query_params.get('district_id')
+        # district_id = request.query_params.get('district_id')
         language_id = request.query_params.get('language_id')
         education = request.query_params.get('education')
         experience_years = request.query_params.get('experience_years')
@@ -81,8 +81,8 @@ class SearchAPIView(APIView):
         if city_id:
             queryset = queryset.filter(cities__id=city_id)
 
-        if district_id:
-            queryset = queryset.filter(districts__id=district_id)
+        # if district_id:
+        #     queryset = queryset.filter(districts__id=district_id)
 
         if language_id:
             queryset = queryset.filter(languages__id=language_id)
@@ -109,7 +109,7 @@ class SearchAPIView(APIView):
                 'profession_area': master.profession_area.name if master.profession_area else '',
                 'profession_speciality': master.profession_speciality.name if master.profession_speciality else '',
                 'city': [city.name for city in master.cities.all()],
-                'district': [district.name for district in master.districts.all()],
+                # 'district': [district.name for district in master.districts.all()],
                 'language': [language.name for language in master.languages.all()],
                 'education': master.education,
                 'experience_years': master.experience_years
