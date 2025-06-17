@@ -24,7 +24,8 @@ class ProfileAPIView(APIView):
             ),
             403: "Bu səhifə əlçatan deyil",
             401: "Avtorizasiya tələb olunur"
-        }
+        },
+        security=[{"Bearer": []}]
     )
 
     def get(self, request):
@@ -67,7 +68,8 @@ class ProfileUpdateAPIView(APIView):
             400: "Validation error",
             401: "Unauthorized",
             403: "Forbidden"
-        }
+        },
+        security=[{"Bearer": []}]
     )
     def patch(self, request, user_id):
         user = request.user
