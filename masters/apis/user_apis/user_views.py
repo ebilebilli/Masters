@@ -75,6 +75,7 @@ class RegisterAPIView(APIView):
         serializer.save()
         return Response({"detail": "Qeydiyyat uğurla tamamlandı."}, status=status.HTTP_201_CREATED)
 
+
 class LoginAPIView(APIView):
     permission_classes = [AllowAny]
     @swagger_auto_schema(request_body=LoginSerializer)
@@ -83,21 +84,6 @@ class LoginAPIView(APIView):
         if serializer.is_valid():
             return Response(serializer.validated_data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-# class TestAPIView(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def get(self, request):
-#         user = request.user
-
-#         if user:
-#             return Response({'mobile_number': user.mobile_number,
-#                             'first_name': user.first_name})
-#         else:
-#             return Response({'detal': 'ok'})
-        
 
 
 class LogoutAPIView(APIView):

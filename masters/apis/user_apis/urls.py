@@ -67,11 +67,11 @@ urlpatterns = [
         ProfileAPIView.as_view(), 
         name='profile'
     ),
-    # path(
-    #     'update/', 
-    #     ProfileUpdateAPIView.as_view(), 
-    #     name='update'
-    # ),
+    path(
+        'update/', 
+        ProfileUpdateAPIView.as_view(), 
+        name='update'
+    ),
     path(
         'logout/', 
         LogoutAPIView.as_view(), 
