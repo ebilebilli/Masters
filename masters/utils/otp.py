@@ -5,16 +5,6 @@ from random import choices
 
 
 def create_otp(mobile_number):
-    """
-    Generates a One-Time Password (OTP) code and stores it in Redis
-    with a 3-minute expiration time for the given mobile number.
-
-    Args:
-        mobile_number (str): The mobile number to associate the OTP with.
-
-    Returns:
-        str: The generated OTP code.
-    """
     #code = ''.join(choices('0123456789', k=6))
     code = 111111   #it is default code for development
 
@@ -29,17 +19,20 @@ def create_otp(mobile_number):
     return code
 
 
+def get_mobile_number_by_otp_in_redis(otp_code):
+    redis_client = redis.Redis(
+        host=settings.REDIS_HOST,
+        port=settings.REDIS_PORT,
+        db=settings.REDIS_DB
+    )
+    for key in redis_client.scan_iter(match='otp:*'):
+        stored_code = redis_client.get(key)
+        if stored_code and stored_code.decode('utf-8') == otp_code:
+            return key.decode('utf-8').split(':')[1]
+    return None
+
+
 def check_otp_in_redis(data):
-    """
-    Checks if the OTP code provided in `data` matches the stored OTP 
-    in Redis for the given mobile number.
-
-    Args:
-        data (dict): A dictionary containing 'mobile_number' and 'otp_code' keys.
-
-    Raises:
-        ValidationError: If the OTP is missing, expired, or does not match.
-    """
     redis_client = redis.Redis(
             host=settings.REDIS_HOST,
             port=settings.REDIS_PORT,
@@ -52,16 +45,10 @@ def check_otp_in_redis(data):
         raise ValidationError({'otp_code': 'Yanlış və ya vaxtı keçmiş OTP kodu.'})
 
 
-def delete_otp_in_redis(mobile_number):
-    """
-    Deletes the OTP code stored in Redis for the given mobile number
-
-    Args:
-        mobile_number(str): The mobile number whose OTP entry should be deleted.
-    """
+def delete_otp_in_redis(data):
     redis_client = redis.Redis(
         host=settings.REDIS_HOST,
         port=settings.REDIS_PORT,
         db=settings.REDIS_DB
         )
-    redis_client.delete(f'otp:{mobile_number}')
+    redis_client.delete(f'otp:{data["mobile_number"]}')

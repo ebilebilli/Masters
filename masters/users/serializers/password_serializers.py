@@ -1,7 +1,9 @@
+import uuid
+from django.conf import settings
+import redis
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from users.models.user_model import CustomUser
-from utils.otp import check_otp_in_redis, delete_otp_in_redis
 
 
 class PasswordResetRequestSerializer(serializers.Serializer):
@@ -23,38 +25,49 @@ class PasswordResetRequestSerializer(serializers.Serializer):
         return self._user
 
 
-class PasswordResetConfirmSerializer(serializers.Serializer):
-    """
-    Serializer to confirm password reset using OTP and set a new password.
-    Validates OTP, ensures new passwords match, and applies Django's 
-    password validation policy.
-    """
-    mobile_number = serializers.CharField(max_length=13, required=True)
+class VerifyOTPSerializer(serializers.Serializer):
     otp_code = serializers.CharField(max_length=6, required=True)
+
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
     new_password = serializers.CharField(write_only=True, required=True)
     new_password_two = serializers.CharField(write_only=True, required=True)
-    
+
     def validate(self, data):
-        if not CustomUser.objects.filter(mobile_number=data['mobile_number']).exists():
-            raise serializers.ValidationError({'mobile_number': 'Bu telefon nömrəsi ilə istifadəçi tapılmadı.'})
+        token = self.context['request'].headers.get('Authorization', '').replace('Bearer ', '')
+        if not token:
+            raise serializers.ValidationError({'error': 'Redis token tələb olunur.'})
+
+        redis_client = redis.Redis(
+            host=settings.REDIS_HOST,
+            port=settings.REDIS_PORT,
+            db=settings.REDIS_DB
+        )
+        mobile_number = redis_client.get(f'token:{token}')
+        if not mobile_number:
+            raise serializers.ValidationError({'token': 'Yanlış və ya vaxtı keçmiş token.'})
         
-        try:
-            check_otp_in_redis(data)
-        except Exception as e:
-            raise serializers.ValidationError({'otp_code': f'OTP yoxlaması uğursuz: {str(e)}'})
-        
+        mobile_number = mobile_number.decode('utf-8')
+        self.context['mobile_number'] = mobile_number  
+
         if data['new_password'] != data['new_password_two']:
             raise serializers.ValidationError({'new_password': 'Şifrələr uyğun deyil.'})
         
-        user = CustomUser.objects.get(mobile_number=data['mobile_number'])
+        user = CustomUser.objects.get(mobile_number=mobile_number)
         validate_password(data['new_password'], user=user)
         return data
-        
+
     def save(self):
-        mobile_number = self.validated_data['mobile_number']
+        mobile_number = self.context['mobile_number']
         new_password = self.validated_data['new_password']
         user = CustomUser.objects.get(mobile_number=mobile_number)
         user.set_password(new_password)
         user.save()
-        delete_otp_in_redis(mobile_number)
+        redis_client = redis.Redis(
+            host=settings.REDIS_HOST,
+            port=settings.REDIS_PORT,
+            db=settings.REDIS_DB
+        )
+        token = self.context['request'].headers.get('Authorization', '').replace('Bearer ', '')
+        redis_client.delete(f'token:{token}')
         return user
