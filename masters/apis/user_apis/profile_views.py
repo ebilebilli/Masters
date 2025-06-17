@@ -80,4 +80,24 @@ class ProfileUpdateAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class ProfileDeleteAPIVview(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_summary="İstifadəçi profilinin deaktiv edilməsi",
+        responses={
+            200: openapi.Response(description="Profil deaktiv edildi"),
+            401: "Authorization tələb olunur",
+        },
+        security=[{"Bearer": []}]
+    )
+
+    def delete(self, request):
+        request.user.is_active = False
+        request.user.save()
+        return Response({'message': 'Profiliniz uğurla deaktiv edildi'}, status=status.HTTP_204_NO_CONTENT)
+        
+
   

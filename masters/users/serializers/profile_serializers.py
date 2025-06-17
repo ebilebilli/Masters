@@ -90,6 +90,12 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
         profession_speciality = attrs.get("profession_speciality", user.profession_speciality)
         custom_profession = attrs.get("custom_profession", user.custom_profession)
 
+        if profession_area and profession_speciality:
+            if profession_speciality.category_id != profession_area.id:
+                raise serializers.ValidationError({
+                    "profession_speciality": "Seçilmiş peşə ixtisası bu sahəyə aid deyil."
+                })
+
         if profession_area.name.lower() == "other":
             if profession_speciality:
                 raise serializers.ValidationError({
