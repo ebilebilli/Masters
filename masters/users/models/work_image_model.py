@@ -6,4 +6,4 @@ class WorkImage(models.Model):
     order = models.PositiveIntegerField(default=0, verbose_name="Sıra")
 
     def __str__(self):
-        return f"İş Şəkli {self.id}"
+        return f"İş Şəkli {self.image.url} {self.id}"
