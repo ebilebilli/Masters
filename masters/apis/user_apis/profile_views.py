@@ -11,6 +11,8 @@ from users.serializers.profile_serializers import ProfileSerializer, ProfileUpda
 from utils.permissions import HeHasPermission
 
 class ProfileAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     http_method_names = ['get']
 
     @swagger_auto_schema(
@@ -25,16 +27,14 @@ class ProfileAPIView(APIView):
         }
     )
 
-    def get(self, request, user_id):
-        user = request.user
-        if user.id != user_id:
-            return Response({'error': 'Icazəniz yoxdur'})
-        
+    def get(self, request):
         serializer = ProfileSerializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 
 class ProfileUpdateAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser] 
     http_method_names = ['patch']
 
@@ -71,9 +71,6 @@ class ProfileUpdateAPIView(APIView):
     )
     def patch(self, request, user_id):
         user = request.user
-        if user.id != user_id:
-            return Response({'error': 'Icazəniz yoxdur'})
-        
         serializer = ProfileUpdateSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()

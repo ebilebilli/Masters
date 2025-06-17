@@ -63,12 +63,12 @@ urlpatterns = [
         name='login'
     ),
     path(
-        'profile/<int:user_id>/', 
+        'profile/', 
         ProfileAPIView.as_view(), 
         name='profile'
     ),
     path(
-        'profile/<int:user_id>/update/', 
+        'profile/update/', 
         ProfileUpdateAPIView.as_view(), 
         name='profile-update'
     ),
