@@ -31,9 +31,15 @@ __all__ = [
 
 class PasswordResetRequestAPIView(APIView):
     """
-    API endpoint to request a password reset OTP via mobile number.
-    Applies throttling to limit request rate.
+    API endpoint to send an OTP to the user's mobile number for password reset.
+
+    Accepts a mobile number, validates it, and sends an OTP via a background task (or directly).
+    Designed to initiate the password reset process.
+
+    Permissions: AllowAny (no authentication required)
+    Method: POST
     """
+
     permission_classes = [AllowAny]
     # throttle_classes = [AnonRateThrottle, UserRateThrottle]
     http_method_names = ['post']
@@ -62,6 +68,16 @@ class PasswordResetRequestAPIView(APIView):
 
 
 class VerifyOTPAPIView(APIView):
+    """
+    API endpoint to verify the OTP sent to the user's mobile number.
+
+    Accepts an OTP code, validates it with Redis or temporary storage,
+    and returns a temporary token if verification is successful.
+
+    Permissions: AllowAny
+    Method: POST
+    """
+
     permission_classes = [AllowAny]
     http_method_names = ['post']
 
@@ -100,6 +116,16 @@ class VerifyOTPAPIView(APIView):
 
 
 class PasswordResetConfirmAPIView(APIView):
+    """
+    API endpoint to confirm password reset using a temporary token.
+
+    Accepts a new password and token, verifies the token,
+    and updates the user's password accordingly.
+
+    Permissions: AllowAny
+    Method: POST
+    """
+
     permission_classes = [AllowAny]
     http_method_names = ['post']
     

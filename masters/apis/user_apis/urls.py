@@ -95,9 +95,9 @@ urlpatterns = [
         name='verify-otp'
     ),
     path(
-        'password/reset/',
+        'password/reset/confirm/',
         PasswordResetConfirmAPIView.as_view(),
-        name='password-reset'
+        name='password-reset-confirm'
     ),
 
     #Jwt endpoints
