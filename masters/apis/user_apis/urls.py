@@ -82,12 +82,7 @@ urlpatterns = [
         LogoutAPIView.as_view(), 
         name='logout'
     ),
-    path(
-        'delete/', 
-        UserDeleteAPIView.as_view(), 
-        name='delete'
-    ),
-
+ 
     # OTP endpoints
     path(
         'password/reset/request/',

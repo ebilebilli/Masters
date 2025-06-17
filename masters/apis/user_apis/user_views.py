@@ -118,31 +118,3 @@ class LogoutAPIView(APIView):
             return Response({"detail": "Çıxış uğurla tamamlandı."}, status=status.HTTP_205_RESET_CONTENT)
         except TokenError:
             return Response({"detail": "Token düzgün deyil və ya artıq blacklistdədir."}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
-class UserDeleteAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    @swagger_auto_schema(
-        operation_summary="İstifadəçi profilinin deaktiv edilməsi (silinməsi əvəzinə)",
-        responses={
-            204: openapi.Response(description="Profil deaktiv edildi (is_active=False)"),
-            401: openapi.Response(description="Avtorizasiya tələb olunur")
-        }
-    )
-    @transaction.atomic
-    def delete(self, request):
-        user = request.user
-
-        # Tokenləri blackliste at
-        tokens = OutstandingToken.objects.filter(user=user)
-        for token in tokens:
-            BlacklistedToken.objects.get_or_create(token=token)
-
-        # İstifadəçini tam silmək əvəzinə deaktiv et
-        user.is_active = False
-        user.save()
-
-        return Response({"detail": "İstifadəçi uğurla silindi."}, status=status.HTTP_204_NO_CONTENT)

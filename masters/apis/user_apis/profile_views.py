@@ -8,7 +8,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 from users.serializers.profile_serializers import ProfileSerializer, ProfileUpdateSerializer
-
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 
 __all__ = [
     'ProfileAPIView',
@@ -105,8 +105,14 @@ class ProfileDeleteAPIView(APIView):
     )
 
     def delete(self, request):
-        request.user.is_active = False
-        request.user.save()
+        user = request.user
+        user.is_active = False
+        user.save()
+
+        tokens = OutstandingToken.objects.filter(user=user)
+        for token in tokens:
+            BlacklistedToken.objects.get_or_create(token=token)
+
         return Response({'message': 'Profiliniz uğurla deaktiv edildi'}, status=status.HTTP_204_NO_CONTENT)
         
 
