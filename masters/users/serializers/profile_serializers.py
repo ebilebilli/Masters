@@ -1,4 +1,4 @@
-from PIL import Image
+
 from rest_framework import serializers
 
 from services.models.category_model import Category
@@ -71,7 +71,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = [
             "first_name", "last_name", "birth_date", "gender", "mobile_number",
-            "profession_area", "profession_speciality", "custom_profession", "experience_years",
+            "profession_area", "profession_speciality", "custom_profession", "experience_years",'work_images',
             "cities", "education", "education_speciality", "languages",
             "profile_image", "facebook", "instagram", "tiktok", "linkedin", "note"
         ]
