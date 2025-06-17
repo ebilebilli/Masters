@@ -5,6 +5,7 @@ from apis.user_apis.user_views import *
 from apis.user_apis.profile_views  import *
 from apis.user_apis.master_views import *
 from apis.user_apis.master_img_views import *
+from apis.user_apis.otp_views import *
 
 
 
@@ -80,6 +81,18 @@ urlpatterns = [
         'delete/', 
         UserDeleteAPIView.as_view(), 
         name='delete'
+    ),
+
+    # OTP endpoints
+    path(
+        'password/reset/request/',
+        PasswordResetRequestAPIView.as_view(),
+        name='password-reset-request'  
+    ),
+    path(
+        'password/reset/confirm/',
+        PasswordResetConfirmAPIView.as_view(),
+        name='password-reset-confirm'
     ),
 
     #Jwt endpoints
