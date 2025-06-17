@@ -24,7 +24,7 @@ class ProfileAPIView(APIView):
     http_method_names = ['get']
 
     @swagger_auto_schema(
-        operation_summary="İstifadəçi profil məlumatlarının gətirilməsi",
+        operation_summary="Retrieval of user profile information",
         responses={
             200: openapi.Response(
                 description="İstifadəçi profil məlumatları",
@@ -48,8 +48,8 @@ class ProfileUpdateAPIView(APIView):
     http_method_names = ['patch']
 
     @swagger_auto_schema(
-        operation_summary="Profil yeniləməsi",
-        operation_description="İstifadəçi profilini yeniləmək",
+        operation_summary="Profile update",
+        operation_description="Update user profile",
         manual_parameters=[
             openapi.Parameter('first_name', openapi.IN_FORM, type=openapi.TYPE_STRING, description="Ad", required=False),
             openapi.Parameter('last_name', openapi.IN_FORM, type=openapi.TYPE_STRING, description="Soyad", required=False),
@@ -97,7 +97,7 @@ class ProfileDeleteAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
-        operation_summary="İstifadəçi profilinin deaktiv edilməsi",
+        operation_summary="Deactivation of user profile",
         responses={
             200: openapi.Response(description="Profil deaktiv edildi"),
             401: "Authorization tələb olunur",
