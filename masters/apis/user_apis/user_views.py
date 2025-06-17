@@ -72,8 +72,14 @@ class RegisterAPIView(APIView):
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response({"detail": "Qeydiyyat uğurla tamamlandı."}, status=status.HTTP_201_CREATED)
+        user = serializer.save()
+        refresh = RefreshToken.for_user(user)
+        tokens = {
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+            }
+
+        return Response({"detail": "Qeydiyyat uğurla tamamlandı.", 'token': tokens}, status=status.HTTP_201_CREATED)
 
 
 class LoginAPIView(APIView):
