@@ -10,6 +10,7 @@ from drf_yasg import openapi
 from users.serializers.profile_serializers import ProfileSerializer, ProfileUpdateSerializer
 from utils.permissions import HeHasPermission
 
+
 class ProfileAPIView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -71,7 +72,7 @@ class ProfileUpdateAPIView(APIView):
         },
         security=[{"Bearer": []}]
     )
-    def patch(self, request, user_id):
+    def patch(self, request):
         user = request.user
         serializer = ProfileUpdateSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
