@@ -72,11 +72,14 @@ class ProfileUpdateAPIView(APIView):
             openapi.Parameter('note', openapi.IN_FORM, type=openapi.TYPE_STRING, description="Qeyd", required=False),
         ],
         responses={
-            200: ProfileUpdateSerializer,
-            400: "Validation error",
-            401: "Unauthorized",
-            403: "Forbidden"
-        },
+        200: openapi.Response(
+            description="Yenilənmiş profil məlumatları",
+            schema=ProfileUpdateSerializer()
+        ),
+        400: "Validation error",
+        401: "Unauthorized",
+        403: "Forbidden"
+    },
         security=[{"Bearer": []}]
     )
     def patch(self, request):
