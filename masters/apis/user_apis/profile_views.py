@@ -12,7 +12,8 @@ from utils.permissions import HeHasPermission
 
 class ProfileAPIView(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, HeHasPermission]
+    permission_classes = [IsAuthenticated]
+    http_method_names = ['get']
 
     @swagger_auto_schema(
         operation_summary="İstifadəçi profil məlumatlarının gətirilməsi",
@@ -33,7 +34,8 @@ class ProfileAPIView(APIView):
 
 class ProfileUpdateAPIView(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, HeHasPermission]
+    permission_classes = [IsAuthenticated]
+    http_method_names = ['patch']
     parser_classes = [MultiPartParser, FormParser] 
 
     @swagger_auto_schema(
