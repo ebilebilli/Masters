@@ -90,7 +90,7 @@ urlpatterns = [
         name='password-reset-request'  
     ),
     path(
-        'otp/verify/',
+        'password/otp/verify/',
         VerifyOTPAPIView.as_view(),
         name='verify-otp'
     ),
