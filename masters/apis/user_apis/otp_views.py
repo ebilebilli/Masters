@@ -17,7 +17,7 @@ __all__ = [
 
 class PasswordResetRequestAPIView(APIView):
     """
-    API endpoint to request a password reset OTP via phone number.
+    API endpoint to request a password reset OTP via mobile number.
     Applies throttling to limit request rate.
     """
     permission_classes = [AllowAny]
@@ -38,7 +38,7 @@ class PasswordResetRequestAPIView(APIView):
         serializer = PasswordResetRequestSerializer(data=request.data)
         if serializer.is_valid():
             try:
-                send_otp_task.delay((serializer.validated_data['phone_number']))
+                send_otp_task.delay((serializer.validated_data['mobile_number']))
                 serializer.save()
                 return Response({'message': 'OTP göndərildi.'}, status=status.HTTP_200_OK)
             except Exception as e:

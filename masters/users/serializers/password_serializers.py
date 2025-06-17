@@ -26,7 +26,6 @@ class PasswordResetRequestSerializer(serializers.Serializer):
 class PasswordResetConfirmSerializer(serializers.Serializer):
     """
     Serializer to confirm password reset using OTP and set a new password.
-
     Validates OTP, ensures new passwords match, and applies Django's 
     password validation policy.
     """
