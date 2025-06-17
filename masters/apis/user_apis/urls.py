@@ -63,14 +63,14 @@ urlpatterns = [
         name='login'
     ),
     path(
-        'profile/', 
+        'profile/<int:user_id>/', 
         ProfileAPIView.as_view(), 
         name='profile'
     ),
     path(
-        'update/', 
+        'profile/<int:user_id>/update/', 
         ProfileUpdateAPIView.as_view(), 
-        name='update'
+        name='profile-update'
     ),
     path(
         'logout/', 
