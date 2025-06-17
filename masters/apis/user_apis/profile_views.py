@@ -9,12 +9,12 @@ from drf_yasg import openapi
 
 from users.serializers.profile_serializers import ProfileSerializer, ProfileUpdateSerializer
 
+
 __all__ = [
     'ProfileAPIView',
     'ProfileUpdateAPIView',
     'ProfileDeleteAPIView'
 ]
-
 
 
 class ProfileAPIView(APIView):
