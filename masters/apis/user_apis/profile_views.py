@@ -8,7 +8,13 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 from users.serializers.profile_serializers import ProfileSerializer, ProfileUpdateSerializer
-from utils.permissions import HeHasPermission
+
+__all__ = [
+    'ProfileAPIView',
+    'ProfileUpdateAPIView',
+    'ProfileDeleteAPIView'
+]
+
 
 
 class ProfileAPIView(APIView):
@@ -81,7 +87,7 @@ class ProfileUpdateAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ProfileDeleteAPIVview(APIView):
+class ProfileDeleteAPIView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 

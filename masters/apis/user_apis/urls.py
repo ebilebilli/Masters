@@ -73,6 +73,11 @@ urlpatterns = [
         name='profile-update'
     ),
     path(
+        'profile/delete/', 
+        ProfileDeleteAPIView.as_view(), 
+        name='profile-delete'
+    ),
+    path(
         'logout/', 
         LogoutAPIView.as_view(), 
         name='logout'
