@@ -42,6 +42,7 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
             check_otp_in_redis(data)
         except Exception as e:
             raise serializers.ValidationError({'otp_code': f'OTP yoxlaması uğursuz: {str(e)}'})
+        
         if data['new_password'] != data['new_password_two']:
             raise serializers.ValidationError({'new_password': 'Şifrələr uyğun deyil.'})
         
