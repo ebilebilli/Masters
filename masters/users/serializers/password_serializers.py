@@ -22,6 +22,7 @@ class PasswordResetRequestSerializer(serializers.Serializer):
     def save(self):
         return self._user
 
+
 class PasswordResetConfirmSerializer(serializers.Serializer):
     """
     Serializer to confirm password reset using OTP and set a new password.
