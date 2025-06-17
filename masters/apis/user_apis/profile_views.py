@@ -10,6 +10,7 @@ from drf_yasg import openapi
 from users.serializers.profile_serializers import ProfileSerializer, ProfileUpdateSerializer
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 
+
 __all__ = [
     'ProfileAPIView',
     'ProfileUpdateAPIView',
