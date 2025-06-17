@@ -1,3 +1,4 @@
+from PIL import Image
 from rest_framework import serializers
 
 from services.models.category_model import Category
@@ -63,6 +64,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
     cities = serializers.PrimaryKeyRelatedField(many=True, queryset=City.objects.all(), required=False)
     languages = serializers.PrimaryKeyRelatedField(many=True, queryset=Language.objects.all(), required=False)
     profile_image = serializers.ImageField(required=False)
+    work_images = serializers.PrimaryKeyRelatedField(many=True, queryset=WorkImage.objects.all(), required=False)
 
 
     class Meta:
@@ -127,10 +129,36 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
             })
 
         return attrs
+    
+    def validate_work_images(self, value):
+        if len(value) > 10:
+            raise serializers.ValidationError("Ən çox 10 iş şəkli seçilə bilər.")
+
+        for image_obj in value:
+            try:
+                img_field = image_obj.image
+            except AttributeError:
+                raise serializers.ValidationError("Şəkil obyektində 'image' sahəsi yoxdur.")
+
+            if img_field.size > 5 * 1024 * 1024:
+                raise serializers.ValidationError(f"{img_field.name} faylı 5MB-dan böyükdür.")
+
+            try:
+                img = Image.open(img_field)
+                img.verify()
+                if img.format not in ['JPEG', 'JPG', 'PNG']:
+                    raise serializers.ValidationError(
+                        f"{img_field.name} şəkil formatı uyğun deyil. Yalnız JPG və PNG formatları dəstəklənir."
+                    )
+            except Exception:
+                raise serializers.ValidationError(f"{img_field.name} faylı şəkil deyil və ya zədəlidir.")
+
+        return value
 
     def update(self, instance, validated_data):
         cities = validated_data.pop("cities", None)
         languages = validated_data.pop("languages", None)
+        work_images = validated_data.pop("work_images", None)
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
@@ -139,6 +167,9 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
             instance.cities.set(cities)
         if languages is not None:
             instance.languages.set(languages)
+
+        if work_images is not None:
+            instance.work_images.set(work_images)
 
         instance.save()
         return instance
