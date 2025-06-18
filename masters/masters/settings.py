@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'sslserver',
     'corsheaders',
+    'storages',
 
     #Apps
     'core',
