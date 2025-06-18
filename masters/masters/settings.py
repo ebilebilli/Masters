@@ -156,9 +156,8 @@ REDIS_PORT = os.getenv('REDIS_PORT')
 REDIS_DB = os.getenv('REDIS_DB')
 
 #Media settings
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-MEDIA_URL = "uploads/"
+MEDIA_ROOT = '/app/media/'
+MEDIA_URL = '/uploads/'
 
 # Static files
 STATIC_URL = 'static/'
