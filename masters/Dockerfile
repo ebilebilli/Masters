@@ -17,8 +17,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Layihə fayllarını kopyala
 COPY . .
 
-# collectstatic S3-ə yükləmək üçün AWS mühit dəyişənləri lazım olacaq
-RUN python manage.py collectstatic --noinput
-
 # Prod server üçün gunicorn
 CMD ["gunicorn", "masters.wsgi:application", "--bind", "0.0.0.0:8000"]
