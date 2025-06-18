@@ -36,6 +36,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             'custom_profession',
             'education',
             'education_speciality',
+            'experience_years',
             'languages',
             'cities',
             'work_images',
@@ -58,6 +59,8 @@ class ProfileSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
 
         data['education'] = instance.get_education_display()
+
+        data['gender'] = instance.get_education_display()
 
         if instance.profession_area:
             data['profession_area'] = instance.profession_area.display_name
