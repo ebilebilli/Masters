@@ -9,3 +9,6 @@ __pycache__/
 
 #media
 media/
+
+#env
+.env
