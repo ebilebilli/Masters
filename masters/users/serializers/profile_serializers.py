@@ -60,7 +60,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
         data['education'] = instance.get_education_display()
 
-        data['gender'] = instance.get_education_display()
+        data['gender'] = instance.get_gender_display()
 
         if instance.profession_area:
             data['profession_area'] = instance.profession_area.display_name
