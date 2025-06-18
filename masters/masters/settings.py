@@ -90,7 +90,8 @@ DATABASES = {
         'PORT': os.getenv('POSTGRES_PORT', '5432'),
         'CONN_MAX_AGE': 600,  
         'OPTIONS': {
-            'sslmode': 'require',  
+            'sslmode': 'require',
+            # 'sslmode': 'disable',
         },
     }
 }

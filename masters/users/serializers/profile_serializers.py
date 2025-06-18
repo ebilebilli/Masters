@@ -24,6 +24,8 @@ class ProfileSerializer(serializers.ModelSerializer):
             'last_name',
             'profile_image',
             'note',
+            'gender',
+            'birth_date',
             'mobile_number',
             'facebook',
             'instagram',
@@ -31,6 +33,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             'linkedin',
             'profession_speciality',
             'profession_area',
+            'custom_profession',
             'education',
             'education_speciality',
             'languages',
@@ -53,6 +56,15 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
+
+        data['education'] = instance.get_education_display()
+
+        if instance.profession_area:
+            data['profession_area'] = instance.profession_area.display_name
+
+        if instance.profession_speciality:
+            data['profession_speciality'] = instance.profession_speciality.display_name
+
         return {key: value for key, value in data.items() if value not in [None, '', [], {}]}
 
     
