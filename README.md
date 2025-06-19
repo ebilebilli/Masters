@@ -3,13 +3,14 @@
 ## Tech Stack
 
 <p align="center">
-  <img src="https://my-bucket.s3.amazonaws.com/static/django.png" alt="Django" height="50" />
-  <img src="https://my-bucket.s3.amazonaws.com/static/drf.png" alt="DRF" height="50" />
-  <img src="https://my-bucket.s3.amazonaws.com/static/celery.png" alt="Celery" height="50" />
-  <img src="https://my-bucket.s3.amazonaws.com/static/redis.png" alt="Redis" height="50" />
-  <img src="https://my-bucket.s3.amazonaws.com/static/postgresql.png" alt="PostgreSQL" height="50" />
-  <img src="https://my-bucket.s3.amazonaws.com/static/aws_s3.png" alt="AWS S3" height="50" />
-  <img src="https://my-bucket.s3.amazonaws.com/static/swagger.png" alt="Swagger" height="50" />
+  <img src="https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white" alt="Python" height="50" />
+  <img src="https://img.shields.io/badge/Django-092E20?style=flat&logo=django&logoColor=white" alt="Django" height="50" />
+  <img src="https://img.shields.io/badge/DRF-ff1709?style=flat&logo=django&logoColor=white" alt="DRF" height="50" />
+  <img src="https://img.shields.io/badge/PostgreSQL-316192?style=flat&logo=postgresql&logoColor=white" alt="PostgreSQL" height="50" />
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white" alt="Docker" height="50" />
+  <img src="https://img.shields.io/badge/Redis-DC382D?style=flat&logo=redis&logoColor=white" alt="Redis" height="50" />>
+  <img src="https://img.shields.io/badge/Celery-37814A?style=flat&logo=python&logoColor=white" alt="Celery" height="50" />
+  <img src="https://img.shields.io/badge/AWS-232F3E?style=flat&logo=amazonaws&logoColor=white" alt="AWS" height="50" />
 </p>
 
 ## Overview
