@@ -3,14 +3,14 @@
 ## Tech Stack
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white" alt="Python" height="50" />
-  <img src="https://img.shields.io/badge/Django-092E20?style=flat&logo=django&logoColor=white" alt="Django" height="50" />
-  <img src="https://img.shields.io/badge/DRF-ff1709?style=flat&logo=django&logoColor=white" alt="DRF" height="50" />
-  <img src="https://img.shields.io/badge/PostgreSQL-316192?style=flat&logo=postgresql&logoColor=white" alt="PostgreSQL" height="50" />
-  <img src="https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white" alt="Docker" height="50" />
-  <img src="https://img.shields.io/badge/Redis-DC382D?style=flat&logo=redis&logoColor=white" alt="Redis" height="50" />>
-  <img src="https://img.shields.io/badge/Celery-37814A?style=flat&logo=python&logoColor=white" alt="Celery" height="50" />
-  <img src="https://img.shields.io/badge/AWS-232F3E?style=flat&logo=amazonaws&logoColor=white" alt="AWS" height="50" />
+  <img src="https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white" alt="Python" height="40" />
+  <img src="https://img.shields.io/badge/Django-092E20?style=flat&logo=django&logoColor=white" alt="Django" height="40" />
+  <img src="https://img.shields.io/badge/DRF-ff1709?style=flat&logo=django&logoColor=white" alt="DRF" height="40" />
+  <img src="https://img.shields.io/badge/PostgreSQL-316192?style=flat&logo=postgresql&logoColor=white" alt="PostgreSQL" height="40" />
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white" alt="Docker" height="40" />
+  <img src="https://img.shields.io/badge/Redis-DC382D?style=flat&logo=redis&logoColor=white" alt="Redis" height="40" />>
+  <img src="https://img.shields.io/badge/Celery-37814A?style=flat&logo=python&logoColor=white" alt="Celery" height="40" />
+  <img src="https://img.shields.io/badge/AWS-232F3E?style=flat&logo=amazonaws&logoColor=white" alt="AWS" height="40" />
 </p>
 
 ## Overview
@@ -46,19 +46,73 @@ A robust, modular Django REST API for managing professionals ("professionals"), 
 
 ```
 # requirements.txt (partial)
+amqp==5.3.1
+asgiref==3.8.1
+billiard==4.2.1
+boto3==1.34.103
+botocore==1.34.103
+celery==5.5.2
+certifi==2025.4.26
+charset-normalizer==3.4.2
+click==8.2.0
+click-didyoumean==0.3.1
+click-plugins==1.1.1
+click-repl==0.3.0
+colorama==0.4.6
+coreapi==2.3.3
+coreschema==0.0.4
+dj-database-url==3.0.0
 Django==5.2.1
+django-autoslug==1.9.9
+django-cities-light==3.10.1
+django-cors-headers==4.7.0
+django-elasticsearch-dsl==8.0
+django-redis==5.4.0
+django-rest-swagger==2.2.0
+django-sslserver==0.22
+django-storages==1.14.6
 djangorestframework==3.16.0
 djangorestframework_simplejwt==5.5.0
-celery==5.5.2
-redis==6.1.0
-django-elasticsearch-dsl==8.0
+dotenv==0.9.9
+drf-yasg==1.21.10
+elastic-transport==8.17.1
 elasticsearch==8.18.1
-django-storages==1.14.6
-boto3==1.34.103
+elasticsearch-dsl==8.18.0
 gunicorn==23.0.0
+idna==3.10
+inflection==0.5.1
+itypes==1.2.0
+Jinja2==3.1.6
+jmespath==1.0.1
+kombu==5.5.3
+MarkupSafe==3.0.2
+openapi-codec==1.3.2
+packaging==25.0
+pillow==11.2.1
+progressbar2==4.5.0
+prompt_toolkit==3.0.51
 psycopg2-binary==2.9.10
-# ... see requirements.txt for full list
-```
+PyJWT==2.9.0
+python-dateutil==2.9.0.post0
+python-dotenv==1.1.0
+python-utils==3.9.1
+pytz==2025.2
+PyYAML==6.0.2
+redis==6.1.0
+requests==2.32.3
+s3transfer==0.10.0
+simplejson==3.20.1
+six==1.17.0
+sqlparse==0.5.3
+typing_extensions==4.13.2
+tzdata==2025.2
+Unidecode==1.4.0
+uritemplate==4.1.1
+urllib3==2.4.0
+vine==5.1.0
+wcwidth==0.2.13
+whitenoise==6.9.0
+
 </details>
 
 ---
