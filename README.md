@@ -2,15 +2,15 @@
 
 ## Tech Stack
 
-<p align="center">
-  <img src="static/django.png" alt="Django" height="50"/>
-  <img src="static/drf.png" alt="DRF" height="50"/>
-  <img src="static/celery.png" alt="Celery" height="50"/>
-  <img src="static/redis.png" alt="Redis" height="50"/>
-  <img src="static/postgresql.png" alt="PostgreSQL" height="50"/>
-  <img src="static/aws_s3.png" alt="AWS S3" height="50"/>
-  <img src="static/swagger.png" alt="Swagger" height="50"/>
-</p>
+<div style="display: flex; justify-content: center; align-items: center; gap: 20px;">
+  <img src="static/django.png" alt="Django" height="50" />
+  <img src="static/drf.png" alt="DRF" height="50" />
+  <img src="static/celery.png" alt="Celery" height="50" />
+  <img src="static/redis.png" alt="Redis" height="50" />
+  <img src="static/postgresql.png" alt="PostgreSQL" height="50" />
+  <img src="static/aws_s3.png" alt="AWS S3" height="50" />
+  <img src="static/swagger.png" alt="Swagger" height="50" />
+</div>
 
 ## Overview
 A robust, modular Django REST API for managing professionals ("professionals"), services, reviews, and user authentication. Features JWT auth, OTP, Redis-cache-powered search, async tasks with Celery, and cloud-ready deployment.
