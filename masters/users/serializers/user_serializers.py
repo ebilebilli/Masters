@@ -10,14 +10,17 @@ from users.models import  WorkImage
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
+    cities = serializers.SerializerMethodField()
 
     class Meta:
         model = CustomUser
         exclude = [
             'password', 'is_superuser', 'is_staff', 'user_permissions', 'groups',
-            'last_login', 'is_active', 
+            'last_login', 'is_active',
         ]
-   
+        
+    def get_cities(self, obj):
+        return [city.display_name for city in obj.cities.all()]
 
 
 class RegisterSerializer(serializers.ModelSerializer):
