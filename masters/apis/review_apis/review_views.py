@@ -107,13 +107,13 @@ class CreateReviewAPIView(APIView):
     @transaction.atomic
     def post(self, request, master_id):
         user = request.user
+        master = get_object_or_404(CustomUser, is_active=True, id=master_id)
         if user.id == master_id:
             return Response({'error': 'Özünüzə şərh əlavə edə bilmərsiniz'}, status=status.HTTP_403_FORBIDDEN)
         
         if Review.objects.filter(master=master, user=user).exists():
             raise ValidationError('Siz artıq bu usta üçün rəy bildirmisiniz.')
         
-        master = get_object_or_404(CustomUser, is_active=True, id=master_id)
         serializer = ReviewSerializer(data=request.data, context={'user': user, 'master': master})
         if serializer.is_valid():
             serializer.save()
