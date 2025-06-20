@@ -50,20 +50,20 @@ class CreateReviewAPIView(APIView):
     http_method_names = ['post']
 
     @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(
-                'review_images',
-                openapi.IN_FORM,
-                description="Şəkillər (max 3)",
-                type=openapi.TYPE_ARRAY,
-                items=openapi.Items(type=openapi.TYPE_FILE),
-                max_items=3,
-            )
-        ],
-        request_body=ReviewSerializer,
-        operation_description="Yeni rəy əlavə edir.",
-        responses={201: ReviewSerializer()}
+    manual_parameters=[
+        openapi.Parameter(
+            'review_images',
+            openapi.IN_FORM,
+            description="Şəkillər (max 3)",
+            type=openapi.TYPE_ARRAY,
+            items=openapi.Items(type=openapi.TYPE_FILE),
+            max_items=3,
+        )
+    ],
+    operation_description="Yeni rəy əlavə edir.",
+    responses={201: ReviewSerializer()}
     )
+    
     @transaction.atomic
     def post(self, request, master_id):
         user = request.user
@@ -102,7 +102,7 @@ class UpdateReviewAPIView(APIView):
         operation_description="Mövcud rəyin məlumatlarını yeniləyir.",
         responses={200: ReviewSerializer()}
     )
-    
+
     @transaction.atomic
     def patch(self, request, review_id):
         review = get_object_or_404(Review, id=review_id)
