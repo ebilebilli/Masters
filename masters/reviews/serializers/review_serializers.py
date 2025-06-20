@@ -35,6 +35,10 @@ class ReviewSerializer(serializers.ModelSerializer):
         rating = data.get('rating')
         if rating < 0 or rating > 5:
             raise serializers.ValidationError('1-5 arasında olmalıdır')
+        
+        username = data.get('username')
+        if username and len(username) > 20:
+            raise serializers.ValidationError('Max 20 simvol daxil edə bilərsiz')
 
         return data
     
@@ -80,7 +84,8 @@ class ReviewSerializer(serializers.ModelSerializer):
         master = self.context['master']
         review_images = validated_data.pop('review_images', [])
 
-        review = Review.objects.create(user=str(user), master=master, **validated_data)
+        user_str = str(user)[:20]
+        review = Review.objects.create(user=user_str, master=master, **validated_data)
 
         for idx, image in enumerate(review_images):
             ReviewWorkImage.objects.create(review=review, image=image, order=idx)
