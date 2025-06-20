@@ -7,14 +7,16 @@ from core.models.city_model import City
 from core.models.language_model import Language
 from users.models import CustomUser
 from users.models import  WorkImage
+from core.serializers.city_serializers import CitySerializer
 
 class ProfileSerializer(serializers.ModelSerializer):
     profile_image = serializers.ImageField()
     profession_speciality = serializers.StringRelatedField()
     profession_area = serializers.StringRelatedField()
     languages = serializers.StringRelatedField(many=True)
-    cities = serializers.StringRelatedField(many=True)
+    cities = CitySerializer(many=True)
     work_images = serializers.StringRelatedField(many=True)
+
 
     class Meta:
         model = CustomUser
@@ -54,6 +56,9 @@ class ProfileSerializer(serializers.ModelSerializer):
             'average_patient',
             'review_count',
         ]
+        
+    def get_cities(self, obj):
+        return [city.display_name for city in obj.cities.all()]   
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

@@ -5,7 +5,7 @@ from core.models.city_model import City
 class CitySerializer(serializers.ModelSerializer):  
     class Meta:
         model = City
-        fields = '__all__'
+        fields = ['id', 'display_name']
 
 
 # class DistrictSerializer(serializers.ModelSerializer):
