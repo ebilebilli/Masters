@@ -80,15 +80,14 @@ class ReviewSerializer(serializers.ModelSerializer):
         return instance
         
     def create(self, validated_data):
-        user = self.context['user']
+        user = self.context['user']  # burada user instance olmalıdır (CustomUser obj)
         master = self.context['master']
         review_images = validated_data.pop('review_images', [])
 
-        user_str = str(user)[:20]
-        review = Review.objects.create(user=user_str, master=master, **validated_data)
+        review = Review.objects.create(user=user, master=master, **validated_data)
 
         for idx, image in enumerate(review_images):
             ReviewWorkImage.objects.create(review=review, image=image, order=idx)
 
-        return review    
+        return review
         
