@@ -3,7 +3,7 @@ from django.core.validators import FileExtensionValidator
 
 from reviews.models.review_models import Review
 from reviews.models.review_img_model import ReviewWorkImage
-from reviews.serializers.review_img_serializer import ReviewImageSerializer
+from review_img_serializer import ReviewImageSerializer
 
 
 class ReviewSerializer(serializers.ModelSerializer):
