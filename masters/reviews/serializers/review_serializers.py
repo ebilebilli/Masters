@@ -4,6 +4,7 @@ from django.core.validators import FileExtensionValidator
 from reviews.models.review_models import Review
 from reviews.models.review_img_model import ReviewWorkImage
 
+from review_img_serializer import ReviewImageSerializer
 
 class ReviewSerializer(serializers.ModelSerializer):
     review_images = serializers.ListField(
@@ -12,9 +13,11 @@ class ReviewSerializer(serializers.ModelSerializer):
         ),
         max_length=3,
         required=False,
-        allow_null=True
+        allow_null=True,
+        write_only=True
     )
     master = serializers.PrimaryKeyRelatedField(read_only=True)
+    images = ReviewImageSerializer(many=True, read_only=True)
     
     class Meta:
         model = Review
@@ -57,11 +60,30 @@ class ReviewSerializer(serializers.ModelSerializer):
 
         return value
     
+    def update(self, instance, validated_data):
+        review_images = validated_data.pop('review_images', None)
+
+     
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        if review_images is not None:
+            instance.images.all().delete()
+            for idx, image in enumerate(review_images):
+                ReviewWorkImage.objects.create(review=instance, image=image, order=idx)
+
+        return instance
+        
     def create(self, validated_data):
+        user = self.context['user']
+        master = self.context['master']
         review_images = validated_data.pop('review_images', [])
-        review = Review.objects.create(**validated_data)
+
+        review = Review.objects.create(user=str(user), master=master, **validated_data)
+
         for idx, image in enumerate(review_images):
             ReviewWorkImage.objects.create(review=review, image=image, order=idx)
 
-        return review        
-    
+        return review    
+        

@@ -14,6 +14,7 @@ from reviews.serializers.review_serializers import ReviewSerializer
 from utils.paginations import PaginationForMainPage
 from utils.permissions import HeHasPermission
 
+
 __all__ = [
     'ReviewsForMasterAPIView',
     'CreateReviewAPIView',
@@ -49,6 +50,16 @@ class CreateReviewAPIView(APIView):
     http_method_names = ['post']
 
     @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'review_images',
+                openapi.IN_FORM,
+                description="Şəkillər (max 3)",
+                type=openapi.TYPE_ARRAY,
+                items=openapi.Items(type=openapi.TYPE_FILE),
+                max_items=3,
+            )
+        ],
         request_body=ReviewSerializer,
         operation_description="Yeni rəy əlavə edir.",
         responses={201: ReviewSerializer()}
@@ -62,10 +73,10 @@ class CreateReviewAPIView(APIView):
             master = CustomUser.objects.get(is_active=True, id=master_id)
         except CustomUser.DoesNotExist:
             return Response({'detail': 'Usta tapılmadı.'}, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = ReviewSerializer(data=request.data)
+        
+        serializer = ReviewSerializer(data=request.data, context={'user': user, 'master': master})
         if serializer.is_valid():
-            serializer.save(user=user, master=master)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -77,10 +88,21 @@ class UpdateReviewAPIView(APIView):
     http_method_names = ['patch']
 
     @swagger_auto_schema(
+    manual_parameters=[
+            openapi.Parameter(
+                'review_images',
+                openapi.IN_FORM,
+                description="Şəkillər (max 3)",
+                type=openapi.TYPE_ARRAY,
+                items=openapi.Items(type=openapi.TYPE_FILE),
+                max_items=3,
+            )
+        ],
         request_body=ReviewSerializer,
         operation_description="Mövcud rəyin məlumatlarını yeniləyir.",
         responses={200: ReviewSerializer()}
     )
+    
     @transaction.atomic
     def patch(self, request, review_id):
         review = get_object_or_404(Review, id=review_id)
