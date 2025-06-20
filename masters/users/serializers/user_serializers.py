@@ -11,9 +11,11 @@ from users.models import  WorkImage
 
 class CustomUserSerializer(serializers.ModelSerializer):
     cities = serializers.SerializerMethodField()
-    languages = serializers.SerializerMethodField()  
-    profession_area = serializers.SerializerMethodField()
-    profession_speciality = serializers.SerializerMethodField()
+    profile_image = serializers.ImageField()
+    profession_speciality = serializers.StringRelatedField()
+    profession_area = serializers.StringRelatedField()
+    languages = serializers.StringRelatedField(many=True)
+    work_images = serializers.StringRelatedField(many=True)
 
     class Meta:
         model = CustomUser
@@ -25,14 +27,20 @@ class CustomUserSerializer(serializers.ModelSerializer):
     def get_cities(self, obj):
         return [city.display_name for city in obj.cities.all()]
     
-    def get_languages(self, obj):  
-        return [lang.display_name for lang in obj.languages.all()]
-    
-    def get_profession_area(self, obj):
-        return obj.profession_area.name 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
 
-    def get_profession_speciality(self, obj):
-        return obj.profession_speciality.name 
+        data['education'] = instance.get_education_display()
+
+        data['gender'] = instance.get_gender_display()  
+
+        if instance.profession_area:
+            data['profession_area'] = instance.profession_area.display_name
+
+        if instance.profession_speciality:
+            data['profession_speciality'] = instance.profession_speciality.display_name
+
+        return {key: value for key, value in data.items() if value not in [None, '', [], {}]}
 
 
 class RegisterSerializer(serializers.ModelSerializer):
