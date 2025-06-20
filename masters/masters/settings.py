@@ -22,6 +22,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 CORS_ALLOW_ALL_ORIGINS=True 
 CORS_ALLOW_CREDENTIALS=False
     
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 # Application definition
 INSTALLED_APPS = [
