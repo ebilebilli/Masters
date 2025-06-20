@@ -51,31 +51,51 @@ class CreateReviewAPIView(APIView):
 
     @swagger_auto_schema(
         operation_description="Yeni rəy əlavə edir.",
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
-                'username': openapi.Schema(type=openapi.TYPE_STRING, description="İstifadəçi adı"),
-                'comment': openapi.Schema(type=openapi.TYPE_STRING, description="Rəy mətni"),
-                'rating': openapi.Schema(type=openapi.TYPE_INTEGER, description="Reytinq (1-5)"),
-                'responsible': openapi.Schema(type=openapi.TYPE_INTEGER, description="Məsuliyyətli (1-5)", nullable=True),
-                'neat': openapi.Schema(type=openapi.TYPE_INTEGER, description="Səliqəli (1-5)", nullable=True),
-                'time_management': openapi.Schema(type=openapi.TYPE_INTEGER, description="Vaxta nəzarət (1-5)", nullable=True),
-                'communicative': openapi.Schema(type=openapi.TYPE_INTEGER, description="Ünsiyyətcil (1-5)", nullable=True),
-                'punctual': openapi.Schema(type=openapi.TYPE_INTEGER, description="Dəqiq (1-5)", nullable=True),
-                'professional': openapi.Schema(type=openapi.TYPE_INTEGER, description="Peşəkar (1-5)", nullable=True),
-                'experienced': openapi.Schema(type=openapi.TYPE_INTEGER, description="Təcrübəli (1-5)", nullable=True),
-                'efficient': openapi.Schema(type=openapi.TYPE_INTEGER, description="Səmərəli (1-5)", nullable=True),
-                'agile': openapi.Schema(type=openapi.TYPE_INTEGER, description="Çevik (1-5)", nullable=True),
-                'patient': openapi.Schema(type=openapi.TYPE_INTEGER, description="Səbirli (1-5)", nullable=True),
-                'review_images': openapi.Schema(
-                    type=openapi.TYPE_ARRAY,
-                    items=openapi.Items(type=openapi.TYPE_FILE),
-                    description="Şəkillər (max 3)",
-                    maxItems=3
-                ),
-            },
-            required=['comment', 'rating']
-        ),
+        manual_parameters=[
+            openapi.Parameter(
+                'username', openapi.IN_FORM, description="İstifadəçi adı", type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'comment', openapi.IN_FORM, description="Rəy mətni", type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'rating', openapi.IN_FORM, description="Reytinq (1-5)", type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                'responsible', openapi.IN_FORM, description="Məsuliyyətli (1-5)", type=openapi.TYPE_INTEGER, required=False
+            ),
+            openapi.Parameter(
+                'neat', openapi.IN_FORM, description="Səliqəli (1-5)", type=openapi.TYPE_INTEGER, required=False
+            ),
+            openapi.Parameter(
+                'time_management', openapi.IN_FORM, description="Vaxta nəzarət (1-5)", type=openapi.TYPE_INTEGER, required=False
+            ),
+            openapi.Parameter(
+                'communicative', openapi.IN_FORM, description="Ünsiyyətcil (1-5)", type=openapi.TYPE_INTEGER, required=False
+            ),
+            openapi.Parameter(
+                'punctual', openapi.IN_FORM, description="Dəqiq (1-5)", type=openapi.TYPE_INTEGER, required=False
+            ),
+            openapi.Parameter(
+                'professional', openapi.IN_FORM, description="Peşəkar (1-5)", type=openapi.TYPE_INTEGER, required=False
+            ),
+            openapi.Parameter(
+                'experienced', openapi.IN_FORM, description="Təcrübəli (1-5)", type=openapi.TYPE_INTEGER, required=False
+            ),
+            openapi.Parameter(
+                'efficient', openapi.IN_FORM, description="Səmərəli (1-5)", type=openapi.TYPE_INTEGER, required=False
+            ),
+            openapi.Parameter(
+                'agile', openapi.IN_FORM, description="Çevik (1-5)", type=openapi.TYPE_INTEGER, required=False
+            ),
+            openapi.Parameter(
+                'patient', openapi.IN_FORM, description="Səbirli (1-5)", type=openapi.TYPE_INTEGER, required=False
+            ),
+            openapi.Parameter(
+                'review_images', openapi.IN_FORM, description="Şəkillər (max 3)", type=openapi.TYPE_ARRAY,
+                items=openapi.Items(type=openapi.TYPE_FILE), maxItems=3
+            ),
+        ],
         responses={
             201: ReviewSerializer(),
             403: openapi.Response('Özünüzə şərh əlavə edə bilmərsiniz'),
@@ -103,30 +123,51 @@ class UpdateReviewAPIView(APIView):
 
     @swagger_auto_schema(
         operation_description="Mövcud rəyin məlumatlarını yeniləyir.",
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
-                'username': openapi.Schema(type=openapi.TYPE_STRING, description="İstifadəçi adı"),
-                'comment': openapi.Schema(type=openapi.TYPE_STRING, description="Rəy mətni"),
-                'rating': openapi.Schema(type=openapi.TYPE_INTEGER, description="Reytinq (1-5)"),
-                'responsible': openapi.Schema(type=openapi.TYPE_INTEGER, description="Məsuliyyətli (1-5)", nullable=True),
-                'neat': openapi.Schema(type=openapi.TYPE_INTEGER, description="Səliqəli (1-5)", nullable=True),
-                'time_management': openapi.Schema(type=openapi.TYPE_INTEGER, description="Vaxta nəzarət (1-5)", nullable=True),
-                'communicative': openapi.Schema(type=openapi.TYPE_INTEGER, description="Ünsiyyətcil (1-5)", nullable=True),
-                'punctual': openapi.Schema(type=openapi.TYPE_INTEGER, description="Dəqiq (1-5)", nullable=True),
-                'professional': openapi.Schema(type=openapi.TYPE_INTEGER, description="Peşəkar (1-5)", nullable=True),
-                'experienced': openapi.Schema(type=openapi.TYPE_INTEGER, description="Təcrübəli (1-5)", nullable=True),
-                'efficient': openapi.Schema(type=openapi.TYPE_INTEGER, description="Səmərəli (1-5)", nullable=True),
-                'agile': openapi.Schema(type=openapi.TYPE_INTEGER, description="Çevik (1-5)", nullable=True),
-                'patient': openapi.Schema(type=openapi.TYPE_INTEGER, description="Səbirli (1-5)", nullable=True),
-                'review_images': openapi.Schema(
-                    type=openapi.TYPE_ARRAY,
-                    items=openapi.Items(type=openapi.TYPE_FILE),
-                    description="Şəkillər (max 3)",
-                    maxItems=3
-                ),
-            }
-        ),
+        manual_parameters=[
+            openapi.Parameter(
+                'username', openapi.IN_FORM, description="İstifadəçi adı", type=openapi.TYPE_STRING, required=False
+            ),
+            openapi.Parameter(
+                'comment', openapi.IN_FORM, description="Rəy mətni", type=openapi.TYPE_STRING, required=False
+            ),
+            openapi.Parameter(
+                'rating', openapi.IN_FORM, description="Reytinq (1-5)", type=openapi.TYPE_INTEGER, required=False
+            ),
+            openapi.Parameter(
+                'responsible', openapi.IN_FORM, description="Məsuliyyətli (1-5)", type=openapi.TYPE_INTEGER, required=False
+            ),
+            openapi.Parameter(
+                'neat', openapi.IN_FORM, description="Səliqəli (1-5)", type=openapi.TYPE_INTEGER, required=False
+            ),
+            openapi.Parameter(
+                'time_management', openapi.IN_FORM, description="Vaxta nəzarət (1-5)", type=openapi.TYPE_INTEGER, required=False
+            ),
+            openapi.Parameter(
+                'communicative', openapi.IN_FORM, description="Ünsiyyətcil (1-5)", type=openapi.TYPE_INTEGER, required=False
+            ),
+            openapi.Parameter(
+                'punctual', openapi.IN_FORM, description="Dəqiq (1-5)", type=openapi.TYPE_INTEGER, required=False
+            ),
+            openapi.Parameter(
+                'professional', openapi.IN_FORM, description="Peşəkar (1-5)", type=openapi.TYPE_INTEGER, required=False
+            ),
+            openapi.Parameter(
+                'experienced', openapi.IN_FORM, description="Təcrübəli (1-5)", type=openapi.TYPE_INTEGER, required=False
+            ),
+            openapi.Parameter(
+                'efficient', openapi.IN_FORM, description="Səmərəli (1-5)", type=openapi.TYPE_INTEGER, required=False
+            ),
+            openapi.Parameter(
+                'agile', openapi.IN_FORM, description="Çevik (1-5)", type=openapi.TYPE_INTEGER, required=False
+            ),
+            openapi.Parameter(
+                'patient', openapi.IN_FORM, description="Səbirli (1-5)", type=openapi.TYPE_INTEGER, required=False
+            ),
+            openapi.Parameter(
+                'review_images', openapi.IN_FORM, description="Şəkillər (max 3)", type=openapi.TYPE_ARRAY,
+                items=openapi.Items(type=openapi.TYPE_FILE), maxItems=3, required=False
+            ),
+        ],
         responses={
             200: ReviewSerializer(),
             400: openapi.Response('Səhv məlumat'),
