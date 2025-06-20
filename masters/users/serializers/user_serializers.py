@@ -11,18 +11,11 @@ from users.models import  WorkImage
 
 class CustomUserSerializer(serializers.ModelSerializer):
     cities = serializers.SerializerMethodField()
-<<<<<<< HEAD
     profile_image = serializers.ImageField()
     profession_speciality = serializers.StringRelatedField()
     profession_area = serializers.StringRelatedField()
     languages = serializers.StringRelatedField(many=True)
     work_images = serializers.StringRelatedField(many=True)
-=======
-    languages = serializers.SerializerMethodField()  
-    profession_area = serializers.SerializerMethodField()
-    profession_speciality = serializers.SerializerMethodField()
->>>>>>> 67148f1fe15a37a1c5a58986f5130c2c2428099a
-
     class Meta:
         model = CustomUser
         exclude = [
@@ -33,7 +26,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
     def get_cities(self, obj):
         return [city.display_name for city in obj.cities.all()]
     
-<<<<<<< HEAD
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
 
@@ -48,7 +41,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             data['profession_speciality'] = instance.profession_speciality.display_name
 
         return {key: value for key, value in data.items() if value not in [None, '', [], {}]}
-=======
+
     def get_languages(self, obj):  
         return [lang.display_name for lang in obj.languages.all()]
     
@@ -57,8 +50,6 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     def get_profession_speciality(self, obj):
         return obj.profession_speciality.name 
->>>>>>> 67148f1fe15a37a1c5a58986f5130c2c2428099a
-
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)

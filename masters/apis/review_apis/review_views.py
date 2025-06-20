@@ -7,6 +7,7 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from django.core.exceptions import ValidationError
 
 from reviews.models.review_models import Review
 from users.models.user_model import CustomUser
@@ -106,9 +107,13 @@ class CreateReviewAPIView(APIView):
     @transaction.atomic
     def post(self, request, master_id):
         user = request.user
+        master = get_object_or_404(CustomUser, is_active=True, id=master_id)
         if user.id == master_id:
             return Response({'error': 'Özünüzə şərh əlavə edə bilmərsiniz'}, status=status.HTTP_403_FORBIDDEN)
-        master = get_object_or_404(CustomUser, is_active=True, id=master_id)
+        
+        if Review.objects.filter(master=master, user=user).exists():
+            raise ValidationError('Siz artıq bu usta üçün rəy bildirmisiniz.')
+        
         serializer = ReviewSerializer(data=request.data, context={'user': user, 'master': master})
         if serializer.is_valid():
             serializer.save()

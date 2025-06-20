@@ -19,7 +19,7 @@ class ReviewAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Əsas məlumatlar', {
-            'fields': ('master', 'username', 'rating', 'comment')
+            'fields': ('user', 'master', 'username', 'rating', 'comment')
         }),
         ('Dəyərləndirmə kriteriyaları', {
             'fields': (
@@ -33,6 +33,7 @@ class ReviewAdmin(admin.ModelAdmin):
             'fields': ('created_at', 'updated_at'),
         }),
     )
+
 
 
 @admin.register(ReviewWorkImage)
