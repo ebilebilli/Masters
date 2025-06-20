@@ -14,4 +14,4 @@ class Service(models.Model):
     display_name = models.CharField(max_length=100)
 
     def __str__(self):
-        return f'{self.name} ({self.category.display_name})'
+        return f'{self.display_name} ({self.category.display_name})'

@@ -1,16 +1,13 @@
 from rest_framework import serializers
 
 from services.models.service_model import Service
-from services.models.category_model import Category
+from .category_serializer import CategorySerializer
 
 
 class ServiceSerializer(serializers.ModelSerializer):
-    category = serializers.SlugRelatedField(
-    queryset=Category.objects.all(),
-    slug_field='name'
-    )
+    category = CategorySerializer()
     
     class Meta:
         model = Service
-        fields = '__all__'
+        fields = ['id', 'display_name', 'category']
 

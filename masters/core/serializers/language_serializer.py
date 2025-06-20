@@ -5,5 +5,5 @@ from core.models.language_model import Language
 class LanguageSerializer(serializers.ModelSerializer):  
     class Meta:
         model = Language
-        fields = '__all__'
+        fields = ['id', 'display_name']
 
