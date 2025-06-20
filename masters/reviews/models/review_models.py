@@ -16,7 +16,7 @@ class Review(models.Model):
         related_name='comments',
         null=True,
         blank=True,
-        default=None
+        default=1
         )   
     master = models.ForeignKey(
         'users.CustomUser', 
