@@ -15,7 +15,7 @@ urlpatterns = [
     ),
     path(
         'cities/<int:city_id>/districts',
-        DistrictListAPIView.as_view(),
+        DistrictListForCityAPIView.as_view(),
         name='districts-for-city'
     ),
     path(
