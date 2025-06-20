@@ -13,4 +13,4 @@ class ReviewWorkImage(models.Model):
         ordering = ['order'] 
         
     def __str__(self):
-         return f'Review images for {self.review.master}'
+         return f'Review image for {self.review.master}'
