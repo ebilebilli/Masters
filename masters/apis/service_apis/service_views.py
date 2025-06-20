@@ -74,7 +74,7 @@ class ServicesForCategoryAPIView(APIView):
     http_method_names = ['get']
     
     @swagger_auto_schema(
-        operation_summary="Kateqoriya üzrə aktiv ustaları qaytarır",
+        operation_summary="Kateqoriya üzrə servisleri qaytarır",
         responses={200: ServiceSerializer(many=True)}
     )
 
@@ -110,7 +110,7 @@ class MasterListForServicesAPIView(APIView):
     http_method_names = ['get']
     
     @swagger_auto_schema(
-        operation_summary="Kateqoriya üzrə aktiv ustaları qaytarır",
+        operation_summary="Servis üzrə aktiv ustaları qaytarır",
         responses={200: CustomUserSerializer(many=True)}
     )
 
