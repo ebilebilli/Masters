@@ -8,7 +8,7 @@ class ReviewImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model =  ReviewWorkImage
-        fields = ['id', 'image', 'order', 'image_url']
+        fields =  '__all__' 
 
     def get_image_url(self, obj):
         if obj.image:
