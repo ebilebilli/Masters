@@ -2,7 +2,7 @@ from rest_framework.views import APIView, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import FormParser, MultiPartParser
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
@@ -13,6 +13,7 @@ from users.models.user_model import CustomUser
 from reviews.serializers.review_serializers import ReviewSerializer
 from utils.paginations import PaginationForMainPage
 from utils.permissions import HeHasPermission
+
 
 __all__ = [
     'ReviewsForMasterAPIView',
@@ -38,7 +39,9 @@ class ReviewsForMasterAPIView(APIView):
         result_page = pagination.paginate_queryset(reviews, request)
         serializer = ReviewSerializer(result_page, many=True)
         paginated_response = pagination.get_paginated_response(serializer.data).data
+
         return Response(paginated_response, status=status.HTTP_200_OK)
+
 
 class CreateReviewAPIView(APIView):
     authentication_classes = [JWTAuthentication]
@@ -51,8 +54,19 @@ class CreateReviewAPIView(APIView):
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
-                'text': openapi.Schema(type=openapi.TYPE_STRING, description="Rəy mətni"),
+                'username': openapi.Schema(type=openapi.TYPE_STRING, description="İstifadəçi adı"),
+                'comment': openapi.Schema(type=openapi.TYPE_STRING, description="Rəy mətni"),
                 'rating': openapi.Schema(type=openapi.TYPE_INTEGER, description="Reytinq (1-5)"),
+                'responsible': openapi.Schema(type=openapi.TYPE_INTEGER, description="Məsuliyyətli (1-5)", nullable=True),
+                'neat': openapi.Schema(type=openapi.TYPE_INTEGER, description="Səliqəli (1-5)", nullable=True),
+                'time_management': openapi.Schema(type=openapi.TYPE_INTEGER, description="Vaxta nəzarət (1-5)", nullable=True),
+                'communicative': openapi.Schema(type=openapi.TYPE_INTEGER, description="Ünsiyyətcil (1-5)", nullable=True),
+                'punctual': openapi.Schema(type=openapi.TYPE_INTEGER, description="Dəqiq (1-5)", nullable=True),
+                'professional': openapi.Schema(type=openapi.TYPE_INTEGER, description="Peşəkar (1-5)", nullable=True),
+                'experienced': openapi.Schema(type=openapi.TYPE_INTEGER, description="Təcrübəli (1-5)", nullable=True),
+                'efficient': openapi.Schema(type=openapi.TYPE_INTEGER, description="Səmərəli (1-5)", nullable=True),
+                'agile': openapi.Schema(type=openapi.TYPE_INTEGER, description="Çevik (1-5)", nullable=True),
+                'patient': openapi.Schema(type=openapi.TYPE_INTEGER, description="Səbirli (1-5)", nullable=True),
                 'review_images': openapi.Schema(
                     type=openapi.TYPE_ARRAY,
                     items=openapi.Items(type=openapi.TYPE_FILE),
@@ -60,12 +74,13 @@ class CreateReviewAPIView(APIView):
                     maxItems=3
                 ),
             },
-            required=['text', 'rating']
+            required=['comment', 'rating']
         ),
         responses={
             201: ReviewSerializer(),
             403: openapi.Response('Özünüzə şərh əlavə edə bilmərsiniz'),
-            404: openapi.Response('Usta tapılmadı')
+            404: openapi.Response('Usta tapılmadı'),
+            400: openapi.Response('Səhv məlumat')
         }
     )
     @transaction.atomic
@@ -91,8 +106,19 @@ class UpdateReviewAPIView(APIView):
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
-                'text': openapi.Schema(type=openapi.TYPE_STRING, description="Rəy mətni"),
+                'username': openapi.Schema(type=openapi.TYPE_STRING, description="İstifadəçi adı"),
+                'comment': openapi.Schema(type=openapi.TYPE_STRING, description="Rəy mətni"),
                 'rating': openapi.Schema(type=openapi.TYPE_INTEGER, description="Reytinq (1-5)"),
+                'responsible': openapi.Schema(type=openapi.TYPE_INTEGER, description="Məsuliyyətli (1-5)", nullable=True),
+                'neat': openapi.Schema(type=openapi.TYPE_INTEGER, description="Səliqəli (1-5)", nullable=True),
+                'time_management': openapi.Schema(type=openapi.TYPE_INTEGER, description="Vaxta nəzarət (1-5)", nullable=True),
+                'communicative': openapi.Schema(type=openapi.TYPE_INTEGER, description="Ünsiyyətcil (1-5)", nullable=True),
+                'punctual': openapi.Schema(type=openapi.TYPE_INTEGER, description="Dəqiq (1-5)", nullable=True),
+                'professional': openapi.Schema(type=openapi.TYPE_INTEGER, description="Peşəkar (1-5)", nullable=True),
+                'experienced': openapi.Schema(type=openapi.TYPE_INTEGER, description="Təcrübəli (1-5)", nullable=True),
+                'efficient': openapi.Schema(type=openapi.TYPE_INTEGER, description="Səmərəli (1-5)", nullable=True),
+                'agile': openapi.Schema(type=openapi.TYPE_INTEGER, description="Çevik (1-5)", nullable=True),
+                'patient': openapi.Schema(type=openapi.TYPE_INTEGER, description="Səbirli (1-5)", nullable=True),
                 'review_images': openapi.Schema(
                     type=openapi.TYPE_ARRAY,
                     items=openapi.Items(type=openapi.TYPE_FILE),
@@ -114,6 +140,7 @@ class UpdateReviewAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class DeleteReviewAPIView(APIView):
@@ -130,6 +157,7 @@ class DeleteReviewAPIView(APIView):
         review = get_object_or_404(Review, id=review_id)
         review.delete()
         return Response({'message': 'Şərhiniz uğurla silindi'}, status=status.HTTP_204_NO_CONTENT)
+
 
 class FilterReviewAPIView(APIView):
     permission_classes = [AllowAny]
@@ -149,7 +177,12 @@ class FilterReviewAPIView(APIView):
         pagination = self.pagination_class()
         master = get_object_or_404(CustomUser, is_active=True, id=master_id)
         order = request.query_params.get('order', 'newest')
-        reviews = Review.objects.filter(master=master).order_by('created_at' if order == 'oldest' else '-created_at')
+
+        if order == 'oldest':
+            reviews = Review.objects.filter(master=master).order_by('created_at')
+        else:
+            reviews = Review.objects.filter(master=master).order_by('-created_at')
+
         result_page = pagination.paginate_queryset(reviews, request)
         serializer = ReviewSerializer(result_page, many=True)
         paginated_response = pagination.get_paginated_response(serializer.data).data
