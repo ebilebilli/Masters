@@ -15,7 +15,8 @@ class Review(models.Model):
         on_delete=models.CASCADE, 
         related_name='comments',
         null=True,
-        blank=True
+        blank=True,
+        default=None
         )   
     master = models.ForeignKey(
         'users.CustomUser', 
