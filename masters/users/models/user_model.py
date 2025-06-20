@@ -13,6 +13,7 @@ from services.models.service_model import Service
 from reviews.models.review_models import Review
 from core.models.city_model import City
 from core.models.language_model import Language
+from utils.validators import az_letters_validator
 
 
 
@@ -72,7 +73,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     custom_profession = models.CharField(
         max_length=100,
-        validators=[azerbaijani_letters_validator],
+        validators=[az_letters_validator],
         null=True,
         blank=True,
     )
@@ -101,7 +102,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     education_speciality = models.CharField(
         max_length=50,
         blank=True,
-        validators=[azerbaijani_letters_validator],
+        validators=[az_letters_validator],
         verbose_name="Təhsil üzrə ixtisas"
     )
 
@@ -129,7 +130,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     )
 
     note = models.TextField(
-        validators=[azerbaijani_letters_validator],
+        validators=[az_letters_validator],
         blank=True,
         max_length=1500,
         verbose_name="Əlavə qeyd"
