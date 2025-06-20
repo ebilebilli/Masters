@@ -15,9 +15,11 @@ az_letters_name_validator = RegexValidator(
     message='Yalnız Azərbaycan hərfləri ilə yazılmalıdır.'
 )
 
+from django.core.validators import RegexValidator
+
 az_letters_validator = RegexValidator(
-    regex=r'^[a-zA-ZəƏöÖüÜşŞçÇğĞıİ\s.,!?-]+$',
-    message='Yalnız Azərbaycan hərfləri ilə yazılmalıdır.'
+    regex=r'^[a-zA-ZəƏöÖüÜşŞçÇğĞıİ0-9\s.,!?-]+$',
+    message='Yalnız Azərbaycan hərfləri və rəqəmləri ilə yazılmalıdır.'
 )
 
 def validate_full_name(value):

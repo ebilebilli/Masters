@@ -10,7 +10,7 @@ from utils.validators import az_letters_validator, not_only_whitespace
 
 
 class Review(models.Model):
-    user = models.CharField(max_length=20)  
+    user =  models.ForeignKey('users.CustomUser', on_delete=models.CASCADE, related_name='comments')   # real customer user will add in product level
     master = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE, related_name='reviews') 
     username = models.CharField(
         max_length=20,
@@ -94,6 +94,6 @@ class Review(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # class Meta:
-    #     unique_together = ('master', 'user')
+    class Meta:
+        unique_together = ('master', 'user')
 
