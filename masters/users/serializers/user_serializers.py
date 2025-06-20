@@ -12,6 +12,8 @@ from users.models import  WorkImage
 class CustomUserSerializer(serializers.ModelSerializer):
     cities = serializers.SerializerMethodField()
     languages = serializers.SerializerMethodField()  
+    profession_area = serializers.SerializerMethodField()
+    profession_speciality = serializers.SerializerMethodField()
 
     class Meta:
         model = CustomUser
@@ -23,8 +25,14 @@ class CustomUserSerializer(serializers.ModelSerializer):
     def get_cities(self, obj):
         return [city.display_name for city in obj.cities.all()]
     
-    def get_languages(self, obj):  # bu metod field adı ilə eyni olmalıdır
+    def get_languages(self, obj):  
         return [lang.display_name for lang in obj.languages.all()]
+    
+    def get_profession_area(self, obj):
+        return obj.profession_area.name 
+
+    def get_profession_speciality(self, obj):
+        return obj.profession_speciality.name 
 
 
 class RegisterSerializer(serializers.ModelSerializer):
