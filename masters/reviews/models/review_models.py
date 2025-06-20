@@ -10,14 +10,12 @@ from utils.validators import az_letters_validator, not_only_whitespace
 
 
 class Review(models.Model):
-    user =  models.ForeignKey(       # real customer user will add in product level
-        'users.CustomUser', 
-        on_delete=models.CASCADE, 
-        related_name='comments',
-        null=True,
-        blank=True,
-        default=1
-        )   
+    # user =  models.ForeignKey(       # real customer user will add in product level
+    #     'users.CustomUser', 
+    #     on_delete=models.CASCADE, 
+    #     related_name='comments'
+    #     )
+    user = models.CharField(max_length=20)   
     master = models.ForeignKey(
         'users.CustomUser', 
         on_delete=models.CASCADE, 
