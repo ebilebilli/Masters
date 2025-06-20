@@ -1,1 +1,1 @@
-from review_img_serializer import ReviewImageSerializer
+from .review_img_serializer import ReviewImageSerializer
