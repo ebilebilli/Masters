@@ -11,7 +11,7 @@ from ..user_managers import CustomUserManager
 from services.models.category_model import Category
 from services.models.service_model import Service
 from reviews.models.review_models import Review
-from core.models.city_model import City
+from core.models.city_model import City, District
 from core.models.language_model import Language
 from utils.validators import az_letters_validator
 
@@ -82,6 +82,14 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         City,
         related_name='city_masters',
         verbose_name='Şəhərlər',
+        blank=True,
+    )
+
+    districts = models.ManyToManyField(
+        District,
+        related_name='district_masters',
+        verbose_name='Bakı bölgələri',
+        blank=True,
     )
 
     ##########//  Təhsil məlumatları  \\##########
