@@ -36,7 +36,7 @@ class ReviewsForMasterAPIView(APIView):
     def get(self, request, master_id):
         master = get_object_or_404(CustomUser, is_active=True, id=master_id)
         pagination = self.pagination_class()
-        reviews = Review.objects.filter(master=master)
+        reviews = Review.objects.filter(master=master).order_by('-created_at')
         result_page = pagination.paginate_queryset(reviews, request)
         serializer = ReviewSerializer(result_page, many=True)
         paginated_response = pagination.get_paginated_response(serializer.data).data
