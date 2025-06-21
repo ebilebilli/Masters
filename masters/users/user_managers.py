@@ -27,8 +27,8 @@ class CustomUserManager(BaseUserManager):
         from services.models.category_model import Category
         from services.models.service_model import Service
         
-        category, _ = Category.objects.get(pk=11)
-        service, _ = Service.objects.get(pk=9)
+        category = Category.objects.get(pk=11)
+        service = Service.objects.get(pk=9)
         extra_fields.setdefault("profession_area", category)
         extra_fields.setdefault("profession_speciality", service)
 
