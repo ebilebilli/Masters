@@ -9,6 +9,9 @@ class City(models.Model):
     display_name = models.CharField(
         max_length=60
         ) 
+    
+    class Meta:
+        ordering = ['display_name']
 
     def __str__(self):
         return self.display_name
@@ -30,6 +33,9 @@ class District(models.Model):
         max_length=60,
         unique=True
         )
+    
+    class Meta:
+        ordering = ['display_name']
     
     def __str__(self):
         return self.display_name

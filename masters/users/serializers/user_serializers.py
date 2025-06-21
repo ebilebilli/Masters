@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
-from core.models.city_model import City
+from core.models.city_model import City, District
 from core.models.language_model import Language
 from services.models.category_model import Category
 
@@ -11,6 +11,7 @@ from users.models import  WorkImage
 
 class CustomUserSerializer(serializers.ModelSerializer):
     cities = serializers.SerializerMethodField()
+    districts = serializers.SerializerMethodField()
     profile_image = serializers.ImageField()
     profession_speciality = serializers.StringRelatedField()
     profession_area = serializers.StringRelatedField()
@@ -26,7 +27,9 @@ class CustomUserSerializer(serializers.ModelSerializer):
     def get_cities(self, obj):
         return [city.display_name for city in obj.cities.all()]
     
-
+    def get_districts(self, obj):
+        return [district.display_name for district in obj.districts.all()] 
+    
     def to_representation(self, instance):
         data = super().to_representation(instance)
 
@@ -56,6 +59,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(write_only=True)
 
     cities = serializers.PrimaryKeyRelatedField(many=True, queryset=City.objects.all())
+    districts = serializers.PrimaryKeyRelatedField(many=True, queryset=District.objects.all())
     languages = serializers.PrimaryKeyRelatedField(many=True, queryset=Language.objects.all())
 
     work_images = serializers.ListField(
@@ -84,6 +88,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             'custom_profession',
             'experience_years',
             'cities',
+            'districts',
 
             # Təhsil məlumatları
             'education',
@@ -177,6 +182,12 @@ class RegisterSerializer(serializers.ModelSerializer):
         else:
             self.fields["education_speciality"].required = True
 
+        cities = request_data.get('cities')
+
+        if cities is None:
+            self.fields['districts'].required = True
+
+
     def validate_mobile_number(self, value):
         if CustomUser.objects.filter(mobile_number=value).exists():
             raise serializers.ValidationError("Bu mobil nömrə ilə artıq qeydiyyat aparılıb.")
@@ -235,11 +246,6 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Ən azı bir dil seçilməlidir.")
         return value
 
-    def validate_cities(self, value):
-        if not value:
-            raise serializers.ValidationError("Ən azı bir şəhər seçilməlidir.")
-        return value
-
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
             raise serializers.ValidationError({"password": "Şifrələr uyğun deyil."})
@@ -271,6 +277,14 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({
                 "education_speciality": "Bu sahə mütləq doldurulmalıdır."
             })
+        
+        cities = attrs.get('cities')
+        districts = attrs.get('districts')
+
+        if not cities and not districts:
+            raise serializers.ValidationError({
+                "cities": "Ən azı bir şəhər və ya ərazi seçilməlidir."
+            })
 
         return attrs
 
@@ -287,6 +301,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             education_speciality = education_speciality.capitalize()
 
         cities = validated_data.pop('cities', [])
+        districts = validated_data.pop('districts', [])
         languages = validated_data.pop('languages', [])
 
         user = CustomUser.objects.create(
@@ -301,7 +316,14 @@ class RegisterSerializer(serializers.ModelSerializer):
         def extract_ids(qs):
             return [obj if isinstance(obj, int) else obj.id for obj in qs]
 
-        user.cities.set(extract_ids(cities))
+        if cities is None and districts is not None:
+            user.districts.set(extract_ids(districts))
+        elif cities is not None and districts is None:
+            user.cities.set(extract_ids(cities))
+        elif cities is not None and districts is not None:
+            user.cities.set(extract_ids(cities))
+            user.districts.set(extract_ids(districts))
+        
         user.languages.set(extract_ids(languages))
 
         for image in work_images_data:

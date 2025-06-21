@@ -14,7 +14,8 @@ class ProfileSerializer(serializers.ModelSerializer):
     profession_speciality = serializers.StringRelatedField()
     profession_area = serializers.StringRelatedField()
     languages = serializers.StringRelatedField(many=True)
-    cities = CitySerializer(many=True)
+    cities = serializers.SerializerMethodField()
+    districts = serializers.SerializerMethodField()
     work_images = serializers.StringRelatedField(many=True)
 
 
@@ -41,6 +42,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             'experience_years',
             'languages',
             'cities',
+            'districts',
             'work_images',
 
             'average_rating',
@@ -58,7 +60,10 @@ class ProfileSerializer(serializers.ModelSerializer):
         ]
         
     def get_cities(self, obj):
-        return [city.display_name for city in obj.cities.all()]   
+        return [city.display_name for city in obj.cities.all()]
+
+    def get_districts(self, obj):
+        return [district.display_name for district in obj.districts.all()]   
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
