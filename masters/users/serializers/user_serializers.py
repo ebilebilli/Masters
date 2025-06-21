@@ -53,6 +53,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     def get_profession_speciality(self, obj):
         return obj.profession_speciality.name 
+    
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)

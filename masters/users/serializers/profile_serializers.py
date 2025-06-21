@@ -3,11 +3,11 @@ from rest_framework import serializers
 
 from services.models.category_model import Category
 from services.models.service_model import Service
-from core.models.city_model import City
+from core.models.city_model import City, District
 from core.models.language_model import Language
 from users.models import CustomUser
 from users.models import  WorkImage
-from core.serializers.city_serializers import CitySerializer
+
 
 class ProfileSerializer(serializers.ModelSerializer):
     profile_image = serializers.ImageField()
@@ -87,6 +87,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
     profession_area = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all(), required=False)
     profession_speciality = serializers.PrimaryKeyRelatedField(queryset=Service.objects.all(), required=False)
     cities = serializers.PrimaryKeyRelatedField(many=True, queryset=City.objects.all(), required=False)
+    districts = serializers.PrimaryKeyRelatedField(many=True, queryset=District.objects.all(), required=False)
     languages = serializers.PrimaryKeyRelatedField(many=True, queryset=Language.objects.all(), required=False)
     profile_image = serializers.ImageField(required=False)
     work_images = serializers.PrimaryKeyRelatedField(many=True, queryset=WorkImage.objects.all(), required=False)
@@ -97,7 +98,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
         fields = [
             "first_name", "last_name", "birth_date", "gender", "mobile_number",
             "profession_area", "profession_speciality", "custom_profession", "experience_years",'work_images',
-            "cities", "education", "education_speciality", "languages",
+            "cities",  "disrticts", "education", "education_speciality", "languages",
             "profile_image", "facebook", "instagram", "tiktok", "linkedin", "note"
         ]
 
@@ -116,7 +117,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
         profession_area = attrs.get("profession_area", user.profession_area)
         profession_speciality = attrs.get("profession_speciality", user.profession_speciality)
         custom_profession = attrs.get("custom_profession", user.custom_profession)
-
+        
         if profession_area and profession_speciality:
             if profession_speciality.category_id != profession_area.id:
                 raise serializers.ValidationError({
@@ -153,6 +154,12 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
                 "education_speciality": "Bu sahə mütləq doldurulmalıdır."
             })
 
+        cities = attrs.get("cities") or user.cities.all()
+        districts = attrs.get("disrticts") or user.districts.all()
+
+        if districts and not any(city.name == 'baku' for city in cities):
+            raise serializers.ValidationError('Rayonlar sadəcə Bakı şəhəri üçün mövcuddur.')
+
         return attrs
     
     def validate_work_images(self, value):
@@ -182,6 +189,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         cities = validated_data.pop("cities", None)
+        districts = validated_data.pop("disrticts", None)
         languages = validated_data.pop("languages", None)
         work_images = validated_data.pop("work_images", None)
 
@@ -190,6 +198,10 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
 
         if cities is not None:
             instance.cities.set(cities)
+        
+        if districts is not None:
+            instance.disrticts.set(districts)
+
         if languages is not None:
             instance.languages.set(languages)
 

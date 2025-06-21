@@ -165,14 +165,6 @@ AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
 AWS_DEFAULT_ACL = None
 AWS_QUERYSTRING_AUTH = False  
 
-<<<<<<< Updated upstream
-=======
-# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
-DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileS ystemStorage'
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-
->>>>>>> Stashed changes
 
 STORAGES = {
     "default": {
