@@ -155,7 +155,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
             })
 
         cities = attrs.get("cities") or user.cities.all()
-        districts = attrs.get("disrticts") or user.districts.all()
+        districts = attrs.get("districts") or user.districts.all()
 
         if districts and not any(city.name == 'baku' for city in cities):
             raise serializers.ValidationError('Rayonlar sadəcə Bakı şəhəri üçün mövcuddur.')
@@ -189,7 +189,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         cities = validated_data.pop("cities", None)
-        districts = validated_data.pop("disrticts", None)
+        districts = validated_data.pop("districts", None)
         languages = validated_data.pop("languages", None)
         work_images = validated_data.pop("work_images", None)
 
@@ -200,7 +200,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
             instance.cities.set(cities)
         
         if districts is not None:
-            instance.disrticts.set(districts)
+            instance.districts.set(districts)
 
         if languages is not None:
             instance.languages.set(languages)
