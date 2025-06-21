@@ -159,6 +159,9 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
 
         if districts and not any(city.name == 'baku' for city in cities):
             raise serializers.ValidationError('Rayonlar sadəcə Bakı şəhəri üçün mövcuddur.')
+        
+        if not districts and any(city.name == 'baku' for city in cities):
+            raise serializers.ValidationError('Bakı şəhəri seçilibsə Bakı üçün rayonlar seçilməlidir.')
 
         return attrs
     

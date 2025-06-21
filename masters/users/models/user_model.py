@@ -89,7 +89,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         District,
         related_name='district_masters',
         verbose_name='Bakı bölgələri',
-        blank=True,
+        null=True,
+        blank=True
     )
 
     ##########//  Təhsil məlumatları  \\##########
