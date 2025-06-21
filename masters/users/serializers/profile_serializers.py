@@ -98,7 +98,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
         fields = [
             "first_name", "last_name", "birth_date", "gender", "mobile_number",
             "profession_area", "profession_speciality", "custom_profession", "experience_years",'work_images',
-            "cities",  "disrticts", "education", "education_speciality", "languages",
+            "cities",  "districts ", "education", "education_speciality", "languages",
             "profile_image", "facebook", "instagram", "tiktok", "linkedin", "note"
         ]
 
