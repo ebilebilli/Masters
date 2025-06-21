@@ -58,6 +58,11 @@ urlpatterns = [
         name='register'
     ),
     path(
+        'check-phone/',
+        PhoneCheckAPIView.as_view(),
+        name='check-phone'
+    ),
+    path(
         'login/', 
         LoginAPIView.as_view(), 
         name='login'

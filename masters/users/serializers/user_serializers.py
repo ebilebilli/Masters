@@ -52,7 +52,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return obj.profession_area.name 
 
     def get_profession_speciality(self, obj):
-        return obj.profession_speciality.name 
+        return obj.profession_speciality.name
     
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -112,55 +112,6 @@ class RegisterSerializer(serializers.ModelSerializer):
             'note',
         ]
 
-    extra_kwargs = {
-            'first_name': {
-                'required': {'message': 'Ad sahəsi mütləq doldurulmalıdır.'},
-                'blank': {'message': 'Ad sahəsi boş ola bilməz.'},
-                'invalid': {'message': 'Ad sahəsi üçün düzgün dəyər daxil edin.'}
-            },
-            'last_name': {
-                'required': {'message': 'Soyad sahəsi mütləq doldurulmalıdır.'},
-                'blank': {'message': 'Soyad sahəsi boş ola bilməz.'},
-                'invalid': {'message': 'Soyad sahəsi üçün düzgün dəyər daxil edin.'}
-            },
-            'gender': {
-                'required': {'message': 'Cins sahəsi mütləq seçilməlidir.'},
-                'invalid_choice': {'message': '"{input}" düzgün seçim deyil.'}
-            },
-            'mobile_number': {
-                'required': {'message': 'Mobil nömrə mütləq daxil edilməlidir.'},
-                'unique': {'message': 'Bu mobil nömrə ilə artıq qeydiyyat aparılıb.'},
-                'invalid': {'message': 'Mobil nömrə yalnız rəqəmlərdən ibarət olmalıdır.'}
-            },
-            'profession_area': {
-                'required': {'message': 'Peşə sahəsi mütləq seçilməlidir.'},
-                'null': {'message': 'Peşə sahəsi boş ola bilməz.'}
-            },
-            'experience_years': {
-                'required': {'message': 'Təcrübə illəri mütləq daxil edilməlidir.'},
-                'invalid': {'message': 'İş təcrübəsi üçün düzgün rəqəm daxil edin.'}
-            },
-            'cities': {
-                'required': {'message': 'Ən azı bir şəhər seçilməlidir.'},
-                'invalid': {'message': 'Şəhərlər üçün düzgün ID dəyərləri daxil edin.'}
-            },
-            'languages': {
-                'required': {'message': 'Ən azı bir dil seçilməlidir.'},
-                'invalid': {'message': 'Dillər üçün düzgün ID dəyərləri daxil edin.'}
-            },
-            'education': {
-                'required': {'message': 'Təhsil sahəsi mütləq seçilməlidir.'},
-                'invalid_choice': {'message': 'Təhsil üçün düzgün seçim daxil edin.'}
-            },
-            'education_speciality': {
-                'required': {'message': 'Təhsil ixtisası mütləq daxil edilməlidir.'},
-                'invalid': {'message': 'Təhsil ixtisası yalnız hərflərdən ibarət olmalıdır.'}
-            },
-            'custom_profession': {
-                'invalid': {'message': 'Xüsusi ixtisas sahəsi yalnız hərflərdən ibarət olmalıdır.'}
-            }
-        }
-    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -201,16 +152,16 @@ class RegisterSerializer(serializers.ModelSerializer):
     def validate_first_name(self, value):
         if not value.strip():
             raise serializers.ValidationError("Ad sahəsi boş ola bilməz.")
-        if len(value.strip()) < 2:
-            raise serializers.ValidationError("Ad ən azı 2 simvol olmalıdır.")
+        if len(value.strip()) < 3:
+            raise serializers.ValidationError("Ad ən azı 3 simvol olmalıdır.")
         return value    
 
 
     def validate_last_name(self, value):
         if not value.strip():
             raise serializers.ValidationError("Soyad sahəsi boş ola bilməz.")
-        if len(value.strip()) < 2:
-            raise serializers.ValidationError("Soyad ən azı 2 simvol olmalıdır.")
+        if len(value.strip()) < 3:
+            raise serializers.ValidationError("Soyad ən azı 3 simvol olmalıdır.")
         return value
 
 

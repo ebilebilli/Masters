@@ -92,8 +92,8 @@ DATABASES = {
         'PORT': os.getenv('POSTGRES_PORT', '5432'),
         'CONN_MAX_AGE': 600,  
         'OPTIONS': {
-            'sslmode': 'require',
-            # 'sslmode': 'disable',
+            # 'sslmode': 'require',
+            'sslmode': 'disable',
         },
     }
 }
@@ -119,7 +119,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 
-LANGUAGE_CODE = 'az'
+# LANGUAGE_CODE = 'az'
+LANGUAGE_CODE = 'en-us'
 TIME_ZONE = "Asia/Baku"
 USE_I18N = True
 USE_TZ = True

@@ -10,6 +10,7 @@ from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiResponse
 
 from users.serializers.user_serializers import(
     RegisterSerializer,
@@ -18,7 +19,7 @@ from users.serializers.user_serializers import(
 from rest_framework.generics import CreateAPIView
 
 from users.serializers.work_image_serializers import WorkImageSerializer
-from users.models import WorkImage
+from users.models import WorkImage, CustomUser
 
 
 class WorkImageCreateAPIView(CreateAPIView):
@@ -32,6 +33,59 @@ work_images_field = openapi.Schema(
     description="İş şəkilləri (bir neçə fayl)",
     nullable=True,
 )
+
+
+class PhoneCheckAPIView(APIView):
+
+    @extend_schema(
+        summary="Mobil nömrənin unikal olub-olmadığını yoxla",
+        description="Bu endpoint daxil edilmiş mobil nömrənin sistemdə artıq mövcud olub olmadığını yoxlayır.",
+        request={
+            'application/json': {
+                'type': 'object',
+                'properties': {
+                    'phone_number': {
+                        'type': 'string',
+                        'example': '+994501234567',
+                        'description': 'Yoxlanılacaq mobil nömrə'
+                    }
+                },
+                'required': ['phone_number']
+            }
+        },
+        responses={
+            200: OpenApiResponse(description="Nömrə istifadə oluna bilər (cavab boşdur)"),
+            400: OpenApiResponse(
+                response={
+                    'type': 'object',
+                    'properties': {
+                        'phone_number': {
+                            'type': 'string',
+                            'example': 'Bu nömrə ilə artıq qeydiyyat var.'
+                        }
+                    }
+                },
+                description="Nömrə artıq istifadə olunub və ya daxil edilməyib"
+            )
+        },
+        tags=["Qeydiyyat"]
+    )
+    def post(self, request):
+        phone = request.data.get("phone_number")
+        if not phone:
+            return Response(
+                {"phone_number": "Mobil nömrə daxil edilməlidir."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if CustomUser.objects.filter(phone_number=phone).exists():
+            return Response(
+                {"phone_number": "Bu nömrə ilə artıq qeydiyyat var."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        return Response(status=status.HTTP_200_OK)
+
 
 class RegisterAPIView(APIView):
     permission_classes = [AllowAny]
