@@ -41,7 +41,7 @@ class MastersListAPIView(APIView):
         masters = CustomUser.objects.annotate(
             avg_rating=Avg('reviews__rating'),
             count_ratings=Count('reviews')
-        ).filter(is_active=True)
+        ).filter(is_active=True).order_by('-created_at')
         
         if not masters.exists():
             return Response({
