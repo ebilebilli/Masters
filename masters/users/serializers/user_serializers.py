@@ -19,6 +19,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
     profession_area = serializers.StringRelatedField()
     languages = serializers.StringRelatedField(many=True)
     work_images = serializers.StringRelatedField(many=True)
+    average_rating = serializers.SerializerMethodField()
+
     class Meta:
         model = CustomUser
         exclude = [
@@ -56,9 +58,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
     def get_profession_speciality(self, obj):
         return obj.profession_speciality.name
     
-    
     def get_average_rating(self, obj):
-        return obj.average_rating()
+        return obj.average_rating
 
 
 

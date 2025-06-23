@@ -111,9 +111,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         return obj.average_patient
 
     def get_review_count(self, obj):
-        return obj.review_count()
-
-    
+        return obj.review_count 
 
 
 class ProfileUpdateSerializer(serializers.ModelSerializer):
