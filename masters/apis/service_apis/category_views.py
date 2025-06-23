@@ -80,7 +80,11 @@ class MasterListForCategoryAPIView(APIView):
     def get(self, request, category_id):
         pagination = self.pagination_class()
         category = get_object_or_404(Category, id=category_id)
-        masters = CustomUser.objects.filter(profession_area=category, is_active=True)
+        masters = CustomUser.objects.filter(
+            profession_area=category,
+            is_active=True, 
+            is_master=True
+            )
         if not masters.exists():
             return Response({
                 'error': 'Hal-hazırda bu kateqoriyaya uyğun aktiv bir usta yoxdur'

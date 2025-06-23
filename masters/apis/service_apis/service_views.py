@@ -117,7 +117,11 @@ class MasterListForServicesAPIView(APIView):
     def get(self, request, service_id):
         pagination = self.pagination_class()
         service = get_object_or_404(Service, id=service_id)
-        masters = CustomUser.objects.filter(profession_speciality=service, is_active=True)
+        masters = CustomUser.objects.filter(
+            profession_speciality=service, 
+            is_active=True, 
+            is_master=True
+            )
         if not masters.exists():
             return Response({
                 'error': 'Hal-hazırda bu servisə uyğun aktiv bir usta yoxdur'
@@ -148,7 +152,7 @@ class MasterListForServicesAPIView(APIView):
     }
 )
 def statistics_view(request):
-    master_count = CustomUser.objects.filter(is_active=True).count()
+    master_count = CustomUser.objects.filter(is_active=True, is_master=True).count()
     
     category_count = Category.objects.count()
     
