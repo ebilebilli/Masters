@@ -51,14 +51,14 @@ class MobileNumberCheckAPIView(APIView):
         ],
         request_body=MobileNumberSerializer,
         responses={
-            201: openapi.Response(description='Uğurlu qeydiyyat'),
+            200: openapi.Response(description='Uğurlu qeydiyyat'),
             400: openapi.Response(description='Validasiya xətası')
         }
     )
     def post(self, request):
         serializer = MobileNumberSerializer(data=request.data)
         if serializer.is_valid():
-            return Response(status=status.HTTP_200_OK)
+            return Response({"is_mobile_number": True}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

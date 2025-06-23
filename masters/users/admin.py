@@ -11,10 +11,7 @@ class WorkImageAdmin(admin.ModelAdmin):
     list_display = ('id', 'image')
     search_fields = ['field_name']
     list_per_page = 20
-
-from django.contrib import admin
-
-
+    
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
@@ -22,9 +19,9 @@ class CustomUserAdmin(UserAdmin):
     list_display = (
         'id', 'first_name', 'last_name', 'mobile_number',
         'gender', 'profession_area', 'experience_years',
-        'is_active', 'is_staff'
+        'is_active', 'is_staff', 'is_master',
     )
-    list_filter = ('is_active', 'is_staff', 'gender', 'profession_area')
+    list_filter = ('is_active', 'is_staff', 'is_master', 'gender', 'profession_area')
     search_fields = ('first_name', 'last_name', 'mobile_number')
     ordering = ('-created_at',)
     filter_horizontal = ('cities', 'districts', 'languages', 'work_images', 'groups', 'user_permissions')
@@ -55,7 +52,7 @@ class CustomUserAdmin(UserAdmin):
         }),
         (_("İcazələr"), {
             "fields": (
-                'is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions',
+                'is_active', 'is_staff', 'is_master', 'is_superuser', 'groups', 'user_permissions',
             )
         }),
         (_("Tarixlər"), {
@@ -75,7 +72,7 @@ class CustomUserAdmin(UserAdmin):
                 'custom_profession', 'cities', 'districts', 'work_images',
                 'education', 'education_speciality', 'languages',
                 'facebook', 'instagram', 'tiktok', 'linkedin',
-                'is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions',
+                'is_active', 'is_staff', 'is_master', 'is_superuser', 'groups', 'user_permissions',
             ),
         }),
     )

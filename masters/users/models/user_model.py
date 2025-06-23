@@ -146,6 +146,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    is_master = models.BooleanField(default=True)
 
     created_at = models.DateTimeField(default=timezone.now, verbose_name="Yaradılma tarixi")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Son yenilənmə tarixi")
