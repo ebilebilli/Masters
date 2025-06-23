@@ -25,7 +25,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         model = CustomUser
         exclude = [
             'password', 'is_superuser', 'is_staff', 'is_master', 'user_permissions', 'groups',
-            'note', 'birth_date', 'last_login', 'is_active', 'facebook', 'instagram', 'tiktok', 'linkedin', 
+            'note', 'last_login', 'is_active', 'facebook', 'instagram', 'tiktok', 'linkedin', 
         ]
         
     def get_cities(self, obj):
