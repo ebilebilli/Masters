@@ -2,7 +2,7 @@ import hashlib
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.db.models import Q
+from django.db.models import Q, Avg
 from django.core.cache import cache
 from rest_framework.permissions import AllowAny
 from drf_yasg.utils import swagger_auto_schema
@@ -110,5 +110,8 @@ class SearchAPIView(ListAPIView):
                 queryset = queryset.filter(experience_years=int(experience_years))
             except ValueError:
                 pass
+        
+        if ordering.lstrip('-') == 'rating':
+            queryset = queryset.annotate(rating=Avg('reviews__rating'))
 
         return queryset.order_by(ordering)
