@@ -12,14 +12,13 @@ from users.models import  WorkImage
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
     cities = serializers.SerializerMethodField()
     districts = serializers.SerializerMethodField()
     profile_image = serializers.ImageField()
     profession_speciality = serializers.StringRelatedField()
-    profession_area = serializers.StringRelatedField()
-    languages = serializers.StringRelatedField(many=True)
-    work_images = serializers.StringRelatedField(many=True)
     average_rating = serializers.SerializerMethodField()
+    badge = serializers.SerializerMethodField()
 
     class Meta:
         model = CustomUser
@@ -33,7 +32,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'rating',
             'experience_years',
             'profile_image',
-            'average_rating'
+            'average_rating',
             'badge',
         ]
 
