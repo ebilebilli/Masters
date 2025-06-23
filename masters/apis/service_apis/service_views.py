@@ -157,6 +157,8 @@ def statistics_view(request):
     category_count = Category.objects.count()
     
     avg_rating = Review.objects.aggregate(avg=Avg('rating'))['avg'] or 0.0
+    if avg_rating > 5:
+        avg_rating = 5
 
     if master_count <= 50:
         master_count_label = str(master_count)
@@ -168,7 +170,7 @@ def statistics_view(request):
         master_count_label = "500+"
     else:
         master_count_label = "1000+"
-
+    
     data = {
         "usta_sayi": master_count_label,
         "xidmet_novu": category_count,
