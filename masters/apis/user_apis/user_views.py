@@ -47,7 +47,7 @@ class MobileNumberCheckAPIView(APIView):
                 request_only=True
             )
         ],
-        request=MobileNumberSerializer,
+        request_body=MobileNumberSerializer,
         responses={
             201: openapi.Response(description='Uğurlu qeydiyyat'),
             400: openapi.Response(description='Validasiya xətası')
