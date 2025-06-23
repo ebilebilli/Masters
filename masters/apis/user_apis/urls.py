@@ -59,7 +59,7 @@ urlpatterns = [
     ),
     path(
         'check-phone/',
-        PhoneCheckAPIView.as_view(),
+        MobileNumberCheckAPIView.as_view(),
         name='check-phone'
     ),
     path(

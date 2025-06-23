@@ -67,15 +67,15 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         related_name='profession_masters'
     )
 
-    experience_years = models.PositiveIntegerField(
-        verbose_name="İş təcrübəsi (il ilə)"
-    )
-
     custom_profession = models.CharField(
-        max_length=100,
+        max_length=50,
         validators=[az_letters_validator],
         null=True,
         blank=True,
+    )
+
+    experience_years = models.PositiveIntegerField(
+        verbose_name="İş təcrübəsi (il ilə)"
     )
 
     cities = models.ManyToManyField(
@@ -89,7 +89,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         District,
         related_name='district_masters',
         verbose_name='Bakı bölgələri',
-        null=True,
         blank=True
     )
 

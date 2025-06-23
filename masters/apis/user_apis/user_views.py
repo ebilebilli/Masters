@@ -13,6 +13,7 @@ from drf_yasg import openapi
 from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiResponse
 
 from users.serializers.user_serializers import(
+    MobileNumberSerializer,
     RegisterSerializer,
     LoginSerializer,
 )
@@ -35,56 +36,18 @@ work_images_field = openapi.Schema(
 )
 
 
-class PhoneCheckAPIView(APIView):
-
+class MobileNumberCheckAPIView(APIView):
     @extend_schema(
-        summary="Mobil nömrənin unikal olub-olmadığını yoxla",
-        description="Bu endpoint daxil edilmiş mobil nömrənin sistemdə artıq mövcud olub olmadığını yoxlayır.",
-        request={
-            'application/json': {
-                'type': 'object',
-                'properties': {
-                    'phone_number': {
-                        'type': 'string',
-                        'example': '+994501234567',
-                        'description': 'Yoxlanılacaq mobil nömrə'
-                    }
-                },
-                'required': ['phone_number']
-            }
-        },
-        responses={
-            200: OpenApiResponse(description="Nömrə istifadə oluna bilər (cavab boşdur)"),
-            400: OpenApiResponse(
-                response={
-                    'type': 'object',
-                    'properties': {
-                        'phone_number': {
-                            'type': 'string',
-                            'example': 'Bu nömrə ilə artıq qeydiyyat var.'
-                        }
-                    }
-                },
-                description="Nömrə artıq istifadə olunub və ya daxil edilməyib"
-            )
-        },
-        tags=["Qeydiyyat"]
+        summary="Mobil nömrəni yoxla",
+        description="Mobil nömrənin yalnız rəqəmlərdən ibarət olub-olmadığını və operator prefix-nin düzgünlüyünü yoxlayır.",
+        request=MobileNumberSerializer,
+        responses={200: dict, 400: dict}
     )
     def post(self, request):
-        phone = request.data.get("phone_number")
-        if not phone:
-            return Response(
-                {"phone_number": "Mobil nömrə daxil edilməlidir."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        if CustomUser.objects.filter(phone_number=phone).exists():
-            return Response(
-                {"phone_number": "Bu nömrə ilə artıq qeydiyyat var."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        return Response(status=status.HTTP_200_OK)
+        serializer = MobileNumberSerializer(data=request.data)
+        if serializer.is_valid():
+            return Response(status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class RegisterAPIView(APIView):

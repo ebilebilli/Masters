@@ -1,9 +1,11 @@
+import re
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from core.models.city_model import City, District
 from core.models.language_model import Language
 from services.models.category_model import Category
+from services.models.service_model import Service
 
 from users.models import CustomUser
 from users.models import  WorkImage
@@ -53,21 +55,215 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     def get_profession_speciality(self, obj):
         return obj.profession_speciality.name
-    
+
+
+
+class MobileNumberSerializer(serializers.Serializer):
+    mobile_number = serializers.CharField(
+        required=True,
+        allow_blank=False,
+        error_messages={
+            'blank': "Zəhmət olmasa, məlumatları daxil edin.",
+            'required': "Zəhmət olmasa, məlumatları daxil edin."
+        }
+    )
+
+    def validate_mobile_number(self, value):
+        if not value:
+            raise serializers.ValidationError("Zəhmət olmasa, məlumatları daxil edin.")
+
+        def check_number(phone):
+            flag1 = False
+            flag2 = False
+            flag3 = False
+            print(phone)
+
+            valid_prefixes = ['10', '50', '51', '55', '70', '77', '99']
+            prefix = phone[:2]
+
+            if prefix in valid_prefixes:
+                flag1 = True
+
+            if phone.isdigit():
+                flag2 = True
+
+            if len(phone) == 9:
+                flag3 = True
+
+            if flag1 and flag2 and flag3:
+                return False
+            else:
+                return True
+            
+        if check_number(phone=value):
+            raise serializers.ValidationError("Mobil nömrə düzgün daxil edilməyib. 501234567 formatında daxil edin.")
+
+        if CustomUser.objects.filter(mobile_number=value).exists():
+            raise serializers.ValidationError("Bu mobil nömrə ilə istifadəçi artıq mövcuddur. Zəhmət olmasa, başqa mobil nömrə daxil edin.")
+
+        return value
+
 
 class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-    password2 = serializers.CharField(write_only=True)
+    # password = serializers.CharField(write_only=True)
+    # password2 = serializers.CharField(write_only=True)
 
-    cities = serializers.PrimaryKeyRelatedField(many=True, queryset=City.objects.all())
-    districts = serializers.PrimaryKeyRelatedField(many=True, queryset=District.objects.all())
-    languages = serializers.PrimaryKeyRelatedField(many=True, queryset=Language.objects.all())
+    # cities = serializers.PrimaryKeyRelatedField(many=True, queryset=City.objects.all())
+    # districts = serializers.PrimaryKeyRelatedField(many=True, queryset=District.objects.all())
+    # languages = serializers.PrimaryKeyRelatedField(many=True, queryset=Language.objects.all())
 
     work_images = serializers.ListField(
         child=serializers.ImageField(),
         write_only=True,
         required=False
     )
+    first_name = serializers.CharField(
+        required=True,
+        allow_blank=False,
+        error_messages={
+            "blank": "Zəhmət olmasa, məlumatları daxil edin.",
+            "required": "Zəhmət olmasa, məlumatları daxil edin."
+        }
+    )
+
+    last_name = serializers.CharField(
+        required=True,
+        allow_blank=False,
+        error_messages={
+            "blank": "Zəhmət olmasa, məlumatları daxil edin.",
+            "required": "Zəhmət olmasa, məlumatları daxil edin."
+        }
+    )
+
+    birth_date = serializers.DateField(
+        required=False,
+        allow_null=True,
+        input_formats=["%Y/%m/%d"],
+        error_messages={
+            "null": "Zəhmət olmasa, məlumatları daxil edin.",
+            "invalid": "Doğum tarixi 'YYYY/MM/DD' formatında olmalıdır. Məsələn: 2000/01/30",
+            "required": "Zəhmət olmasa, məlumatları daxil edin."
+        }
+    )
+
+    gender = serializers.ChoiceField(
+        choices=[("MALE", "Kişi"), ("FEMALE", "Qadın")],
+        error_messages={
+            "blank": "Zəhmət olmasa, seçim edin.",
+            "invalid_choice": "Zəhmət olmasa, seçim edin.",
+            "required": "Zəhmət olmasa, seçim edin."
+        }
+    )
+
+    mobile_number = serializers.CharField(
+        required=True,
+        allow_blank=False,
+        error_messages={
+            "blank": "Zəhmət olmasa, məlumatları daxil edin.",
+            "required": "Zəhmət olmasa, məlumatları daxil edin."
+        }
+    )
+
+    password = serializers.CharField(
+        required=True,
+        write_only=True,
+        error_messages={
+            "blank": "Zəhmət olmasa, məlumatları daxil edin.",
+            "required": "Zəhmət olmasa, məlumatları daxil edin."
+        }
+    )
+
+    password2 = serializers.CharField(
+        required=True,
+        write_only=True,
+        error_messages={
+            "blank": "Zəhmət olmasa, məlumatları daxil edin.",
+            "required": "Zəhmət olmasa, məlumatları daxil edin."
+        }
+    )
+
+    profession_area = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.all(),  # Modeli əlavə et
+        error_messages={
+            "required": "Zəhmət olmasa, peşə sahəsini daxil edin.",
+            "null": "Zəhmət olmasa, peşə sahəsini daxil edin."
+        }
+    )
+
+    profession_speciality = serializers.PrimaryKeyRelatedField(
+        queryset=Service.objects.all(),  # Modeli əlavə et
+        error_messages={
+            "required": "Zəhmət olmasa, peşə ixtisasını daxil edin.",
+            "null": "Zəhmət olmasa, peşə ixtisasını daxil edin."
+        }
+    )
+
+    experience_years = serializers.IntegerField(
+        required=False,
+        allow_null=True,
+        error_messages={
+            "invalid": "Zəhmət olmasa, iş təcrübəsini daxil edin.",
+            "required": "Zəhmət olmasa, iş təcrübəsini daxil edin."
+        }
+    )
+
+    education = serializers.ChoiceField(
+        choices=[('0', 'Yoxdur'), ('1', 'Tam ali'), ('2', 'Natamam ali'), ('3', 'Orta'), ('4', 'Peşə təhsili'), ('5', 'Orta ixtisas təhsili')],
+        error_messages={
+            "invalid_choice": "Zəhmət olmasa, təhsil səviyyəsini daxil edin.",
+            "required": "Zəhmət olmasa, təhsil səviyyəsini daxil edin."
+        }
+    )
+
+    education_speciality = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        error_messages={
+            "invalid": "Zəhmət olmasa, təhsil ixtisasını daxil edin.",
+            "required": "Zəhmət olmasa, təhsil ixtisasını daxil edin."
+        }
+    )
+
+    cities = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=City.objects.all(),  # City modeli əlavə et
+        required=False,
+        allow_null=True,
+        error_messages={
+            "required": "Şəhər seçimi mütləqdir.",
+            "incorrect_type": "Fəaliyyət ərazisi seçilməlidir."
+        }
+    )
+
+    districts = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=District.objects.all(),  # District modeli əlavə et
+        required=False,
+        allow_null=True,
+        error_messages={
+            "required": "Rayon seçimi mütləqdir.",
+            "incorrect_type": "Fəaliyyət ərazisi seçilməlidir."
+        }
+    )
+
+    languages = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Language.objects.all(),  # Language modeli əlavə et
+        error_messages={
+            "required": "Zəhmət olmasa, dil biliklərinizi seçinnn.",
+            "incorrect_type": "Zəhmət olmasa, dil biliklərinizi seçin."
+        }
+    )
+
+    note = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        max_length=1500,
+        error_messages={
+            "max_length": "Əlavə qeyd 1500 simvoldan çox ola bilməz."
+        }
+    )
+
 
     class Meta:
         model = CustomUser
@@ -139,67 +335,172 @@ class RegisterSerializer(serializers.ModelSerializer):
         if cities is None:
             self.fields['districts'].required = True
 
-
-    def validate_mobile_number(self, value):
-        if CustomUser.objects.filter(mobile_number=value).exists():
-            raise serializers.ValidationError("Bu mobil nömrə ilə artıq qeydiyyat aparılıb.")
-        if not value.isdigit():
-            raise serializers.ValidationError("Mobil nömrə yalnız rəqəmlərdən ibarət olmalıdır.")
-        if len(value) != 9:
-            raise serializers.ValidationError("Mobil nömrə 9 rəqəmdən ibarət olmalıdır.")
-        return value
-
+##########//  Şəxsi məlumatlar  \\##########
     def validate_first_name(self, value):
         if not value.strip():
-            raise serializers.ValidationError("Ad sahəsi boş ola bilməz.")
+            raise serializers.ValidationError("Zəhmət olmasa, məlumatları daxil edin.")
+        if value and not all(char.isalpha() or char.isspace() for char in value):
+            raise serializers.ValidationError("Yalnız Azərbaycan hərfləri ilə qeyd edilməlidir.")
         if len(value.strip()) < 3:
             raise serializers.ValidationError("Ad ən azı 3 simvol olmalıdır.")
+        if len(value.strip()) > 21:
+            raise serializers.ValidationError("Ad ən çoxu 20 simvol olmalıdır.")
         return value    
 
 
     def validate_last_name(self, value):
         if not value.strip():
-            raise serializers.ValidationError("Soyad sahəsi boş ola bilməz.")
+            raise serializers.ValidationError("Zəhmət olmasa, məlumatları daxil edin.")
+        if value and not all(char.isalpha() or char.isspace() for char in value):
+            raise serializers.ValidationError("Yalnız Azərbaycan hərfləri ilə qeyd edilməlidir.")
         if len(value.strip()) < 3:
             raise serializers.ValidationError("Soyad ən azı 3 simvol olmalıdır.")
+        if len(value.strip()) > 21:
+            raise serializers.ValidationError("Soyad ən çoxu 20 simvol olmalıdır.")
         return value
-
-
-    def validate_education_speciality(self, value):
-        if value and any(char.isdigit() for char in value):
-            raise serializers.ValidationError("Təhsil üzrə ixtisas yalnız hərflərdən ibarət olmalıdır.")
-        return value
-
+    
     def validate_birth_date(self, value):
-        from datetime import date
-        if value > date.today():
-            raise serializers.ValidationError("Doğum tarixi indiki tarixdən sonrakı bir tarix ola bilməz.")
+        from datetime import date, datetime
+        if not value:
+            raise serializers.ValidationError("Zəhmət olmasa, məlumatları daxil edin.")
+
+        if isinstance(value, str):
+            try:
+                value = datetime.strptime(value, "%Y/%m/%d").date()
+            except ValueError:
+                raise serializers.ValidationError("Doğum tarixi 'YYYY/MM/DD' formatında olmalıdır. Məsələn: 2000/01/30")
+            
+        # Yaş hesablaması
+        today = date.today()
+        age = today.year - value.year - (
+            (today.month, today.day) < (value.month, value.day)
+        )
+
+        if age < 16:
+            raise serializers.ValidationError("Qeydiyyatdan keçmək üçün minimum yaş 16 olmalıdır.")
+
         return value
 
+    def validate_mobile_number(self, value):
+        if not value:
+            raise serializers.ValidationError("Zəhmət olmasa, məlumatları daxil edin.")
+
+        def check_number(phone):
+            flag1 = False
+            flag2 = False
+            flag3 = False
+            print(phone)
+
+            valid_prefixes = ['10', '50', '51', '55', '70', '77', '99']
+            prefix = phone[:2]
+
+            if prefix in valid_prefixes:
+                flag1 = True
+
+            if phone.isdigit():
+                flag2 = True
+
+            if len(phone) == 9:
+                flag3 = True
+
+            if flag1 and flag2 and flag3:
+                return False
+            else:
+                return True
+            
+        if check_number(phone=value):
+            raise serializers.ValidationError("Mobil nömrə düzgün daxil edilməyib. 501234567 formatında daxil edin.")
+
+        if CustomUser.objects.filter(mobile_number=value).exists():
+            raise serializers.ValidationError("Bu mobil nömrə ilə istifadəçi artıq mövcuddur. Zəhmət olmasa, başqa mobil nömrə daxil edin.")
+
+        return value
+
+    def validate_gender(self, value):
+        if not value:
+            raise serializers.ValidationError("Zəhmət olmasa, seçim edin.")
+        return value
+
+    def validate_password(self, value):
+        if len(value) < 8 or len(value) > 16:
+            raise serializers.ValidationError("Şifrəniz 8 - 15 simvol aralığından ibarət olmalı, özündə minimum bir böyük hərf, rəqəm və xüsusi simvol (məsələn: !, @, #, -, _, +) ehtiva etməlidir.")
+
+        if not re.search(r'[A-Z]', value):
+            raise serializers.ValidationError("Şifrəniz 8 - 15 simvol aralığından ibarət olmalı, özündə minimum bir böyük hərf, rəqəm və xüsusi simvol (məsələn: !, @, #, -, _, +) ehtiva etməlidir.")
+
+        if not re.search(r'\d', value):
+            raise serializers.ValidationError("Şifrəniz 8 - 15 simvol aralığından ibarət olmalı, özündə minimum bir böyük hərf, rəqəm və xüsusi simvol (məsələn: !, @, #, -, _, +) ehtiva etməlidir.")
+
+        if not re.search(r'[!@#$%^&*()_+\-=\[\]{};:"\\|,.<>\/?]', value):
+            raise serializers.ValidationError("Şifrəniz 8 - 15 simvol aralığından ibarət olmalı, özündə minimum bir böyük hərf, rəqəm və xüsusi simvol (məsələn: !, @, #, -, _, +) ehtiva etməlidir.")
+
+        return value
+
+
+##########//  Peşə məlumatları  \\##########
+    def validate_profession_area(self, value):
+        if not value:
+            raise serializers.ValidationError("Zəhmət olmasa, peşə sahəsini daxil edin.")
+        return value
+    
+    def validate_profession_speciality(self, value):
+        if not value:
+            raise serializers.ValidationError("Zəhmət olmasa, peşə ixtisasını daxil edin.")
+        return value
+    
+    def validate_custom_profession(self, value):
+        if value and any(char.isdigit() for char in value):
+            raise serializers.ValidationError("Yalnız Azərbaycan hərfləri ilə qeyd edilməlidir.")
+        if value and len(value.strip()) > 51:
+            raise serializers.ValidationError("Xüsusi ixtisas sahəsi ən çoxu 50 simvol olmalıdır.")
+        return value
+    
     def validate_experience_years(self, value):
+        if not value:
+            raise serializers.ValidationError("Zəhmət olmasa, iş təcrübəsini daxil edin.")
+        if value < 0:
+            raise serializers.ValidationError("İş təcrübəsi mənfi ədəd ola bilməz.")
         if value > 100:
             raise serializers.ValidationError("İş təcrübəsi 100 ildən çox ola bilməz.")
         return value
+    
 
-    def validate_custom_profession(self, value):
-        if value and not all(char.isalpha() or char.isspace() for char in value):
-            raise serializers.ValidationError("Xüsusi ixtisas sahəsi yalnız hərflərdən ibarət olmalıdır.")
-        if value and len(value.strip()) < 3:
-            raise serializers.ValidationError("Xüsusi ixtisas sahəsi ən azı 3 simvol olmalıdır.")
+##########//  Təhsil məlumatları  \\##########
+    def validate_education(self, value):
+        if not value.strip():
+            raise serializers.ValidationError("Zəhmət olmasa, təhsil səviyyəsini daxil edin.")
         return value
 
-    def validate_profession_area(self, value):
-        if not value:
-            raise serializers.ValidationError("Peşə sahəsi mütləq seçilməlidir.")
+    def validate_education_speciality(self, value):
+        if value and any(char.isdigit() for char in value):
+            raise serializers.ValidationError("Yalnız Azərbaycan hərfləri ilə qeyd edilməlidir.")
+        if len(value.strip()) > 51:
+            raise serializers.ValidationError("Təhsil ixtisası ən çoxu 50 simvol olmalıdır.")
         return value
     
     def validate_languages(self, value):
         if not value:
-            raise serializers.ValidationError("Ən azı bir dil seçilməlidir.")
+            raise serializers.ValidationError("Zəhmət olmasa, dil biliklərinizi seçin.")
+        return value
+
+    def validate_note(self, value):
+        if value and any(char.isdigit() for char in value):
+            raise serializers.ValidationError("Yalnız Azərbaycan hərfləri ilə qeyd edilməlidir.")
+        if value and len(value.strip()) > 1501:
+            raise serializers.ValidationError("Əlavə qeyd ən çoxu 1500 simvol olmalıdır.")
         return value
 
     def validate(self, attrs):
-        if attrs['password'] != attrs['password2']:
+        password = attrs.get('password')
+        password2 = attrs.get('password2')
+
+        if not password:
+            raise serializers.ValidationError({"password": "Zəhmət olmasa, məlumatları daxil edin."})
+        
+        if not password2:
+            raise serializers.ValidationError({"password2": "Zəhmət olmasa, məlumatları daxil edin."})
+
+        if password != password2:
             raise serializers.ValidationError({"password": "Şifrələr uyğun deyil."})
 
         profession_speciality = attrs.get('profession_speciality')
@@ -209,16 +510,12 @@ class RegisterSerializer(serializers.ModelSerializer):
         if speciality_name == 'other':
             if not custom_profession:
                 raise serializers.ValidationError({
-                    'custom_profession': f"Peşə ixtisası 'digər' seçiləndə custom_profession mütləq doldurulmalıdır."
+                    'custom_profession': f"Zəhmət olmasa, peşə ixtisasını daxil edin."
                 })
         else:
             if not profession_speciality:
                 raise serializers.ValidationError({
-                    'profession_speciality': 'Peşə ixtisası qeyd etmək vacibdir.'
-                })
-            if custom_profession:
-                raise serializers.ValidationError({
-                    'custom_profession': 'Bu sahə boş qalmalıdır.'
+                    'profession_speciality': 'Zəhmət olmasa, peşə ixtisasını daxil edin.'
                 })
         
         # Təhsil üçün yoxlanış
@@ -227,7 +524,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         if education != "0" and not speciality:
             raise serializers.ValidationError({
-                "education_speciality": "Bu sahə mütləq doldurulmalıdır."
+                "education_speciality": "Zəhmət olmasa, təhsil ixtisasını daxil edin."
             })
         
         cities = attrs.get('cities')
@@ -235,7 +532,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         if not cities and not districts:
             raise serializers.ValidationError({
-                "cities": "Ən azı bir şəhər və ya ərazi seçilməlidir."
+                "cities": "Fəaliyyət ərazisi seçilməlidir."
             })
 
         return attrs
@@ -251,6 +548,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         education_speciality = validated_data.pop('education_speciality', '')
         if education_speciality:
             education_speciality = education_speciality.capitalize()
+        
+        if education_speciality != 'other':
+            custom_profession = validated_data.pop('custom_profession', '')
 
         cities = validated_data.pop('cities', [])
         districts = validated_data.pop('districts', [])
