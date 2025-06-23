@@ -29,7 +29,6 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'custom_profession',
             'cities',
             'districts',
-            'rating',
             'experience_years',
             'profile_image',
             'average_rating',
