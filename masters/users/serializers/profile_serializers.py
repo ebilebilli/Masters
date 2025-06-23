@@ -154,8 +154,11 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
                 "education_speciality": "Bu sahə mütləq doldurulmalıdır."
             })
 
-        # cities = attrs.get("cities") or user.cities.all()
-        # districts = attrs.get("districts") or user.districts.all()
+        cities = attrs.get("cities") or user.cities.all()
+        districts = attrs.get("districts") or user.districts.all()
+
+        if not cities and not districts:
+            raise serializers.ValidationError('Şəhər və rayonlardan ən azı biri seçilməldir')
 
         # if districts and not any(city.name == 'baku' for city in cities):
         #     raise serializers.ValidationError('Rayonlar sadəcə Bakı şəhəri üçün mövcuddur.')
