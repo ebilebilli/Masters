@@ -10,7 +10,7 @@ from services.models.category_model import Category
 from services.serializers.category_serializer import CategorySerializer
 from utils.paginations import CustomPagination
 from users.models.user_model import CustomUser
-from users.serializers.profile_serializers import ProfileSerializer
+from users.serializers.user_serializers import CustomUserSerializer
 
 
 __all__ = [
@@ -74,7 +74,7 @@ class MasterListForCategoryAPIView(APIView):
     
     @swagger_auto_schema(
         operation_summary="Kateqoriya üzrə aktiv ustaları qaytarır",
-        responses={200: ProfileSerializer(many=True)}
+        responses={200: CustomUserSerializer(many=True)}
     )
 
     def get(self, request, category_id):
@@ -90,6 +90,6 @@ class MasterListForCategoryAPIView(APIView):
                 'error': 'Hal-hazırda bu kateqoriyaya uyğun aktiv bir usta yoxdur'
             }, status=status.HTTP_404_NOT_FOUND)
         result_page = pagination.paginate_queryset(masters, request)
-        serializer = ProfileSerializer(result_page, many=True)
+        serializer = CustomUserSerializer(result_page, many=True)
         paginated_response = pagination.get_paginated_response(serializer.data).data
         return Response(paginated_response, status=status.HTTP_200_OK)
