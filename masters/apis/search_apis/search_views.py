@@ -13,8 +13,6 @@ from users.serializers.user_serializers import CustomUserSerializer
 from utils.paginations import CustomPagination
 
 
-
-
 class SearchAPIView(ListAPIView):
     permission_classes = [AllowAny]
     serializer_class = CustomUserSerializer
