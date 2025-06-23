@@ -37,6 +37,8 @@ work_images_field = openapi.Schema(
 
 
 class MobileNumberCheckAPIView(APIView):
+    permission_classes = [AllowAny]
+    
     @swagger_auto_schema(
         operation_summary="Mobil nömrəni yoxla",
         operation_description="Mobil nömrənin yalnız rəqəmlərdən ibarət olub-olmadığını və operator prefix-nin düzgünlüyünü yoxlayır.",
