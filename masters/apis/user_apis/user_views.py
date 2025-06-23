@@ -35,6 +35,8 @@ work_images_field = openapi.Schema(
     nullable=True,
 )
 
+class MobileNum:
+    mobile_number: str
 
 class MobileNumberCheckAPIView(APIView):
     @extend_schema(
@@ -50,7 +52,7 @@ class MobileNumberCheckAPIView(APIView):
             )
         ]
     )
-    def post(self, request):
+    def post(self, request: MobileNum):
         serializer = MobileNumberSerializer(data=request.data)
         if serializer.is_valid():
             return Response(status=status.HTTP_200_OK)
