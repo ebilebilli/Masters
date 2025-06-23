@@ -18,6 +18,18 @@ class ProfileSerializer(serializers.ModelSerializer):
     districts = serializers.SerializerMethodField()
     work_images = serializers.StringRelatedField(many=True)
 
+    average_rating = serializers.SerializerMethodField()
+    average_responsible = serializers.SerializerMethodField()
+    average_neat = serializers.SerializerMethodField()
+    average_time_management = serializers.SerializerMethodField()
+    average_communicative = serializers.SerializerMethodField()
+    average_punctual = serializers.SerializerMethodField()
+    average_professional = serializers.SerializerMethodField()
+    average_experienced = serializers.SerializerMethodField()
+    average_efficient = serializers.SerializerMethodField()
+    average_agile = serializers.SerializerMethodField()
+    average_patient = serializers.SerializerMethodField()
+    review_count = serializers.SerializerMethodField()
 
     class Meta:
         model = CustomUser
@@ -58,27 +70,48 @@ class ProfileSerializer(serializers.ModelSerializer):
             'average_patient',
             'review_count',
         ]
-        
+
     def get_cities(self, obj):
         return [city.display_name for city in obj.cities.all()]
 
     def get_districts(self, obj):
-        return [district.display_name for district in obj.districts.all()]   
+        return [district.display_name for district in obj.districts.all()]
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
+    def get_average_rating(self, obj):
+        return obj.average_rating()
 
-        data['education'] = instance.get_education_display()
+    def get_average_responsible(self, obj):
+        return obj.average_responsible
 
-        data['gender'] = instance.get_gender_display()  
+    def get_average_neat(self, obj):
+        return obj.average_neat
 
-        if instance.profession_area:
-            data['profession_area'] = instance.profession_area.display_name
+    def get_average_time_management(self, obj):
+        return obj.average_time_management
 
-        if instance.profession_speciality:
-            data['profession_speciality'] = instance.profession_speciality.display_name
+    def get_average_communicative(self, obj):
+        return obj.average_communicative
 
-        return {key: value for key, value in data.items() if value not in [None, '', [], {}]}
+    def get_average_punctual(self, obj):
+        return obj.average_punctual
+
+    def get_average_professional(self, obj):
+        return obj.average_professional
+
+    def get_average_experienced(self, obj):
+        return obj.average_experienced
+
+    def get_average_efficient(self, obj):
+        return obj.average_efficient
+
+    def get_average_agile(self, obj):
+        return obj.average_agile
+
+    def get_average_patient(self, obj):
+        return obj.average_patient
+
+    def get_review_count(self, obj):
+        return obj.review_count()
 
     
 

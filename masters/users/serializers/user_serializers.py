@@ -55,6 +55,10 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     def get_profession_speciality(self, obj):
         return obj.profession_speciality.name
+    
+    
+    def get_average_rating(self, obj):
+        return obj.average_rating()
 
 
 
