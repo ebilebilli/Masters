@@ -40,7 +40,7 @@ class MobileNumberCheckAPIView(APIView):
     @extend_schema(
         summary="Mobil nömrəni yoxla",
         description="Mobil nömrənin yalnız rəqəmlərdən ibarət olub-olmadığını və operator prefix-nin düzgünlüyünü yoxlayır.",
-        request=MobileNumberSerializer,
+        manual_parametres=[openapi.Parameter('mobile_number', openapi.IN_FORM, type=openapi.TYPE_STRING, description="Mobil nömrə", required=True)]
         responses={200: dict, 400: dict},
         examples=[
             OpenApiExample(
