@@ -35,11 +35,9 @@ work_images_field = openapi.Schema(
     nullable=True,
 )
 
-class MobileNum:
-    mobile_number: str
 
 class MobileNumberCheckAPIView(APIView):
-    @extend_schema(
+    @swagger_auto_schema(
         summary="Mobil nömrəni yoxla",
         description="Mobil nömrənin yalnız rəqəmlərdən ibarət olub-olmadığını və operator prefix-nin düzgünlüyünü yoxlayır.",
         request=MobileNumberSerializer,
@@ -50,9 +48,16 @@ class MobileNumberCheckAPIView(APIView):
                 value={"mobile_number": "501234567"},
                 request_only=True
             )
-        ]
+        ],
+        manual_parameters=[
+            openapi.Parameter('mobile_number', openapi.IN_FORM, type=openapi.TYPE_STRING, description="Mobil nömrə", required=True)
+        ],
+        # responses={
+        #     201: openapi.Response(description='Uğurlu qeydiyyat'),
+        #     400: openapi.Response(description='Validasiya xətası')
+        # }
     )
-    def post(self, request: MobileNum):
+    def post(self, request):
         serializer = MobileNumberSerializer(data=request.data)
         if serializer.is_valid():
             return Response(status=status.HTTP_200_OK)
