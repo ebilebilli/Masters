@@ -23,10 +23,22 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        exclude = [
-            'password', 'is_superuser', 'is_staff', 'is_master', 'user_permissions', 'groups',
-            'note', 'last_login', 'is_active', 'facebook', 'instagram', 'tiktok', 'linkedin', 
+        fields = [
+            'id',
+            'full_name',
+            'profession_speciality',
+            'custom_profession',
+            'cities',
+            'districts',
+            'rating',
+            'experience_years',
+            'profile_image',
+            'average_rating'
+            'badge',
         ]
+
+    def get_full_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}"
         
     def get_cities(self, obj):
         return [city.display_name for city in obj.cities.all()]
@@ -60,6 +72,12 @@ class CustomUserSerializer(serializers.ModelSerializer):
     
     def get_average_rating(self, obj):
         return obj.average_rating()
+    
+    def get_badge(self, obj):
+        avg = obj.average_rating()
+        if avg and avg >= 4:
+            return "Tövsiyə olunur"
+        return None
 
 
 
