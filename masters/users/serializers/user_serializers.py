@@ -105,13 +105,6 @@ class MobileNumberSerializer(serializers.Serializer):
 
 
 class RegisterSerializer(serializers.ModelSerializer):
-    # password = serializers.CharField(write_only=True)
-    # password2 = serializers.CharField(write_only=True)
-
-    # cities = serializers.PrimaryKeyRelatedField(many=True, queryset=City.objects.all())
-    # districts = serializers.PrimaryKeyRelatedField(many=True, queryset=District.objects.all())
-    # languages = serializers.PrimaryKeyRelatedField(many=True, queryset=Language.objects.all())
-
     work_images = serializers.ListField(
         child=serializers.ImageField(),
         write_only=True,

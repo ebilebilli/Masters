@@ -41,7 +41,14 @@ class MobileNumberCheckAPIView(APIView):
         summary="Mobil nömrəni yoxla",
         description="Mobil nömrənin yalnız rəqəmlərdən ibarət olub-olmadığını və operator prefix-nin düzgünlüyünü yoxlayır.",
         request=MobileNumberSerializer,
-        responses={200: dict, 400: dict}
+        responses={200: dict, 400: dict},
+        examples=[
+            OpenApiExample(
+                name="Doğru format",
+                value={"mobile_number": "501234567"},
+                request_only=True
+            )
+        ]
     )
     def post(self, request):
         serializer = MobileNumberSerializer(data=request.data)
