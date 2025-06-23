@@ -47,9 +47,7 @@ class MobileNumberCheckAPIView(APIView):
                 request_only=True
             )
         ],
-        manual_parameters=[
-            openapi.Parameter('mobile_number', openapi.IN_FORM, type=openapi.TYPE_STRING, description="Mobil nömrə", required=True)
-        ],
+        request=MobileNumberSerializer,
         responses={
             201: openapi.Response(description='Uğurlu qeydiyyat'),
             400: openapi.Response(description='Validasiya xətası')
