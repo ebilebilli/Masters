@@ -18,7 +18,7 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_active", True)
-        extra_fields.setdefault("is_masters", False)
+        extra_fields.setdefault("is_master", False)
         extra_fields.setdefault("first_name", "Admin")
         extra_fields.setdefault("last_name", "İstifadəçi")
         extra_fields.setdefault("birth_date", timezone.now().date())
