@@ -25,7 +25,10 @@ class CustomUserSerializer(serializers.ModelSerializer):
         model = CustomUser
         exclude = [
             'password', 'is_superuser', 'is_staff', 'is_master', 'user_permissions', 'groups',
-            'last_login', 'is_active',
+            'note', 'birth_date', 'last_login', 'is_active', 'facebook', 'instagram', 'tiktok', 'linkedin', 
+            'average_responsible', 'average_neat', 'average_time_management',
+            'average_communicative', 'average_punctual', 'average_professional',
+            'average_experienced', 'average_efficient', 'average_agile', 'average_patient'
         ]
         
     def get_cities(self, obj):
@@ -59,7 +62,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return obj.profession_speciality.name
     
     def get_average_rating(self, obj):
-        return obj.average_rating
+        return obj.average_rating()
 
 
 

@@ -10,6 +10,7 @@ from drf_yasg import openapi
 
 from users.models.user_model import CustomUser
 from users.serializers.user_serializers import CustomUserSerializer
+from users.serializers.profile_serializers import ProfileSerializer
 from utils.paginations import CustomPagination, PaginationForMainPage
 
 
@@ -102,12 +103,12 @@ class MasterDetailAPIView(APIView):
     
     @swagger_auto_schema(
         operation_summary="Usta məlumatlarını göstər",
-        responses={200: CustomUserSerializer()}
+        responses={200: ProfileSerializer()}
     )
 
     def get(self, request, master_id):
         master = get_object_or_404(CustomUser, id=master_id, is_active=True)
-        serializer = CustomUserSerializer(master)
+        serializer = ProfileSerializer(master)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

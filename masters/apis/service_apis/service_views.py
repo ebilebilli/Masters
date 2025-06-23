@@ -13,7 +13,7 @@ from services.models.category_model import Category
 from services.models.service_model import Service
 from services.serializers.service_serializer import ServiceSerializer
 from users.models.user_model import CustomUser
-from users.serializers.user_serializers import CustomUserSerializer
+from users.serializers.profile_serializers import ProfileSerializer
 from utils.paginations import CustomPagination
 from reviews.models.review_models import Review
 
@@ -111,7 +111,7 @@ class MasterListForServicesAPIView(APIView):
     
     @swagger_auto_schema(
         operation_summary="Servis üzrə aktiv ustaları qaytarır",
-        responses={200: CustomUserSerializer(many=True)}
+        responses={200: ProfileSerializer(many=True)}
     )
 
     def get(self, request, service_id):
@@ -127,7 +127,7 @@ class MasterListForServicesAPIView(APIView):
                 'error': 'Hal-hazırda bu servisə uyğun aktiv bir usta yoxdur'
             }, status=status.HTTP_404_NOT_FOUND)
         result_page = pagination.paginate_queryset(masters, request)
-        serializer = CustomUserSerializer(result_page, many=True)
+        serializer = ProfileSerializer(result_page, many=True)
         paginated_response = pagination.get_paginated_response(serializer.data).data
         return Response(paginated_response, status=status.HTTP_200_OK)
 

@@ -155,7 +155,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = [] 
 
     objects = CustomUserManager()
-
+    
     def average_rating(self):
         average = Review.objects.filter(master=self).aggregate(avg=Avg('rating'))['avg']
         if average is None:
