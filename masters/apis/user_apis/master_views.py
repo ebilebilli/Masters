@@ -17,7 +17,7 @@ __all__ = [
     'MastersListAPIView',
     'TopRatedMastersListAPIView',
     'MasterDetailAPIView',
-    'MasterProfileDeleteAPIView'
+    # 'MasterProfileDeleteAPIView'
 ]
 
 
@@ -41,7 +41,7 @@ class MastersListAPIView(APIView):
         masters = CustomUser.objects.annotate(
             avg_rating=Avg('reviews__rating'),
             count_ratings=Count('reviews')
-        ).filter(is_active=True).order_by('-created_at')
+        ).filter(is_active=True, is_master=True).order_by('-created_at')
         
         if not masters.exists():
             return Response({
@@ -73,7 +73,7 @@ class TopRatedMastersListAPIView(APIView):
         masters = CustomUser.objects.annotate(
             avg_rating=Avg('reviews__rating'),
             count_ratings=Count('reviews')
-        ).filter(is_active=True).order_by('-avg_rating', '-count_ratings', '-last_login')
+        ).filter(is_active=True, is_master=True).order_by('-avg_rating', '-count_ratings', '-last_login')
         
         if not masters.exists():
             return Response({
@@ -112,30 +112,30 @@ class MasterDetailAPIView(APIView):
 
 
 
-class MasterProfileDeleteAPIView(APIView):
-    """
-    delete:
-    Delete the master. Only the master themselves or a superuser can perform this.
+# class MasterProfileDeleteAPIView(APIView):
+#     """
+#     delete:
+#     Delete the master. Only the master themselves or a superuser can perform this.
 
-    """
+#     """
 
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    http_method_names = ['delete']
+#     authentication_classes = [JWTAuthentication]
+#     permission_classes = [IsAuthenticated]
+#     http_method_names = ['delete']
 
-    @swagger_auto_schema(
-        operation_summary="Ustanı sil",
-        responses={
-            204: openapi.Response(description="Hesab silindi"),
-            403: 'İcazəniz yoxdur'
-        }
-    )
+#     @swagger_auto_schema(
+#         operation_summary="Ustanı sil",
+#         responses={
+#             204: openapi.Response(description="Hesab silindi"),
+#             403: 'İcazəniz yoxdur'
+#         }
+#     )
     
-    def delete(self, request, master_id):
-        user = request.user
-        master = get_object_or_404(CustomUser, id=master_id)
-        if master.id != user.id and not user.is_superuser:
-            return Response({'error': 'Bunu etməyə icazəniz yoxdur'}, status=status.HTTP_403_FORBIDDEN)
+#     def delete(self, request, master_id):
+#         user = request.user
+#         master = get_object_or_404(CustomUser, id=master_id)
+#         if master.id != user.id and not user.is_superuser:
+#             return Response({'error': 'Bunu etməyə icazəniz yoxdur'}, status=status.HTTP_403_FORBIDDEN)
         
-        master.delete()
-        return Response({'message': 'Hesab silindi'}, status=status.HTTP_204_NO_CONTENT)
+#         master.delete()
+#         return Response({'message': 'Hesab silindi'}, status=status.HTTP_204_NO_CONTENT)

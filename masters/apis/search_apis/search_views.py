@@ -80,7 +80,7 @@ class SearchAPIView(ListAPIView):
         experience_years = request.query_params.get('experience_years')
         ordering = request.query_params.get('ordering', '-id')
 
-        queryset = CustomUser.objects.all()
+        queryset = CustomUser.objects.filter(is_active=True, is_master=True)
 
         if search_query:
             queryset = queryset.filter(

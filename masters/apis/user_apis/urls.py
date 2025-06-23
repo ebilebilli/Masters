@@ -28,11 +28,11 @@ urlpatterns = [
         MasterDetailAPIView.as_view(),
         name='professionals-detail'
     ),
-    path(
-        'professionals/<int:master_id>/delete', 
-        MasterProfileDeleteAPIView.as_view(),
-        name='professionals-delete'
-    ),  
+    # path(
+    #     'professionals/<int:master_id>/delete', 
+    #     MasterProfileDeleteAPIView.as_view(),
+    #     name='professionals-delete'
+    # ),  
     
     #Master handwork images endpoints
     path(
