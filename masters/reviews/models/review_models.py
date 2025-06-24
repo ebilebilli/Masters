@@ -10,11 +10,11 @@ from utils.validators import az_letters_validator, not_only_whitespace
 
 
 class Review(models.Model):
-    user =  models.ForeignKey(       # real customer user will add in product level
-        'users.CustomUser', 
-        on_delete=models.CASCADE, 
-        related_name='comments'
-        )
+    # user =  models.ForeignKey(       # real customer user will add in product level
+    #     'users.CustomUser', 
+    #     on_delete=models.CASCADE, 
+    #     related_name='comments'
+    #     )
     master = models.ForeignKey(
         'users.CustomUser', 
         on_delete=models.CASCADE, 
@@ -69,6 +69,6 @@ class Review(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    class Meta:
-        unique_together = ('master', 'user')
+    # class Meta:
+    #     unique_together = ('master', 'user')
 

@@ -111,14 +111,11 @@ class CreateReviewAPIView(APIView):
         if user.id == master_id:
             return Response({'error': 'Özünüzə şərh əlavə edə bilmərsiniz'}, status=status.HTTP_403_FORBIDDEN)
         
-        if Review.objects.filter(master=master, user=user).exists():
-            raise ValidationError('Siz artıq bu usta üçün rəy bildirmisiniz.')
-        
-        serializer = ReviewSerializer(data=request.data, context={'user': user, 'master': master})
+        serializer = ReviewSerializer(data=request.data, context={'master': master})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Göndərilən sorğu düzgün deyil'}, status=status.HTTP_400_BAD_REQUEST)
 
 class UpdateReviewAPIView(APIView):
     authentication_classes = [JWTAuthentication]
@@ -187,7 +184,7 @@ class UpdateReviewAPIView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Göndərilən sorğu düzgün deyil'},  status=status.HTTP_400_BAD_REQUEST)
 
 
 class DeleteReviewAPIView(APIView):
@@ -222,7 +219,7 @@ class FilterReviewAPIView(APIView):
     )
     def get(self, request, master_id):
         pagination = self.pagination_class()
-        master = get_object_or_404(CustomUser, is_active=True, id=master_id)
+        master = get_object_or_404(CustomUser, is_active=True, is_master=True, id=master_id)
         order = request.query_params.get('order', 'newest')
 
         if order == 'oldest':

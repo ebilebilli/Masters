@@ -21,7 +21,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Review
-        exclude = ['user']
+        fields = '__all__'
 
     def validate(self, data):
         required_fields = ['comment', 'rating']
@@ -89,11 +89,10 @@ class ReviewSerializer(serializers.ModelSerializer):
         return instance
         
     def create(self, validated_data):
-        user = self.context['user']  # burada user instance olmalıdır (CustomUser obj)
         master = self.context['master']
         review_images = validated_data.pop('review_images', [])
 
-        review = Review.objects.create(user=user, master=master, **validated_data)
+        review = Review.objects.create(master=master, **validated_data)
 
         for idx, image in enumerate(review_images):
             ReviewWorkImage.objects.create(review=review, image=image, order=idx)
