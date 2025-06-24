@@ -10,6 +10,7 @@ from users.models import  WorkImage
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
     profile_image = serializers.ImageField()
     profession_speciality = serializers.StringRelatedField()
     profession_area = serializers.StringRelatedField()
@@ -35,8 +36,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = [
             'id',
-            'first_name',
-            'last_name',
+            'full_name',
             'profile_image',
             'note',
             'gender',
@@ -70,6 +70,30 @@ class ProfileSerializer(serializers.ModelSerializer):
             'average_patient',
             'review_count',
         ]
+    
+    def get_full_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}"
+        
+    def get_cities(self, obj):
+        return [city.display_name for city in obj.cities.all()]
+    
+    def get_districts(self, obj):
+        return [district.display_name for district in obj.districts.all()] 
+    
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        data['education'] = instance.get_education_display()
+
+        data['gender'] = instance.get_gender_display()  
+
+        if instance.profession_area:
+            data['profession_area'] = instance.profession_area.display_name
+
+        if instance.profession_speciality:
+            data['profession_speciality'] = instance.profession_speciality.display_name
+
+        return {key: value for key, value in data.items() if value not in [None, '', [], {}]}
 
     def get_cities(self, obj):
         return [city.display_name for city in obj.cities.all()]
