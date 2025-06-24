@@ -19,7 +19,7 @@ class ReviewAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Əsas məlumatlar', {
-            'fields': ('user', 'master', 'username', 'rating', 'comment')
+            'fields': ('master', 'username', 'rating', 'comment')
         }),
         ('Dəyərləndirmə kriteriyaları', {
             'fields': (
