@@ -38,66 +38,33 @@ class Review(models.Model):
             MaxLengthValidator(1000),
         ]
     )
-    responsible = models.PositiveSmallIntegerField(
-        verbose_name="Məsuliyyətli",
-        validators=[MinValueValidator(1),MaxValueValidator(5)],
-        null=True,
-        blank=True
-    )
-    neat = models.PositiveSmallIntegerField(
-        verbose_name="Səliqəli",
-        validators=[MinValueValidator(1), MaxValueValidator(5)],
-        null=True,
-        blank=True
-    )
-    time_management = models.PositiveSmallIntegerField(
-        verbose_name="Vaxta nəzarət",
-        validators=[MinValueValidator(1), MaxValueValidator(5)],
-        null=True,
-        blank=True
-    )
-    communicative = models.PositiveSmallIntegerField(
-        verbose_name="Ünsiyyətcil",
-        validators=[MinValueValidator(1), MaxValueValidator(5)],
-        null=True,
-        blank=True
-    )
-    punctual = models.PositiveSmallIntegerField(
-        verbose_name="Dəqiq",
-        validators=[MinValueValidator(1), MaxValueValidator(5)],
-        null=True,
-        blank=True
-    )
-    professional = models.PositiveSmallIntegerField(
-        verbose_name="Peşəkar",
-        validators=[MinValueValidator(1), MaxValueValidator(5)],
-        null=True,
-        blank=True
-    )
-    experienced = models.PositiveSmallIntegerField(
-        verbose_name="Təcrübəli",
-        validators=[MinValueValidator(1), MaxValueValidator(5)],
-        null=True,
-        blank=True
-    )
-    efficient = models.PositiveSmallIntegerField(
-        verbose_name="Səmərəli",
-        validators=[MinValueValidator(1), MaxValueValidator(5)],
-        null=True,
-        blank=True
-    )
-    agile = models.PositiveSmallIntegerField(
-        verbose_name="Çevik",
-        validators=[MinValueValidator(1), MaxValueValidator(5)],
-        null=True,
-        blank=True
-    )
-    patient = models.PositiveSmallIntegerField(
-        verbose_name="Səbirli",
-        validators=[MinValueValidator(1), MaxValueValidator(5)],
-        null=True,
-        blank=True
-    )
+    
+    experienced = models.BooleanField(default=False, verbose_name="Təcrübəli")
+    professional = models.BooleanField(default=False, verbose_name="Peşəkar")
+    patient = models.BooleanField(default=False, verbose_name="Səbirli")
+    punctual = models.BooleanField(default=False, verbose_name="Dəqiq")
+    responsible = models.BooleanField(default=False, verbose_name="Məsuliyyətli")
+    neat = models.BooleanField(default=False, verbose_name="Səliqəli")
+    time_management = models.BooleanField(default=False, verbose_name="Vaxta nəzarət")
+    communicative = models.BooleanField(default=False, verbose_name="Ünsiyyətcil")
+    efficient = models.BooleanField(default=False, verbose_name="Səmərəli")
+    agile = models.BooleanField(default=False, verbose_name="Çevik")
+
+    @property
+    def tag_list(self):
+        tags = {
+            "Təcrübəli": self.experienced,
+            "Peşəkar": self.professional,
+            "Səbirli": self.patient,
+            "Dəqiq": self.punctual,
+            "Məsuliyyətli": self.responsible,
+            "Səliqəli": self.neat,
+            "Vaxta nəzarət": self.time_management,
+            "Ünsiyyətcil": self.communicative,
+            "Səmərəli": self.efficient,
+            "Çevik": self.agile,
+        }
+        return [name for name, value in tags.items() if value]
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

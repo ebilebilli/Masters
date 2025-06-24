@@ -62,39 +62,39 @@ class CreateReviewAPIView(APIView):
             openapi.Parameter(
                 'rating', openapi.IN_FORM, description="Reytinq (1-5)", type=openapi.TYPE_INTEGER
             ),
-            openapi.Parameter(
-                'responsible', openapi.IN_FORM, description="Məsuliyyətli (1-5)", type=openapi.TYPE_INTEGER, required=False
+             openapi.Parameter(
+                'responsible', openapi.IN_FORM, description="Məsuliyyətli", type=openapi.TYPE_BOOLEAN, required=False
             ),
             openapi.Parameter(
-                'neat', openapi.IN_FORM, description="Səliqəli (1-5)", type=openapi.TYPE_INTEGER, required=False
+                'neat', openapi.IN_FORM, description="Səliqəli", type=openapi.TYPE_BOOLEAN, required=False
             ),
             openapi.Parameter(
-                'time_management', openapi.IN_FORM, description="Vaxta nəzarət (1-5)", type=openapi.TYPE_INTEGER, required=False
+                'time_management', openapi.IN_FORM, description="Vaxta nəzarət", type=openapi.TYPE_BOOLEAN, required=False
             ),
             openapi.Parameter(
-                'communicative', openapi.IN_FORM, description="Ünsiyyətcil (1-5)", type=openapi.TYPE_INTEGER, required=False
+                'communicative', openapi.IN_FORM, description="Ünsiyyətcil", type=openapi.TYPE_BOOLEAN, required=False
             ),
             openapi.Parameter(
-                'punctual', openapi.IN_FORM, description="Dəqiq (1-5)", type=openapi.TYPE_INTEGER, required=False
+                'punctual', openapi.IN_FORM, description="Dəqiq", type=openapi.TYPE_BOOLEAN, required=False
             ),
             openapi.Parameter(
-                'professional', openapi.IN_FORM, description="Peşəkar (1-5)", type=openapi.TYPE_INTEGER, required=False
+                'professional', openapi.IN_FORM, description="Peşəkar", type=openapi.TYPE_BOOLEAN, required=False
             ),
             openapi.Parameter(
-                'experienced', openapi.IN_FORM, description="Təcrübəli (1-5)", type=openapi.TYPE_INTEGER, required=False
+                'experienced', openapi.IN_FORM, description="Təcrübəli", type=openapi.TYPE_BOOLEAN, required=False
             ),
             openapi.Parameter(
-                'efficient', openapi.IN_FORM, description="Səmərəli (1-5)", type=openapi.TYPE_INTEGER, required=False
+                'efficient', openapi.IN_FORM, description="Səmərəli", type=openapi.TYPE_BOOLEAN, required=False
             ),
             openapi.Parameter(
-                'agile', openapi.IN_FORM, description="Çevik (1-5)", type=openapi.TYPE_INTEGER, required=False
+                'agile', openapi.IN_FORM, description="Çevik", type=openapi.TYPE_BOOLEAN, required=False
             ),
             openapi.Parameter(
-                'patient', openapi.IN_FORM, description="Səbirli (1-5)", type=openapi.TYPE_INTEGER, required=False
+                'patient', openapi.IN_FORM, description="Səbirli", type=openapi.TYPE_BOOLEAN, required=False
             ),
             openapi.Parameter(
                 'review_images', openapi.IN_FORM, description="Şəkillər (max 3)", type=openapi.TYPE_ARRAY,
-                items=openapi.Items(type=openapi.TYPE_FILE), maxItems=3
+                items=openapi.Items(type=openapi.TYPE_FILE), maxItems=3, required=False
             ),
         ],
         responses={
@@ -138,35 +138,35 @@ class UpdateReviewAPIView(APIView):
             openapi.Parameter(
                 'rating', openapi.IN_FORM, description="Reytinq (1-5)", type=openapi.TYPE_INTEGER, required=False
             ),
-            openapi.Parameter(
-                'responsible', openapi.IN_FORM, description="Məsuliyyətli (1-5)", type=openapi.TYPE_INTEGER, required=False
+             openapi.Parameter(
+                'responsible', openapi.IN_FORM, description="Məsuliyyətli", type=openapi.TYPE_BOOLEAN, required=False
             ),
             openapi.Parameter(
-                'neat', openapi.IN_FORM, description="Səliqəli (1-5)", type=openapi.TYPE_INTEGER, required=False
+                'neat', openapi.IN_FORM, description="Səliqəli", type=openapi.TYPE_BOOLEAN, required=False
             ),
             openapi.Parameter(
-                'time_management', openapi.IN_FORM, description="Vaxta nəzarət (1-5)", type=openapi.TYPE_INTEGER, required=False
+                'time_management', openapi.IN_FORM, description="Vaxta nəzarət", type=openapi.TYPE_BOOLEAN, required=False
             ),
             openapi.Parameter(
-                'communicative', openapi.IN_FORM, description="Ünsiyyətcil (1-5)", type=openapi.TYPE_INTEGER, required=False
+                'communicative', openapi.IN_FORM, description="Ünsiyyətcil", type=openapi.TYPE_BOOLEAN, required=False
             ),
             openapi.Parameter(
-                'punctual', openapi.IN_FORM, description="Dəqiq (1-5)", type=openapi.TYPE_INTEGER, required=False
+                'punctual', openapi.IN_FORM, description="Dəqiq", type=openapi.TYPE_BOOLEAN, required=False
             ),
             openapi.Parameter(
-                'professional', openapi.IN_FORM, description="Peşəkar (1-5)", type=openapi.TYPE_INTEGER, required=False
+                'professional', openapi.IN_FORM, description="Peşəkar", type=openapi.TYPE_BOOLEAN, required=False
             ),
             openapi.Parameter(
-                'experienced', openapi.IN_FORM, description="Təcrübəli (1-5)", type=openapi.TYPE_INTEGER, required=False
+                'experienced', openapi.IN_FORM, description="Təcrübəli", type=openapi.TYPE_BOOLEAN, required=False
             ),
             openapi.Parameter(
-                'efficient', openapi.IN_FORM, description="Səmərəli (1-5)", type=openapi.TYPE_INTEGER, required=False
+                'efficient', openapi.IN_FORM, description="Səmərəli", type=openapi.TYPE_BOOLEAN, required=False
             ),
             openapi.Parameter(
-                'agile', openapi.IN_FORM, description="Çevik (1-5)", type=openapi.TYPE_INTEGER, required=False
+                'agile', openapi.IN_FORM, description="Çevik", type=openapi.TYPE_BOOLEAN, required=False
             ),
             openapi.Parameter(
-                'patient', openapi.IN_FORM, description="Səbirli (1-5)", type=openapi.TYPE_INTEGER, required=False
+                'patient', openapi.IN_FORM, description="Səbirli", type=openapi.TYPE_BOOLEAN, required=False
             ),
             openapi.Parameter(
                 'review_images', openapi.IN_FORM, description="Şəkillər (max 3)", type=openapi.TYPE_ARRAY,
@@ -188,6 +188,7 @@ class UpdateReviewAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class DeleteReviewAPIView(APIView):
     authentication_classes = [JWTAuthentication]

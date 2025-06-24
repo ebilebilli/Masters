@@ -163,74 +163,21 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return round(average, 2)
 
     @property
-    def average_responsible(self):
-        average = Review.objects.filter(master=self).aggregate(avg=Avg('responsible'))['avg']
-        if average is None:
-            return ''
-        return round(average, 2)
-
-    @property
-    def average_neat(self):
-        average = Review.objects.filter(master=self).aggregate(avg=Avg('neat'))['avg']
-        if average is None:
-            return ''
-        return round(average, 2)
-
-    @property
-    def average_time_management(self):
-        average = Review.objects.filter(master=self).aggregate(avg=Avg('time_management'))['avg']
-        if average is None:
-            return ''
-        return round(average, 2)
-
-    @property
-    def average_communicative(self):
-        average = Review.objects.filter(master=self).aggregate(avg=Avg('communicative'))['avg']
-        if average is None:
-            return ''
-        return round(average, 2)
-
-    @property
-    def average_punctual(self):
-        average = Review.objects.filter(master=self).aggregate(avg=Avg('punctual'))['avg']
-        if average is None:
-            return ''
-        return round(average, 2)
-
-    @property
-    def average_professional(self):
-        average = Review.objects.filter(master=self).aggregate(avg=Avg('professional'))['avg']
-        if average is None:
-            return ''
-        return round(average, 2)
-
-    @property
-    def average_experienced(self):
-        average = Review.objects.filter(master=self).aggregate(avg=Avg('experienced'))['avg']
-        if average is None:
-            return ''
-        return round(average, 2)
-
-    @property
-    def average_efficient(self):
-        average = Review.objects.filter(master=self).aggregate(avg=Avg('efficient'))['avg']
-        if average is None:
-            return ''
-        return round(average, 2)
-
-    @property
-    def average_agile(self):
-        average = Review.objects.filter(master=self).aggregate(avg=Avg('agile'))['avg']
-        if average is None:
-            return ''
-        return round(average, 2)
-
-    @property
-    def average_patient(self):
-        average = Review.objects.filter(master=self).aggregate(avg=Avg('patient'))['avg']
-        if average is None:
-            return ''
-        return round(average, 2)
+    def given_tags_with_count(self):
+        tags = {
+            "Təcrübəli": Review.objects.filter(master=self, experienced=True).count(),
+            "Peşəkar": Review.objects.filter(master=self, professional=True).count(),
+            "Səbirli": Review.objects.filter(master=self, patient=True).count(),
+            "Dəqiq": Review.objects.filter(master=self, punctual=True).count(),
+            "Məsuliyyətli": Review.objects.filter(master=self, responsible=True).count(),
+            "Səliqəli": Review.objects.filter(master=self, neat=True).count(),
+            "Vaxta nəzarət": Review.objects.filter(master=self, time_management=True).count(),
+            "Ünsiyyətcil": Review.objects.filter(master=self, communicative=True).count(),
+            "Səmərəli": Review.objects.filter(master=self, efficient=True).count(),
+            "Çevik": Review.objects.filter(master=self, agile=True).count(),
+        }
+    
+        return [name for name, count in tags.items() if count > 0]
 
     @property
     def review_count(self):

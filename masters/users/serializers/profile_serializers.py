@@ -20,17 +20,8 @@ class ProfileSerializer(serializers.ModelSerializer):
     work_images = serializers.StringRelatedField(many=True)
 
     average_rating = serializers.SerializerMethodField()
-    average_responsible = serializers.SerializerMethodField()
-    average_neat = serializers.SerializerMethodField()
-    average_time_management = serializers.SerializerMethodField()
-    average_communicative = serializers.SerializerMethodField()
-    average_punctual = serializers.SerializerMethodField()
-    average_professional = serializers.SerializerMethodField()
-    average_experienced = serializers.SerializerMethodField()
-    average_efficient = serializers.SerializerMethodField()
-    average_agile = serializers.SerializerMethodField()
-    average_patient = serializers.SerializerMethodField()
     review_count = serializers.SerializerMethodField()
+    given_tags_with_count = serializers.SerializerMethodField()
 
     class Meta:
         model = CustomUser
@@ -58,17 +49,8 @@ class ProfileSerializer(serializers.ModelSerializer):
             'work_images',
 
             'average_rating',
-            'average_responsible',
-            'average_neat',
-            'average_time_management',
-            'average_communicative',
-            'average_punctual',
-            'average_professional',
-            'average_experienced',
-            'average_efficient',
-            'average_agile',
-            'average_patient',
             'review_count',
+            'given_tags_with_count'
         ]
     
     def get_full_name(self, obj):
@@ -103,40 +85,13 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def get_average_rating(self, obj):
         return obj.average_rating()
-
-    def get_average_responsible(self, obj):
-        return obj.average_responsible
-
-    def get_average_neat(self, obj):
-        return obj.average_neat
-
-    def get_average_time_management(self, obj):
-        return obj.average_time_management
-
-    def get_average_communicative(self, obj):
-        return obj.average_communicative
-
-    def get_average_punctual(self, obj):
-        return obj.average_punctual
-
-    def get_average_professional(self, obj):
-        return obj.average_professional
-
-    def get_average_experienced(self, obj):
-        return obj.average_experienced
-
-    def get_average_efficient(self, obj):
-        return obj.average_efficient
-
-    def get_average_agile(self, obj):
-        return obj.average_agile
-
-    def get_average_patient(self, obj):
-        return obj.average_patient
-
+    
     def get_review_count(self, obj):
         return obj.review_count
-     
+    
+    def get_given_tags_with_count(self, obj):
+        return obj.given_tags_with_count
+
 
 class ProfileUpdateSerializer(serializers.ModelSerializer):
     profession_area = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all(), required=False)
