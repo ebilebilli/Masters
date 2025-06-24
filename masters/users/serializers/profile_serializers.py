@@ -69,12 +69,6 @@ class ProfileSerializer(serializers.ModelSerializer):
 
         data['gender'] = instance.get_gender_display()  
 
-        if instance.profession_area:
-            data['profession_area'] = instance.profession_area.display_name
-
-        if instance.profession_speciality:
-            data['profession_speciality'] = instance.profession_speciality.display_name
-
         return {key: value for key, value in data.items() if value not in [None, '', [], {}]}
 
     def get_cities(self, obj):
