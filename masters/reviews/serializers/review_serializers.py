@@ -39,15 +39,24 @@ class ReviewSerializer(serializers.ModelSerializer):
         username = data.get('username')
         if username and len(username) > 20:
             raise serializers.ValidationError('Max 20 simvol daxil edə bilərsiz')
+        
+        rating_fields = [
+            data.get('responsible'),
+            data.get('neat'),
+            data.get('time_management'),
+            data.get('communicative'),
+            data.get('punctual'),
+            data.get('professional'),
+            data.get('experienced'),
+            data.get('efficient'),
+            data.get('agile'),
+            data.get('patient'),
+            ]
+        
+        if all(value in [None, ''] for value in rating_fields):
+            raise serializers.ValidationError("Zəhmət olmasa ən azı bir etiket seçin.")
 
-        return data
-    
-    def validate_count_of_label(self, data):
-        rated_fields = [
-        'responsible', 'neat', 'time_management', 'communicative', 'punctual',
-        'professional', 'experienced', 'efficient', 'agile', 'patient'
-    ]
-        filled = [field for field in rated_fields if data.get(field) is not None]
+        filled = [field for field in rating_fields if data.get(field) is not None]
 
         if len(filled) > 5:
             raise serializers.ValidationError('Ən çox 5 sahəyə dəyər verə bilərsiniz.')
