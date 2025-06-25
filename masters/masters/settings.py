@@ -13,14 +13,25 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ["masters-1.onrender.com", 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = [
+    'localhost', 
+    '127.0.0.1',
+    'api.peshekar.online', 
+    'peshekar.online', 
+    'www.peshekar.online'
+    ]
 
-CSRF_TRUSTED_ORIGINS = ['https://masters-1.onrender.com', 'http://masters-1.onrender.com',]
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-# SECURE_SSL_REDIRECT = True
 
-CORS_ALLOW_ALL_ORIGINS=True 
-CORS_ALLOW_CREDENTIALS=False
+# CORS
+CORS_ALLOW_ALL_ORIGINS = False 
+CORS_ALLOWED_ORIGINS = [
+    "https://api.peshekar.online",
+    "https://peshekar.online",
+    "https://www.peshekar.online",
+]
+
+CORS_ALLOW_CREDENTIALS = True 
     
 # DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
