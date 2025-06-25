@@ -50,6 +50,8 @@ services:
       - TIMEOUT=${TIMEOUT}
       - JWT_ALGORITHM=${JWT_ALGORITHM}
       - JWT_AUTH_HEADER_TYPE=${JWT_AUTH_HEADER_TYPE}
+      - SECRET_KEY=${SECRET_KEY}
+      - DEBUG=${DEBUG}
     volumes:
       - .:/app
     depends_on:
