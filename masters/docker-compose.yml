@@ -38,3 +38,8 @@ services:
     volumes:
       - .:/app
     command: celery -A masters worker --loglevel=info
+
+networks:
+  default:
+    external:
+      name: bridge
