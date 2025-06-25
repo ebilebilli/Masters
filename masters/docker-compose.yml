@@ -21,11 +21,6 @@ services:
       - AWS_S3_REGION_NAME=${AWS_S3_REGION_NAME}
     volumes:
       - .:/app
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
     command: sh -c "sleep 5 && python manage.py collectstatic --noinput && gunicorn masters.wsgi:application --bind 0.0.0.0:8000"
 
   celery:
