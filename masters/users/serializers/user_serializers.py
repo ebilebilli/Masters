@@ -390,7 +390,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             (today.month, today.day) < (value.month, value.day)
         )
 
-        if age < 16:
+        if age < 15:
             raise serializers.ValidationError("Qeydiyyatdan keçmək üçün minimum yaş 16 olmalıdır.")
 
         return value
