@@ -18,7 +18,6 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_active", True)
-        extra_fields.setdefault("is_master", False)
         extra_fields.setdefault("first_name", "Admin")
         extra_fields.setdefault("last_name", "İstifadəçi")
         extra_fields.setdefault("birth_date", timezone.now().date())
@@ -28,8 +27,11 @@ class CustomUserManager(BaseUserManager):
         from services.models.category_model import Category
         from services.models.service_model import Service
         
-        category = Category.objects.get(pk=11)
-        service = Service.objects.get(pk=9)
+        category, _ = Category.objects.get_or_create(name="Defolt Kateqoriya")
+        service, _ = Service.objects.get_or_create(
+            name="Defolt Xidmət",
+            defaults={"category": category}  
+        )
         extra_fields.setdefault("profession_area", category)
         extra_fields.setdefault("profession_speciality", service)
 
