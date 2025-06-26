@@ -5,6 +5,7 @@ deploy:
   stage: deploy
   image: alpine:latest
   before_script:
+    - |
       apk add --no-cache openssh-client sshpass
       mkdir -p ~/.ssh
       ssh-keyscan $SERVER_IP >> ~/.ssh/known_hosts || true
