@@ -24,6 +24,9 @@ services:
       - TIMEOUT=${TIMEOUT}
       - JWT_ALGORITHM=${JWT_ALGORITHM}
       - JWT_AUTH_HEADER_TYPE=${JWT_AUTH_HEADER_TYPE}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_DB=${REDIS_DB}
     volumes:
       - .:/app
     depends_on:
