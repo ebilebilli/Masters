@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from corsheaders.defaults import default_headers
 
 load_dotenv()
 
@@ -31,8 +32,21 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 #     "https://www.peshekar.online",
 # ]
 
-CORS_ALLOW_ALL_ORIGINS=True 
-CORS_ALLOW_CREDENTIALS=False
+
+CORS_ALLOW_ALL_ORIGINS=False
+
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https?:\/\/.*$",  # bütün http və https origin-lərə icazə verir
+]
+
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'authorization',
+]
+
+CORS_ALLOW_CREDENTIALS=True
     
 # Application definition
 
