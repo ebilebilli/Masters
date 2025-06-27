@@ -34,8 +34,7 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
     new_password_two = serializers.CharField(write_only=True, required=True)
 
     def validate(self, data):
-        auth_header = self.context['request'].headers.get('Authorization', '')
-        token = auth_header.replace('Bearer ', '') if auth_header.startswith('Bearer ') else auth_header
+        token = self.context['request'].headers.get('Authorization', '').replace('Bearer ', '')
         if not token:
             raise serializers.ValidationError({'error': 'Redis token tələb olunur.'})
 
@@ -69,7 +68,6 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
             port=settings.REDIS_PORT,
             db=settings.REDIS_DB
         )
-        auth_header = self.context['request'].headers.get('Authorization', '')
-        token = auth_header.replace('Bearer ', '') if auth_header.startswith('Bearer ') else auth_header
+        token = self.context['request'].headers.get('Authorization', '').replace('Bearer ', '')
         redis_client.delete(f'token:{token}')
         return user

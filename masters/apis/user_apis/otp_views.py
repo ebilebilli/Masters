@@ -62,7 +62,7 @@ class PasswordResetRequestAPIView(APIView):
                 serializer.save()
                 return Response({'message': 'OTP göndərildi.'}, status=status.HTTP_200_OK)
             except Exception as e:
-                return Response({'error': f'OTP göndərilə bilmədi: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': f'OTP göndərilə bilmədi: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -110,9 +110,9 @@ class VerifyOTPAPIView(APIView):
                 return Response({'message': 'OTP yoxlaması uğurludur', 'token': token}, status=status.HTTP_200_OK)
             
             except Exception as e:
-                return Response({'error': f'OTP yoxlanıla bilmədi: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': f'OTP yoxlanıla bilmədi: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-        return Response({'error': 'Sorğu düzgün göndərilməyib'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PasswordResetConfirmAPIView(APIView):
@@ -146,8 +146,6 @@ class PasswordResetConfirmAPIView(APIView):
                 serializer.save()
                 return Response({'message': 'Parol uğurla dəyişdirildi.'}, status=status.HTTP_200_OK)
             except Exception as e:
-                return Response({'error': f'Parol dəyişdirilə bilmədi: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': f'Parol dəyişdirilə bilmədi: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
-        return Response({'error': 'Sorğu düzgün göndərilməyib'}, status=status.HTTP_400_BAD_REQUEST)
- 
-
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
