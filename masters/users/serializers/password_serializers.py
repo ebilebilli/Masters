@@ -38,16 +38,11 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         if not token:
             raise serializers.ValidationError({'error': 'Redis token tələb olunur.'})
 
-        redis_client = redis.Redis(
-            host=settings.REDIS_HOST,
-            port=settings.REDIS_PORT,
-            db=settings.REDIS_DB
-        )
-        mobile_number = redis_client.get(f'token:{token}')
+        mobile_number = settings.REDIS_CLIENT.get(f'token:{token}')
         if not mobile_number:
             raise serializers.ValidationError({'token': 'Yanlış və ya vaxtı keçmiş token.'})
         
-        mobile_number = mobile_number.decode('utf-8')
+        mobile_number = mobile_number  
         self.context['mobile_number'] = mobile_number  
 
         if data['new_password'] != data['new_password_two']:
@@ -57,17 +52,13 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         validate_password(data['new_password'], user=user)
         return data
 
+
     def save(self):
         mobile_number = self.context['mobile_number']
         new_password = self.validated_data['new_password']
         user = CustomUser.objects.get(mobile_number=mobile_number)
         user.set_password(new_password)
         user.save()
-        redis_client = redis.Redis(
-            host=settings.REDIS_HOST,
-            port=settings.REDIS_PORT,
-            db=settings.REDIS_DB
-        )
         token = self.context['request'].headers.get('Authorization', '').replace('Bearer ', '')
-        redis_client.delete(f'token:{token}')
+        settings.REDIS_CLIENT.delete(f'token:{token}')
         return user

@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from corsheaders.defaults import default_headers
 
 load_dotenv()
+import redis
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -176,6 +177,15 @@ CELERY_TIMEZONE = 'UTC'
 REDIS_HOST = os.getenv('REDIS_HOST', 'redis')         
 REDIS_PORT = os.getenv('REDIS_PORT')
 REDIS_DB = os.getenv('REDIS_DB')
+
+REDIS_POOL = redis.ConnectionPool(
+    host=REDIS_HOST,
+    port=REDIS_PORT,
+    db=REDIS_DB,
+    decode_responses=True  # Avtomatik string decode
+)
+
+REDIS_CLIENT = redis.Redis(connection_pool=REDIS_POOL)
 
 #AWS S3 settings 
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
