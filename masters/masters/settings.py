@@ -23,19 +23,19 @@ ALLOWED_HOSTS = [
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# CORS
-CORS_ALLOW_ALL_ORIGINS = False 
-CORS_ALLOWED_ORIGINS = [
-    "https://api.peshekar.online",
-    "https://peshekar.online",
-    "https://www.peshekar.online",
-]
+# CORS settings
 
-CORS_ALLOW_CREDENTIALS = True 
+# CORS_ALLOWED_ORIGINS = [
+#     "https://api.peshekar.online",
+#     "https://peshekar.online",
+#     "https://www.peshekar.online",
+# ]
+
+CORS_ALLOW_ALL_ORIGINS=True 
+CORS_ALLOW_CREDENTIALS=False
     
-# DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-
 # Application definition
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
