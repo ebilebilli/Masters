@@ -69,6 +69,7 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
             port=settings.REDIS_PORT,
             db=settings.REDIS_DB
         )
-        token = self.context['request'].headers.get('Authorization', '').replace('Bearer ', '')
+        auth_header = self.context['request'].headers.get('Authorization', '')
+        token = auth_header.replace('Bearer ', '') if auth_header.startswith('Bearer ') else auth_header
         redis_client.delete(f'token:{token}')
         return user
