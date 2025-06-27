@@ -31,7 +31,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 #     "https://peshekar.online",
 #     "https://www.peshekar.online",
 # ]
-
+#
 
 CORS_ALLOW_ALL_ORIGINS=False
 
