@@ -33,13 +33,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # ]
 #
 
-CORS_ALLOW_ALL_ORIGINS=False
-
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"^https?:\/\/.*$",  # bütün http və https origin-lərə icazə verir
-]
-
-
+CORS_ALLOW_ALL_ORIGINS=True
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
