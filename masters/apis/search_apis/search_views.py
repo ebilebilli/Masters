@@ -3,6 +3,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Q, Avg
+from django.db.models.functions import Coalesce
 from django.core.cache import cache
 from rest_framework.permissions import AllowAny
 from drf_yasg.utils import swagger_auto_schema
@@ -78,6 +79,10 @@ class SearchAPIView(ListAPIView):
         experience_years = request.query_params.get('experience_years')
         ordering = request.query_params.get('ordering', '-id')
 
+        allowed_ordering_fields = ['id', 'first_name', 'last_name', 'experience_years', 'created_at', 'rating']
+        if ordering.lstrip('-') not in allowed_ordering_fields:
+            ordering = '-id'
+
         queryset = CustomUser.objects.filter(is_active=True, is_master=True)
 
         if search_query:
@@ -108,8 +113,8 @@ class SearchAPIView(ListAPIView):
                 queryset = queryset.filter(experience_years=int(experience_years))
             except ValueError:
                 pass
-        
+
         if ordering.lstrip('-') == 'rating':
-            queryset = queryset.annotate(rating=Avg('reviews__rating'))
+            queryset = queryset.annotate(rating=Coalesce(Avg('reviews__rating'), 0))
 
         return queryset.order_by(ordering)
