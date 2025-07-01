@@ -1,3 +1,4 @@
+import logging
 from django.db import transaction
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
@@ -22,6 +23,9 @@ from rest_framework.generics import CreateAPIView
 from users.serializers.work_image_serializers import WorkImageSerializer
 from users.models import WorkImage, CustomUser
 
+
+
+logger = logging.getLogger(__name__)
 
 class WorkImageCreateAPIView(CreateAPIView):
     queryset = WorkImage.objects.all()
@@ -99,15 +103,20 @@ class RegisterAPIView(APIView):
             400: openapi.Response(description='Validasiya xətası')
         }
     )
-    def post(self, request):
+      def post(self, request):
         serializer = RegisterSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except serializers.ValidationError:
+            logger.warning("Register API validation error: %s | Input data: %s", serializer.errors, request.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
         user = serializer.save()
         refresh = RefreshToken.for_user(user)
         tokens = {
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
-            }
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        }
 
         return Response({"detail": "Qeydiyyat uğurla tamamlandı.", 'token': tokens}, status=status.HTTP_201_CREATED)
 
