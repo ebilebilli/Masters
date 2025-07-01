@@ -103,7 +103,7 @@ class RegisterAPIView(APIView):
             400: openapi.Response(description='Validasiya xətası')
         }
     )
-      def post(self, request):
+    def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         try:
             serializer.is_valid(raise_exception=True)
