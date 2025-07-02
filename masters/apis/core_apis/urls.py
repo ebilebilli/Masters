@@ -7,7 +7,7 @@ from apis.core_apis.language_views import *
 app_name = 'core_apis'
 
 urlpatterns = [
-    #City endpoints
+    # City endpoints
     path(
         'cities/',
         CityListAPIView.as_view(),
@@ -23,7 +23,7 @@ urlpatterns = [
         DistrictListAPIView.as_view(),
         name='districts'
     ),
-    #Language endpointss
+    # Language endpointss
     path(
         'languages/',
         LanguageListAPIView.as_view(),

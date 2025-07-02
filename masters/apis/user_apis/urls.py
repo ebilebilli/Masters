@@ -34,7 +34,7 @@ urlpatterns = [
     #     name='professionals-delete'
     # ),  
     
-    #Master handwork images endpoints
+    # Master handwork images endpoints
     path(
         'professionals/<int:master_id>/images/',
         WorkImagesForMasterAPIView.as_view(),
@@ -51,7 +51,7 @@ urlpatterns = [
         name='delete-image'
     ),
     
-    #Auth views
+    # Auth views
     path(
         'register/',
         RegisterAPIView.as_view(),
@@ -105,7 +105,7 @@ urlpatterns = [
         name='password-reset-confirm'
     ),
 
-    #Jwt endpoints
+    # Jwt endpoints
     path(
         'api/token/', 
         jwt_views.TokenObtainPairView.as_view(),

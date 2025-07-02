@@ -8,7 +8,7 @@ from apis.service_apis.service_views import statistics_view
 app_name = 'service_apis'
 
 urlpatterns = [
-    #Category endpoints
+    # Category endpoints
     path(
         'categories/',
         CategoryListAPIView.as_view(),
@@ -20,7 +20,7 @@ urlpatterns = [
         name='masters-by-category'
     ),
 
-    #Service endpoints
+    # Service endpoints
      path(
         'services/',
         ServiceListAPIView.as_view(),

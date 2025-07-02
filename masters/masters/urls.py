@@ -9,7 +9,7 @@ from masters.settings import MEDIA_URL
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Masters project APIs",
+        title="Professionals project APIs",
         default_version='v1',
         description="API documentation for project",
     ),
