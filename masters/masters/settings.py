@@ -1,11 +1,12 @@
 import os
+import redis
 from pathlib import Path
 from dotenv import load_dotenv
 from corsheaders.defaults import default_headers
 import sys
 
+
 load_dotenv()
-import redis
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,24 +27,23 @@ ALLOWED_HOSTS = [
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+
 # CORS settings
+CORS_ALLOW_ALL_ORIGINS = False
 
-# CORS_ALLOWED_ORIGINS = [
-#     "https://api.peshekar.online",
-#     "https://peshekar.online",
-#     "https://www.peshekar.online",
-# ]
-#
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",          
+    "http://127.0.0.1:3000",     
+    "https://peshekar.online",       
+    "https://www.peshekar.online",    
+    "https://api.peshekar.online", 
+]
 
-CORS_ALLOW_ALL_ORIGINS=True
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
     'authorization',
 ]
-
-CORS_ALLOW_CREDENTIALS=True
-    
 # Application definition
 
 INSTALLED_APPS = [
@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
-    #Third party apps
+    # Third party apps
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
@@ -64,7 +64,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'storages',
 
-    #Apps
+    # Apps
     'core',
     'services',
     'users',
@@ -174,7 +174,7 @@ CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
 CELERY_IGNORE_RESULT = True
 CELERY_TIMEZONE = 'UTC'
 
-#Redis settings
+# Redis settings
 REDIS_HOST = os.getenv('REDIS_HOST', 'redis')         
 REDIS_PORT = os.getenv('REDIS_PORT')
 REDIS_DB = os.getenv('REDIS_DB')
@@ -188,7 +188,7 @@ REDIS_POOL = redis.ConnectionPool(
 
 REDIS_CLIENT = redis.Redis(connection_pool=REDIS_POOL)
 
-#AWS S3 settings 
+# AWS S3 settings 
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
@@ -219,7 +219,7 @@ MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
 STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
 
 
-#JWT settings
+# JWT settings
 from datetime import timedelta
 
 SIMPLE_JWT = {
@@ -243,7 +243,7 @@ SIMPLE_JWT = {
     'TOKEN_BLACKLIST_ENABLED': True,
 }
 
-#Caches settings
+# Caches settings
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
