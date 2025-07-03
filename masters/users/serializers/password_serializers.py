@@ -1,3 +1,4 @@
+import re
 import uuid
 from django.conf import settings
 import redis
