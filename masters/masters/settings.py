@@ -34,6 +34,7 @@ CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",          
     "http://127.0.0.1:3000",
+    "http://localhost:5173",
     "http://localhost5173.ecom",     
     "https://peshekar.online",       
     "https://www.peshekar.online",    
