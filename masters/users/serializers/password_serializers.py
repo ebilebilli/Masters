@@ -53,15 +53,15 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         mobile_number = settings.REDIS_CLIENT.get(f'token:{token}')
         if not mobile_number:
             raise serializers.ValidationError({'token': 'Yanlış və ya vaxtı keçmiş token.'})
-        
-        mobile_number = mobile_number  
-        self.context['mobile_number'] = mobile_number  
+
+        if isinstance(mobile_number, bytes):
+            mobile_number = mobile_number.decode()
+
+        self.context['mobile_number'] = mobile_number
 
         if data['new_password'] != data['new_password_two']:
             raise serializers.ValidationError({'new_password': 'Şifrələr uyğun deyil.'})
-        
-        user = CustomUser.objects.get(mobile_number=mobile_number)
-        validate_password(data['new_password'], user=user)
+
         return data
 
     def validate_new_password(self, value):
@@ -73,13 +73,10 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
             raise serializers.ValidationError('Şifrənizdə minimum bir rəqəm olmalıdır.')
         if not re.search(r'[!@#$%^&*()_\+\-=\[\]{};:"\\|,.<>\/?]', value):
             raise serializers.ValidationError('Şifrənizdə minimum bir xüsusi simvol olmalıdır.')
-            
         return value
 
     def save(self):
         mobile_number = self.context['mobile_number']
-        if isinstance(mobile_number, bytes):
-            mobile_number = mobile_number.decode()
         logger.info(f"Redis-dən alınan mobil nömrə: {mobile_number}")
 
         try:
