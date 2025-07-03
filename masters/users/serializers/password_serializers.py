@@ -71,7 +71,7 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
             raise serializers.ValidationError('Şifrənizdə minimum bir böyük hərf olmalıdır.')
         if not re.search(r'\d', value):
             raise serializers.ValidationError('Şifrənizdə minimum bir rəqəm olmalıdır.')
-        if not re.search(r'[!@#$%^&*()_+\-=\[\]{};:"\\|,.<>\/?]', value):
+        if not re.search(r'[!@#$%^&*()_\+\-=\[\]{};:"\\|,.<>\/?]', value):
             raise serializers.ValidationError('Şifrənizdə minimum bir xüsusi simvol olmalıdır.')
             
         return value
