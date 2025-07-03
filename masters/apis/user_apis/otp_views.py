@@ -1,4 +1,3 @@
-import logging
 import uuid
 from django.conf import settings
 import redis
@@ -21,8 +20,6 @@ from utils.otp import (
     get_mobile_number_by_otp_in_redis
 )
 
-
-logger = logging.getLogger(__name__)
 
 __all__ = [
     'PasswordResetRequestAPIView',

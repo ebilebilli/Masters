@@ -1,3 +1,4 @@
+import logging
 import re
 import uuid
 from django.conf import settings
@@ -5,6 +6,15 @@ import redis
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from users.models.user_model import CustomUser
+
+
+logger = logging.getLogger(__name__)
+
+__all__ = [
+    'PasswordResetRequestSerializer',
+    'VerifyOTPSerializer',
+    'PasswordResetConfirmSerializer'
+]
 
 
 class PasswordResetRequestSerializer(serializers.Serializer):
