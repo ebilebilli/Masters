@@ -53,6 +53,18 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         validate_password(data['new_password'], user=user)
         return data
 
+    def validate_new_password(self, value):
+        if len(value) < 8 or len(value) > 16:
+            raise serializers.ValidationError('Şifrəniz 8-16 simvol arası olmalı, böyük hərf, rəqəm və xüsusi simvol içərməlidir.')
+        if not re.search(r'[A-Z]', value):
+            raise serializers.ValidationError('Şifrənizdə minimum bir böyük hərf olmalıdır.')
+        if not re.search(r'\d', value):
+            raise serializers.ValidationError('Şifrənizdə minimum bir rəqəm olmalıdır.')
+        if not re.search(r'[!@#$%^&*()_+\-=\[\]{};:"\\|,.<>\/?]', value):
+            raise serializers.ValidationError('Şifrənizdə minimum bir xüsusi simvol olmalıdır.')
+            
+        return value
+
     def save(self):
         mobile_number = self.context['mobile_number']
         new_password = self.validated_data['new_password']

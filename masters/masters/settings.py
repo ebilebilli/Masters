@@ -53,6 +53,7 @@ CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 #     "x-csrftoken",
 #     "x-requested-with",
 # ]
+
 CORS_ALLOW_CREDENTIALS = False
 
 # Application definition
