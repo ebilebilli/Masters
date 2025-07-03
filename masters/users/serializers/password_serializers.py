@@ -68,11 +68,30 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
 
     def save(self):
         mobile_number = self.context['mobile_number']
+        if isinstance(mobile_number, bytes):
+            mobile_number = mobile_number.decode()
+        logger.info(f"Redis-dən alınan mobil nömrə: {mobile_number}")
+
+        try:
+            user = CustomUser.objects.get(mobile_number=mobile_number)
+        except CustomUser.DoesNotExist:
+            logger.error(f"User tapılmadı: {mobile_number}")
+            raise serializers.ValidationError({'user': 'İstifadəçi tapılmadı.'})
+
         new_password = self.validated_data['new_password']
-        user = CustomUser.objects.get(mobile_number=mobile_number)
         user.set_password(new_password)
         user.save()
+        logger.info(f"İstifadəçi {mobile_number} üçün yeni şifrə uğurla təyin edildi.")
+
+        user.refresh_from_db()
+        if user.check_password(new_password):
+            logger.info("Yeni şifrə yoxlandı və doğrudur.")
+        else:
+            logger.error("Yeni şifrə bazaya düzgün yazılmayıb!")
+
         auth_header = self.context['request'].headers.get('Authorization', '')
         token = auth_header.replace('Bearer ', '') if auth_header.startswith('Bearer ') else auth_header
         settings.REDIS_CLIENT.delete(f'token:{token}')
+        logger.info(f"Redis token {token} silindi.")
+
         return user
