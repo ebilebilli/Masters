@@ -131,25 +131,14 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
                     "profession_speciality": "Seçilmiş peşə ixtisası bu sahəyə aid deyil."
                 })
 
-        if profession_area.name.lower() == "other":
-            if profession_speciality:
-                raise serializers.ValidationError({
-                    "profession_speciality": "Bu sahə seçiləndə profession_speciality boş olmalıdır."
-                })
+        other_speciality = profession_speciality and hasattr(profession_speciality, 'name') and profession_speciality.name == 'other'
+        if other_speciality:
             if not custom_profession:
-                raise serializers.ValidationError({
-                    "custom_profession": "Bu sahə seçiləndə custom_profession mütləq doldurulmalıdır."
-                })
+                raise serializers.ValidationError({"custom_profession": "'Digər' xidmət seçilibsə, öz peşənizi daxil edin."})
         else:
-            if not profession_speciality:
-                raise serializers.ValidationError({
-                    "profession_speciality": "Bu sahə üçün profession_speciality vacibdir."
-                })
             if custom_profession:
-                raise serializers.ValidationError({
-                    "custom_profession": "Bu sahə üçün custom_profession boş qalmalıdır."
-                })
-
+                raise serializers.ValidationError({"custom_profession": "Xidmət 'Digər' deyilsə, öz peşənizi daxil etməyin."})
+        
         education = attrs.get("education", user.education)
         education_speciality = attrs.get("education_speciality", user.education_speciality)
         if education == "0" and education_speciality:
