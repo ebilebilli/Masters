@@ -75,8 +75,21 @@ class CreateWorkImagesForMasterAPIView(APIView):
         ),
     ],
     responses={
-        201: openapi.Response(description="Uğurla əlavə olundu", schema=WorkImageSerializer(many=True)),
-        400: "Validasiya xətası və ya şəkil limiti keçildi"
+    201: openapi.Response(
+        description="Uğurla əlavə olundu",
+        schema=openapi.Schema(
+            type=openapi.TYPE_ARRAY,
+            items=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'id': openapi.Schema(type=openapi.TYPE_INTEGER),
+                    'image': openapi.Schema(type=openapi.TYPE_STRING, format='binary'),
+                    'order': openapi.Schema(type=openapi.TYPE_INTEGER),
+                }
+            )
+        )
+    ),
+    400: openapi.Response(description="Validasiya xətası və ya şəkil limiti keçildi")
     }
     )
     def post(self, request, master_id):
