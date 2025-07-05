@@ -119,7 +119,7 @@ class CreateReviewAPIView(APIView):
 
 class UpdateReviewAPIView(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, HeHasPermission]
+    permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
     http_method_names = ['patch']
 

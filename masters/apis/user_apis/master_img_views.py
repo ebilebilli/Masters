@@ -56,7 +56,7 @@ class DeleteMasterWorkImageAPIView(APIView):
     - 400 Bad Request if image not found.
     """
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, HeHasPermission]
+    permission_classes = [IsAuthenticated]
     http_method_names = ['delete']
     
     @swagger_auto_schema(
