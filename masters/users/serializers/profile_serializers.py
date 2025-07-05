@@ -5,8 +5,8 @@ from services.models.category_model import Category
 from services.models.service_model import Service
 from core.models.city_model import City, District
 from core.models.language_model import Language
-from users.models.user_model import CustomUser
-from users.models.work_image import  WorkImage
+from users.models import CustomUser
+from users.models import  WorkImage
 
 
 class ProfileSerializer(serializers.ModelSerializer):
