@@ -51,9 +51,33 @@ class CreateWorkImagesForMasterAPIView(APIView):
     http_method_names = ['post']
 
     @swagger_auto_schema(
-        operation_summary="Master üçün şəkil yüklə",
-        request_body=WorkImageSerializer(many=True),
-        responses={201: WorkImageSerializer(many=True), 400: 'Validasiya xətası'}
+    operation_summary="Master üçün şəkil yüklə",
+    manual_parameters=[
+        openapi.Parameter(
+            name='master_id',
+            in_=openapi.IN_PATH,
+            type=openapi.TYPE_INTEGER,
+            description='Şəkil yüklənəcək ustanın ID-si'
+        ),
+        openapi.Parameter(
+            name='image',
+            in_=openapi.IN_FORM,
+            type=openapi.TYPE_FILE,
+            description='Şəkil faylı (ən çox 10 ədəd yüklənə bilər)',
+            required=True
+        ),
+        openapi.Parameter(
+            name='order',
+            in_=openapi.IN_FORM,
+            type=openapi.TYPE_INTEGER,
+            description='Şəkilin sırası (istəyə bağlıdır)',
+            required=False
+        ),
+    ],
+    responses={
+        201: openapi.Response(description="Uğurla əlavə olundu", schema=WorkImageSerializer(many=True)),
+        400: "Validasiya xətası və ya şəkil limiti keçildi"
+    }
     )
     def post(self, request, master_id):
         master = get_object_or_404(CustomUser, is_active=True, id=master_id)
