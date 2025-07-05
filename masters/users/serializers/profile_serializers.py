@@ -1,5 +1,6 @@
 from PIL import Image
 from rest_framework import serializers
+import re
 
 from services.models.category_model import Category
 from services.models.service_model import Service
