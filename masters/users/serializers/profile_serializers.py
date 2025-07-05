@@ -159,7 +159,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({
                 "education_speciality": "Bu sahə mütləq doldurulmalıdır."
             })
-
+            
         new_password = attrs.get('new_password')
         new_password_two = attrs.get('new_password_two')
 
@@ -169,6 +169,11 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
 
             if new_password != new_password_two:
                 raise serializers.ValidationError({'new_password': 'Şifrələr uyğun deyil.'})
+
+            self.validate_new_password(new_password_two)
+
+        elif not new_password and not new_password_two:
+            pass
 
         cities = attrs.get("cities") or user.cities.all()
         districts = attrs.get("districts") or user.districts.all()
@@ -243,6 +248,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
         
         if new_password:
             instance.set_password(new_password)
+            instance.save()
 
         if work_images is not None:
             for image in work_images:
