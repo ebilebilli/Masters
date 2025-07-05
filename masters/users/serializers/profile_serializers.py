@@ -216,8 +216,8 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
 
         if work_images is not None:
             for image in work_images:
-            work_image = WorkImage.objects.create(image=image)
-            instance.work_images.add(work_image)
+                work_image = WorkImage.objects.create(image=image)
+                instance.work_images.add(work_image)
 
         instance.save()
         return instance
