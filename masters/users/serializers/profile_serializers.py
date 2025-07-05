@@ -170,8 +170,6 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
             if new_password != new_password_two:
                 raise serializers.ValidationError({'new_password': 'Şifrələr uyğun deyil.'})
 
-        return attrs
-
         cities = attrs.get("cities") or user.cities.all()
         districts = attrs.get("districts") or user.districts.all()
 
