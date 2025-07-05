@@ -58,7 +58,6 @@ CORS_ALLOW_HEADERS = [
 CORS_ALLOW_CREDENTIALS = False
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
