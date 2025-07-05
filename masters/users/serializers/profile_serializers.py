@@ -5,8 +5,8 @@ from services.models.category_model import Category
 from services.models.service_model import Service
 from core.models.city_model import City, District
 from core.models.language_model import Language
-from users.models import CustomUser
-from users.models import  WorkImage
+from users.models.user_model import CustomUser
+from users.models.work_image import  WorkImage
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -218,6 +218,6 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
             for image in work_images:
             work_image = WorkImage.objects.create(image=image)
             instance.work_images.add(work_image)
-            
+
         instance.save()
         return instance
