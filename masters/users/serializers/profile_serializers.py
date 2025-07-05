@@ -160,7 +160,10 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
                 "education_speciality": "Bu sahə mütləq doldurulmalıdır."
             })
 
-        if attrs.get('new_password') != attrs.get('new_password_two'):
+        new_password = attrs.get('new_password', user.password)
+        new_password_two = attrs.get('new_password_two')
+
+        if new_password != new_password_two:
             raise serializers.ValidationError({'new_password': 'Şifrələr uyğun deyil.'})
 
         cities = attrs.get("cities") or user.cities.all()
