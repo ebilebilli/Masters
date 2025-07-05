@@ -177,7 +177,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
 
         for image_obj in value:
             try:
-                img_field = image_obj.image
+                img_field = image_obj
             except AttributeError:
                 raise serializers.ValidationError("Şəkil obyektində 'image' sahəsi yoxdur.")
 
