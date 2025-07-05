@@ -96,12 +96,15 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
     profile_image = serializers.ImageField(required=False)
     work_images = serializers.ListField(child=serializers.ImageField(), required=False, write_only=True)
 
+    new_password = serializers.CharField(write_only=True, required=True)
+    new_password_two = serializers.CharField(write_only=True, required=True)
+
     class Meta:
         model = CustomUser
         fields = [
             "first_name", "last_name", "birth_date", "gender", "mobile_number",
             "profession_area", "profession_speciality", "custom_profession", "experience_years",'work_images',
-            "cities",  "districts", "education", "education_speciality", "languages",
+            "new_password", "new_password_two", "cities",  "districts", "education", "education_speciality", "languages",
             "profile_image", "facebook", "instagram", "tiktok", "linkedin", "note"
         ]
 
@@ -157,6 +160,9 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
                 "education_speciality": "Bu sahə mütləq doldurulmalıdır."
             })
 
+        if attrs.get('new_password') != attrs.get('new_password_two'):
+            raise serializers.ValidationError({'new_password': 'Şifrələr uyğun deyil.'})
+
         cities = attrs.get("cities") or user.cities.all()
         districts = attrs.get("districts") or user.districts.all()
 
@@ -170,6 +176,17 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
         #     raise serializers.ValidationError('Bakı şəhəri seçilibsə Bakı üçün rayonlar seçilməlidir.')
 
         return attrs
+
+    def validate_new_password(self, value):
+        if len(value) < 8 or len(value) > 16:
+            raise serializers.ValidationError('Şifrəniz 8-16 simvol arası olmalı, böyük hərf, rəqəm və xüsusi simvol içərməlidir.')
+        if not re.search(r'[A-Z]', value):
+            raise serializers.ValidationError('Şifrənizdə minimum bir böyük hərf olmalıdır.')
+        if not re.search(r'\d', value):
+            raise serializers.ValidationError('Şifrənizdə minimum bir rəqəm olmalıdır.')
+        if not re.search(r'[!@#$%^&*()_\+\-=\[\]{};:"\\|,.<>\/?]', value):
+            raise serializers.ValidationError('Şifrənizdə minimum bir xüsusi simvol olmalıdır.')
+        return value
     
     def validate_work_images(self, value):
         if len(value) > 10:
@@ -197,10 +214,13 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
         return value
 
     def update(self, instance, validated_data):
+        validated_data.pop('new_password_two', None)
+
         cities = validated_data.pop("cities", None)
         districts = validated_data.pop("districts", None)
         languages = validated_data.pop("languages", None)
-        work_images = validated_data.pop("work_images", None)  # artıq bu fayllardır
+        work_images = validated_data.pop("work_images", None)
+        new_password = validated_data.pop('new_password', None) 
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
@@ -213,6 +233,9 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
 
         if languages is not None:
             instance.languages.set(languages)
+        
+        if new_password:
+            instance.set_password(new_password)
 
         if work_images is not None:
             for image in work_images:

@@ -76,6 +76,8 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         return value
 
     def save(self):
+        validated_data.pop('new_password_two', None)
+
         mobile_number = self.context['mobile_number']
         logger.info(f"Redis-dən alınan mobil nömrə: {mobile_number}")
 
