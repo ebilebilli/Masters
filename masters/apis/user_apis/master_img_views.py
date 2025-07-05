@@ -15,7 +15,6 @@ from utils.permissions import HeHasPermission
 
 __all__ = [
     'WorkImagesForMasterAPIView',
-    'CreateWorkImagesForMasterAPIView',
     'DeleteMasterWorkImageAPIView'
 ]
 
@@ -43,77 +42,6 @@ class WorkImagesForMasterAPIView(APIView):
         serializer = WorkImageSerializer(images, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
-class CreateWorkImagesForMasterAPIView(APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, HeHasPermission]
-    parser_classes = [JSONParser, MultiPartParser]
-    http_method_names = ['post']
-
-    @swagger_auto_schema(
-        operation_summary="Master üçün şəkil yüklə",
-        manual_parameters=[
-            openapi.Parameter(
-                name='master_id',
-                in_=openapi.IN_PATH,
-                type=openapi.TYPE_INTEGER,
-                description='Şəkil yüklənəcək ustanın ID-si'
-            )
-        ],
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
-                'image': openapi.Schema(
-                    type=openapi.TYPE_STRING,
-                    format='binary',
-                    description='Şəkil faylı (ən çox 10 şəkil yükləyə bilərsiz)'
-                ),
-                'order': openapi.Schema(
-                    type=openapi.TYPE_INTEGER,
-                    description='Şəkilin sırası (istəyə bağlıdır)'
-                )
-            },
-            required=['image']
-        ),
-        responses={
-            201: openapi.Response(description="Uğurla əlavə olundu"),
-            400: openapi.Response(description="Validasiya xətası və ya şəkil limiti keçildi")
-        }
-    )
-    def post(self, request, master_id):
-        master = get_object_or_404(CustomUser, is_active=True, id=master_id)
-        user = request.user
-
-        if user.id != master.id:
-            return Response({'error': 'İcazəniz yoxdur'}, status=status.HTTP_401_UNAUTHORIZED)
-
-        existing_image_count = user.work_images.count()
-
-        incoming_data = request.data
-        new_images = incoming_data if isinstance(incoming_data, list) else [incoming_data]
-        new_count = len(new_images)
-
-        if existing_image_count + new_count > 10:
-            return Response(
-                {'error': f'Usta maksimum 10 şəkil yükləyə bilər. Hal-hazırda {existing_image_count} şəkli var, sən {new_count} əlavə etmək istəyirsən.'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        serializer = WorkImageSerializer(data=new_images, many=True)
-        if serializer.is_valid():
-            created_images = []
-            for img_data in serializer.validated_data:
-                work_image = WorkImage.objects.create(
-                    image=img_data['image'],
-                    order=img_data.get('order', 0)
-                )
-                created_images.append(work_image)
-
-            user.work_images.add(*created_images)
-            resp_serializer = WorkImageSerializer(created_images, many=True)
-            return Response(resp_serializer.data, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class DeleteMasterWorkImageAPIView(APIView):
     """
