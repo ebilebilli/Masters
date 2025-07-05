@@ -106,17 +106,24 @@ class DeleteMasterWorkImageAPIView(APIView):
     http_method_names = ['delete']
     
     @swagger_auto_schema(
-        operation_summary="Şəkli sil (master)",
-        responses={
-            204: openapi.Response(description="Şəkil silindi"),
-            400: openapi.Response(description="Şəkil tapılmadı")
-        }
+    operation_summary="Şəkli sil",
+    manual_parameters=[
+        openapi.Parameter(
+            'image_id',
+            openapi.IN_PATH,
+            description="Silinəcək şəklin ID-si",
+            type=openapi.TYPE_INTEGER
+        )
+    ],
+    responses={
+        204: openapi.Response(description="Şəkil silindi"),
+        400: openapi.Response(description="Şəkil tapılmadı"),
+    }
     )
-    
     def delete(self, request, image_id):
         try:
-            image = WorkImageSerializer.objects.get(id=image_id)
+            image = WorkImage.objects.get(id=image_id)
             image.delete()
             return Response({'message': 'Şəkil silindi'}, status=status.HTTP_204_NO_CONTENT)
-        except WorkImageSerializer.DoesNotExist:
+        except WorkImage.DoesNotExist:
             return Response({'error': 'Şəkil tapılmadı'}, status=status.HTTP_400_BAD_REQUEST)
