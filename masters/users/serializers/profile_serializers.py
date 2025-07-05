@@ -94,8 +94,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
     districts = serializers.PrimaryKeyRelatedField(many=True, queryset=District.objects.all(), required=False)
     languages = serializers.PrimaryKeyRelatedField(many=True, queryset=Language.objects.all(), required=False)
     profile_image = serializers.ImageField(required=False)
-    work_images = serializers.PrimaryKeyRelatedField(many=True, queryset=WorkImage.objects.all(), required=False)
-
+    work_images = serializers.ListField(child=serializers.ImageField(), required=False, write_only=True)
 
     class Meta:
         model = CustomUser
@@ -201,14 +200,14 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
         cities = validated_data.pop("cities", None)
         districts = validated_data.pop("districts", None)
         languages = validated_data.pop("languages", None)
-        work_images = validated_data.pop("work_images", None)
+        work_images = validated_data.pop("work_images", None)  # artıq bu fayllardır
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
         if cities is not None:
             instance.cities.set(cities)
-        
+
         if districts is not None:
             instance.districts.set(districts)
 
@@ -216,7 +215,8 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
             instance.languages.set(languages)
 
         if work_images is not None:
-            instance.work_images.set(work_images)
+            for image in work_images:
+                WorkImage.objects.create(user=instance, image=image)
 
         instance.save()
         return instance
