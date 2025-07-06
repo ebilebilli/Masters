@@ -563,8 +563,10 @@ class RegisterSerializer(serializers.ModelSerializer):
         if education_speciality:
             education_speciality = education_speciality.capitalize()
         
+        custom_profession = ''
         if education_speciality != 'other':
             custom_profession = validated_data.pop('custom_profession', '')
+            custom_profession = custom_profession.capitalize()
 
         cities = validated_data.pop('cities', [])
         districts = validated_data.pop('districts', [])
@@ -575,6 +577,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             first_name = first_name,
             last_name = last_name,
             education_speciality = education_speciality,
+            custom_profession = custom_profession,
         )
         user.set_password(password)
         user.save()
