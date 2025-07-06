@@ -280,7 +280,7 @@ SWAGGER_SETTINGS = {
     "USE_SESSION_AUTH": False,  
 }
 
-
+# Logging settings
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

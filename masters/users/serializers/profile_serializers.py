@@ -225,6 +225,8 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
         new_password = validated_data.pop('new_password', None) 
 
         for attr, value in validated_data.items():
+            if attr in ['first_name', 'last_name'] and isinstance(value, str):
+                value = value.capitalize()
             setattr(instance, attr, value)
 
         if cities is not None:
