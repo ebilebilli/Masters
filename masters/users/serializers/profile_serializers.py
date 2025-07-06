@@ -230,9 +230,6 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
         if cities is not None:
             instance.cities.set(cities)
 
-        if cities is not None:
-            instance.cities.set(cities)
-
         if districts is not None:
             instance.districts.set(districts)
 
