@@ -120,4 +120,6 @@ class ProfileDeleteAPIView(APIView):
         return Response({'message': 'Profiliniz uğurla deaktiv edildi'}, status=status.HTTP_204_NO_CONTENT)
         
 
+        
+
   

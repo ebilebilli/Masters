@@ -45,8 +45,7 @@ class ReviewsForMasterAPIView(APIView):
 
 
 class CreateReviewAPIView(APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     parser_classes = [MultiPartParser, FormParser]
     http_method_names = ['post']
 
