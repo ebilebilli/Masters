@@ -1,3 +1,4 @@
+import logging
 from rest_framework.views import APIView, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -15,6 +16,7 @@ from reviews.serializers.review_serializers import ReviewSerializer
 from utils.paginations import PaginationForMainPage
 from utils.permissions import HeHasPermission
 
+logger = logging.getLogger(__name__)
 
 __all__ = [
     'ReviewsForMasterAPIView',
@@ -106,15 +108,29 @@ class CreateReviewAPIView(APIView):
     @transaction.atomic
     def post(self, request, master_id):
         user = request.user
+        logger.info(f'İstifadəçi #{user.id} master #{master_id} üçün şərh göndərir')
+
         master = get_object_or_404(CustomUser, is_active=True, id=master_id)
+        logger.debug(f"Tapılan master: {master.id} - {master.full_name}")
+
         if user.id == master_id:
-            return Response({'error': 'Özünüzə şərh əlavə edə bilmərsiniz'}, status=status.HTTP_403_FORBIDDEN)
-        
+            logger.warning(f'İstifadəçi #{user.id} özünə şərh yazmağa cəhd etdi')
+            return Response(
+                {'error': 'Özünüzə şərh əlavə edə bilmərsiniz'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
         serializer = ReviewSerializer(data=request.data, context={'master': master})
         if serializer.is_valid():
             serializer.save()
+            logger.info(f"Şərh yaradıldı: {serializer.data}")
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response({'error': 'Göndərilən sorğu düzgün deyil'}, status=status.HTTP_400_BAD_REQUEST)
+
+        logger.error(f'Şərh forması səhvdir: {serializer.errors}')
+        return Response(
+            {'error': 'Göndərilən sorğu düzgün deyil'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 class UpdateReviewAPIView(APIView):
