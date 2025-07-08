@@ -111,7 +111,7 @@ class CreateReviewAPIView(APIView):
         logger.info(f'İstifadəçi #{user.id} master #{master_id} üçün şərh göndərir')
 
         master = get_object_or_404(CustomUser, is_active=True, id=master_id)
-        logger.debug(f"Tapılan master: {master.id} - {master.full_name}")
+        logger.debug(f"Tapılan master: {master.id} - {master.first_name}")
 
         if user.id == master_id:
             logger.warning(f'İstifadəçi #{user.id} özünə şərh yazmağa cəhd etdi')
