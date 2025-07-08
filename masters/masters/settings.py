@@ -268,7 +268,7 @@ CACHES = {
 
 TIMEOUT = int(os.getenv('TIMEOUT', 3600))
 
-# Swagger configuration
+# Swagger settings
 SWAGGER_SETTINGS = {
     "SECURITY_DEFINITIONS": {
         "Bearer": {
