@@ -108,29 +108,15 @@ class CreateReviewAPIView(APIView):
     @transaction.atomic
     def post(self, request, master_id):
         user = request.user
-        logger.info(f'İstifadəçi #{user.id} master #{master_id} üçün şərh göndərir')
-
         master = get_object_or_404(CustomUser, is_active=True, id=master_id)
-        logger.debug(f"Tapılan master: {master.id} - {master.first_name}")
-
         if user.id == master_id:
-            logger.warning(f'İstifadəçi #{user.id} özünə şərh yazmağa cəhd etdi')
-            return Response(
-                {'error': 'Özünüzə şərh əlavə edə bilmərsiniz'},
-                status=status.HTTP_403_FORBIDDEN
-            )
-
+            return Response({'error': 'Özünüzə şərh əlavə edə bilmərsiniz'}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = ReviewSerializer(data=request.data, context={'master': master})
         if serializer.is_valid():
             serializer.save()
-            logger.info(f'Şərh yaradıldı: {serializer.data}')
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        logger.error(f'Şərh forması səhvdir: {serializer.errors}')
-        return Response(
-            {'error': 'Göndərilən sorğu düzgün deyil'},
-            status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response({'error': 'Göndərilən sorğu düzgün deyil'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpdateReviewAPIView(APIView):
@@ -209,7 +195,7 @@ class DeleteReviewAPIView(APIView):
     http_method_names = ['delete']
 
     @swagger_auto_schema(
-        operation_description='Rəyi silir.',
+        operation_description="Rəyi silir.",
         responses={204: openapi.Response('Uğurla silindi')}
     )
     @transaction.atomic
