@@ -123,7 +123,7 @@ class CreateReviewAPIView(APIView):
         serializer = ReviewSerializer(data=request.data, context={'master': master})
         if serializer.is_valid():
             serializer.save()
-            logger.info(f"Şərh yaradıldı: {serializer.data}")
+            logger.info(f'Şərh yaradıldı: {serializer.data}')
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         logger.error(f'Şərh forması səhvdir: {serializer.errors}')
@@ -209,7 +209,7 @@ class DeleteReviewAPIView(APIView):
     http_method_names = ['delete']
 
     @swagger_auto_schema(
-        operation_description="Rəyi silir.",
+        operation_description='Rəyi silir.',
         responses={204: openapi.Response('Uğurla silindi')}
     )
     @transaction.atomic

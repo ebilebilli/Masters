@@ -102,26 +102,4 @@ class ReviewSerializer(serializers.ModelSerializer):
 
         return review
     
-    def to_representation(self, instance):
-        rating_fields = [
-            'responsible',
-            'neat',
-            'time_management',
-            'communicative',
-            'punctual',
-            'professional',
-            'experienced',
-            'efficient',
-            'agile',
-            'patient',
-        ]
-
-        rep = super().to_representation(instance)
-
-        rep["ratings"] = {
-            field: rep[field]
-            for field in rating_fields
-            if field in rep and rep[field] not in [None, '', 0]
-        }
-
-        return rep
+    
