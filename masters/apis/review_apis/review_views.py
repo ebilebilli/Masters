@@ -47,7 +47,7 @@ class ReviewsForMasterAPIView(APIView):
 class CreateReviewAPIView(APIView):
     permission_classes = [AllowAny]
     parser_classes = [MultiPartParser, FormParser]
-    http_method_names = ['post']
+    http_method_names = ['post', 'get']
 
     @swagger_auto_schema(
         operation_description="Yeni rəy əlavə edir.",
@@ -115,6 +115,7 @@ class CreateReviewAPIView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response({'error': 'Göndərilən sorğu düzgün deyil'}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class UpdateReviewAPIView(APIView):
     authentication_classes = [JWTAuthentication]
