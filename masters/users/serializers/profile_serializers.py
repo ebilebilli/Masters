@@ -182,7 +182,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
     def validate_new_password(self, value):
         if len(value) < 8 or len(value) > 16:
             raise serializers.ValidationError('Şifrəniz 8-16 simvol arası olmalı, böyük hərf, rəqəm və xüsusi simvol içərməlidir.')
-        if not re.search(r'[A-Z]', value):
+        if not re.search(r'[A-ZƏÖÜÇŞİI]', value):
             raise serializers.ValidationError('Şifrənizdə minimum bir böyük hərf olmalıdır.')
         if not re.search(r'\d', value):
             raise serializers.ValidationError('Şifrənizdə minimum bir rəqəm olmalıdır.')

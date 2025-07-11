@@ -439,7 +439,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         if len(value) < 8 or len(value) > 16:
             raise serializers.ValidationError("Şifrəniz 8 - 15 simvol aralığından ibarət olmalı, özündə minimum bir böyük hərf, rəqəm və xüsusi simvol (məsələn: !, @, #, -, _, +) ehtiva etməlidir.")
 
-        if not re.search(r'[A-Z]', value):
+        if not re.search(r'[A-ZƏÖÜÇŞİI]', value):
             raise serializers.ValidationError("Şifrəniz 8 - 15 simvol aralığından ibarət olmalı, özündə minimum bir böyük hərf, rəqəm və xüsusi simvol (məsələn: !, @, #, -, _, +) ehtiva etməlidir.")
 
         if not re.search(r'\d', value):
